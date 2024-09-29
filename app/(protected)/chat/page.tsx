@@ -1,4 +1,5 @@
-import { createClient } from "@/utils/supabase/server";
+import { ChatInputBox } from "@/components/chat-input-box";
+import { createClient } from "@/lib/utils/supabase/server";
 import { redirect } from "next/navigation";
 
 export default async function ChatPage() {
@@ -8,11 +9,19 @@ export default async function ChatPage() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  console.log(user);
-
   if (!user) {
     return redirect("/sign-in");
   }
 
-  return <div>Chat</div>;
+  const handleSend = async (message: string) => {
+    "use server";
+    console.log(message);
+    // Here you can add the logic to send the message to your backend or database
+  };
+
+  return (
+    <div className="grow max-w-screen-md w-full flex flex-col justify-center">
+      <ChatInputBox handleSend={handleSend} />
+    </div>
+  );
 }
