@@ -1,5 +1,5 @@
-import { ChatInputBox } from "@/components/chat-input-box";
-import { createClient } from "@/lib/utils/supabase/server";
+import Chat from "@/components/chat/chat";
+import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 
 export default async function ChatPage() {
@@ -21,7 +21,7 @@ export default async function ChatPage() {
 
   return (
     <div className="grow max-w-screen-md w-full flex flex-col justify-center">
-      <ChatInputBox handleSend={handleSend} />
+      <Chat />
     </div>
   );
 }
