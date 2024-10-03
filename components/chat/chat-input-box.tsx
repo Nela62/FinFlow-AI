@@ -6,7 +6,6 @@ import { Input } from "@/components/ui/input";
 import { ArrowRightCircleIcon } from "lucide-react";
 
 import Markdown from "react-markdown";
-import { useChat } from "ai/react";
 import { cn } from "@/lib/utils";
 import { ChatRequestOptions } from "ai";
 
@@ -17,12 +16,7 @@ interface ChatInputBoxProps {
       | React.ChangeEvent<HTMLInputElement>
       | React.ChangeEvent<HTMLTextAreaElement>
   ) => void;
-  handleSubmit: (
-    event?: {
-      preventDefault?: () => void;
-    },
-    chatRequestOptions?: ChatRequestOptions
-  ) => void;
+  handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
 }
 
 export function ChatInputBox({
