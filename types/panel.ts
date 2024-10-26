@@ -1,16 +1,8 @@
-// export type Widget = {
-//   id: string;
-//   type: string;
-//   props: Record<string, any>;
-//   position: { x: number; y: number; w: number; h: number };
-// };
-
 export type Widget = {
   id: string;
+  title: string;
   content: React.ReactNode;
-  defaultHeight: number;
-  defaultSize: number;
-  className: string;
+  position: { x: number; y: number; w: number; h: number };
 };
 
 export type Panel = {
