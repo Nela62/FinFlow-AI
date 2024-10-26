@@ -1,7 +1,9 @@
-import { DraggablePanel } from "@/components/dnd/draggable-panel";
 import { createClient } from "@/lib/supabase/server";
 import { Widget } from "@/types/panel";
 import { redirect } from "next/navigation";
+import { Panel } from "./components/panel";
+import { Card, CardContent } from "@/components/ui/card";
+import TechnicalAnalysisWidget from "@/components/widgets/technical-analysis";
 
 export default async function PanelPage({
   params,
@@ -36,8 +38,10 @@ export default async function PanelPage({
 
   // Sample Widget Components
   const StockChart = () => (
-    <div className="p-4 h-full flex items-center justify-center">
-      Stock Chart Widget
+    <div className="p-4 h-full">
+      <div className="text-xl font-semibold text-zinc-200 mb-2">$483.72</div>
+      <div className="text-sm text-green-500">+0.85 (+0.18%)</div>
+      <div className="text-xs text-zinc-400 mt-1">Volume: 2.407M</div>
     </div>
   );
 
@@ -56,25 +60,29 @@ export default async function PanelPage({
   const sampleWidgets: Widget[] = [
     {
       id: "1",
+      title: "Stock Chart",
       content: <StockChart />,
-      defaultHeight: 400,
-      defaultSize: 50,
-      className: "bg-slate-800/50",
+      position: { x: 0, y: 0, w: 6, h: 4 },
     },
     {
       id: "2",
-      content: <FinancialTable />,
-      defaultHeight: 300,
-      defaultSize: 50,
-      className: "bg-slate-800/50",
+      title: "Technical Analysis",
+      content: <TechnicalAnalysisWidget />,
+      position: { x: 6, y: 0, w: 6, h: 10 },
     },
+    // {
+    //   id: "2",
+    //   type: "FinancialTable",
+    //   props: {},
+    //   position: { x: 0, y: 0, w: 1, h: 1 },
+    // },
+    // {
+    //   id: "3",
+    //   type: "FinancialTable",
+    //   props: {},
+    //   position: { x: 0, y: 0, w: 1, h: 1 },
+    // },
   ];
 
-  return (
-    <DraggablePanel
-      widgets={sampleWidgets}
-      handlePanelResize={handlePanelResize}
-      className="h-[600px]"
-    />
-  );
+  return <Panel widgets={sampleWidgets} />;
 }
