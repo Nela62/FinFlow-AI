@@ -2,6 +2,7 @@
 
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
+import "@/styles/react-grid-layout.css";
 
 import React from "react";
 import { Responsive, WidthProvider } from "react-grid-layout";
@@ -49,23 +50,23 @@ export const Panel = ({ widgets }: { widgets: Widget[] }) => {
       {/* {...widgets.map((item: any) => <div key={item.id}>{item.content}</div>)} */}
       {widgets.map((widget) => (
         <div key={widget.id} className="relative">
-          <Card className="h-full overflow-hidden border-zinc-800 bg-zinc-900/90 shadow-lg">
-            <CardHeader className="p-2 border-b border-zinc-800">
+          <Card className="h-full overflow-hidden dark:border-zinc-800 dark:bg-zinc-900/90 shadow-lg">
+            <CardHeader className="p-2 border-b dark:border-zinc-800">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-sm font-medium text-zinc-200">
+                <CardTitle className="text-sm font-medium dark:text-zinc-200">
                   {widget.title}
                 </CardTitle>
                 <div className="flex items-center space-x-1">
-                  <button className="p-1 rounded-sm hover:bg-zinc-800 text-zinc-400 hover:text-zinc-200">
+                  <button className="p-1 rounded-sm dark:hover:bg-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200">
                     <RefreshCw size={14} />
                   </button>
-                  <button className="p-1 rounded-sm hover:bg-zinc-800 text-zinc-400 hover:text-zinc-200">
+                  <button className="p-1 rounded-sm dark:hover:bg-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200">
                     <Maximize2 size={14} />
                   </button>
-                  <button className="p-1 rounded-sm hover:bg-zinc-800 text-zinc-400 hover:text-zinc-200">
+                  <button className="p-1 rounded-sm dark:hover:bg-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200">
                     <MoreHorizontal size={14} />
                   </button>
-                  <button className="p-1 rounded-sm hover:bg-zinc-800 text-zinc-400 hover:text-zinc-200">
+                  <button className="p-1 rounded-sm dark:hover:bg-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200">
                     <X size={14} />
                   </button>
                 </div>

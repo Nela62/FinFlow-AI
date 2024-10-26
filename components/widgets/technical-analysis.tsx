@@ -1,9 +1,11 @@
 "use client";
 
 import React, { useEffect, useRef, memo } from "react";
+import { useTheme } from "next-themes";
 
 function TechnicalAnalysisWidget() {
   const container = useRef<HTMLDivElement>(null);
+  const { theme } = useTheme();
 
   useEffect(() => {
     const script = document.createElement("script");
@@ -18,7 +20,7 @@ function TechnicalAnalysisWidget() {
 			  "interval": "D",
 			  "support_host": "https://www.tradingview.com",
 			  "timezone": "exchange",
-			  "theme": "dark",
+			  "theme": "${theme}",
 			  "style": "1",
 			  "withdateranges": true,
 			  "hide_side_toolbar": false,

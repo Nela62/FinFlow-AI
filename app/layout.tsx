@@ -35,7 +35,8 @@ export default function RootLayout({
           <AIStoreProvider>
             <ThemeProvider
               attribute="class"
-              defaultTheme="system"
+              // defaultTheme="system"
+              defaultTheme="light"
               enableSystem
               disableTransitionOnChange
             >
