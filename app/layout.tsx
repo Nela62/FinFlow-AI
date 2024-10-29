@@ -9,7 +9,8 @@ import { ThemeProvider } from "next-themes";
 import Link from "next/link";
 import "./globals.css";
 import { AIStoreProvider } from "@/providers/aiStoreProvider";
-import { PanelStoreProvider } from "@/providers/panelStoreProvider";
+import { SidebarStoreProvider } from "@/providers/sidebarStoreProvider";
+import { ReactQueryClientProvider } from "@/providers/reactQueryClientProvider";
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -31,19 +32,21 @@ export default function RootLayout({
   return (
     <html lang="en" className={raleway.className} suppressHydrationWarning>
       <body className="bg-background text-foreground">
-        <PanelStoreProvider>
-          <AIStoreProvider>
-            <ThemeProvider
-              attribute="class"
-              // defaultTheme="system"
-              defaultTheme="light"
-              enableSystem
-              disableTransitionOnChange
-            >
-              <main className="min-h-screen">{children}</main>
-            </ThemeProvider>
-          </AIStoreProvider>
-        </PanelStoreProvider>
+        <ReactQueryClientProvider>
+          <SidebarStoreProvider>
+            <AIStoreProvider>
+              <ThemeProvider
+                attribute="class"
+                // defaultTheme="system"
+                defaultTheme="light"
+                enableSystem
+                disableTransitionOnChange
+              >
+                <main className="min-h-screen">{children}</main>
+              </ThemeProvider>
+            </AIStoreProvider>
+          </SidebarStoreProvider>
+        </ReactQueryClientProvider>
       </body>
     </html>
   );

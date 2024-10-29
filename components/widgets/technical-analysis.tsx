@@ -38,11 +38,6 @@ function TechnicalAnalysisWidget() {
 
     // Append the script to the container
     container.current?.appendChild(script);
-
-    // Cleanup function to remove the script when component unmounts
-    return () => {
-      container.current?.removeChild(script);
-    };
   }, []);
 
   return (
