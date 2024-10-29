@@ -11,3 +11,16 @@ export type Panel = {
   widgets: Widget[];
   layout: any; // react-grid-layout configuration
 };
+
+export type WidgetConfig = {
+  id: string;
+  user_id: string;
+  last_updated: string;
+  data: any;
+};
+
+export type FinancialsConfig = WidgetConfig & {
+  ticker: string;
+  selected_tab: "income" | "balance" | "cash" | "metrics";
+  period: "annual" | "quarterly";
+};

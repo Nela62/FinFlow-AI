@@ -9,38 +9,106 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      panels: {
+        Row: {
+          id: string
+          name: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          name: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          name?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       sec_filings: {
         Row: {
           accession_number: string | null
           cik: string | null
           company_name: string | null
-          filing_date: string | null
+          date_as_of_change: string | null
+          filed_as_of_date: string | null
           filing_path: string | null
           filing_type: string | null
           id: string
+          period_of_report_date: string | null
+          quarter: string | null
           ticker: string | null
+          year: number | null
         }
         Insert: {
           accession_number?: string | null
           cik?: string | null
           company_name?: string | null
-          filing_date?: string | null
+          date_as_of_change?: string | null
+          filed_as_of_date?: string | null
           filing_path?: string | null
           filing_type?: string | null
           id?: string
+          period_of_report_date?: string | null
+          quarter?: string | null
           ticker?: string | null
+          year?: number | null
         }
         Update: {
           accession_number?: string | null
           cik?: string | null
           company_name?: string | null
-          filing_date?: string | null
+          date_as_of_change?: string | null
+          filed_as_of_date?: string | null
           filing_path?: string | null
           filing_type?: string | null
           id?: string
+          period_of_report_date?: string | null
+          quarter?: string | null
           ticker?: string | null
+          year?: number | null
         }
         Relationships: []
+      }
+      widgets: {
+        Row: {
+          config: Json
+          data: Json
+          id: string
+          last_updated: string
+          panel_id: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          config: Json
+          data: Json
+          id?: string
+          last_updated?: string
+          panel_id: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          config?: Json
+          data?: Json
+          id?: string
+          last_updated?: string
+          panel_id?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "widgets_panel_id_fkey"
+            columns: ["panel_id"]
+            isOneToOne: false
+            referencedRelation: "panels"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
@@ -139,3 +207,4 @@ export type Enums<
   : PublicEnumNameOrOptions extends keyof PublicSchema["Enums"]
     ? PublicSchema["Enums"][PublicEnumNameOrOptions]
     : never
+
