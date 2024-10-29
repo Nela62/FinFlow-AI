@@ -13,11 +13,20 @@ export function fetchPanelById(client: TypedSupabaseClient, id: string) {
     .throwOnError();
 }
 
+export function fetchPanelByUrl(client: TypedSupabaseClient, url: string) {
+  return client
+    .from("panels")
+    .select("id, name, url")
+    .eq("url", url)
+    .maybeSingle()
+    .throwOnError();
+}
+
 export function fetchAllWidgets(client: TypedSupabaseClient, panelId: string) {
   return client
     .from("widgets")
-    .select("id, data, config")
-    .eq("panel_id", panelId)
+    .select("id, panels (id, url), type, last_updated, data, config, position")
+    .eq("panels.url", panelId)
     .throwOnError();
 }
 

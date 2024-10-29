@@ -21,6 +21,13 @@ import { Sheet, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { AddWidgetDrawer } from "@/components/widgets/add-widget-sidebar";
 import { useSidebarStore } from "@/providers/sidebarStoreProvider";
+import {
+  useInsertMutation,
+  useQuery,
+} from "@supabase-cache-helpers/postgrest-react-query";
+import { createClient } from "@/lib/supabase/client";
+import { fetchAllWidgets, fetchPanelByUrl } from "@/lib/queries";
+import { FinancialsWidget } from "@/components/widgets/financials";
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
@@ -36,10 +43,48 @@ const generateLayout = (widgets: Widget[]) => {
   }));
 };
 
-export const Panel = ({ widgets }: { widgets: Widget[] }) => {
-  const { isAddWidgetOpen, setIsAddWidgetOpen } = useSidebarStore(
-    (state) => state
+export const Panel = ({
+  panelUrl,
+  userId,
+}: {
+  panelUrl: string;
+  userId: string;
+}) => {
+  const {
+    isAddWidgetOpen,
+    setIsAddWidgetOpen,
+    draggedWidgetType,
+    setDraggedWidgetType,
+  } = useSidebarStore((state) => state);
+
+  const client = createClient();
+
+  const { data: panelData } = useQuery(fetchPanelByUrl(client, panelUrl));
+  const { data: widgetsData } = useQuery(fetchAllWidgets(client, panelUrl));
+
+  const { mutateAsync: insertWidget } = useInsertMutation(
+    client.from("widgets"),
+    ["id"],
+    "id"
   );
+
+  console.log(panelData);
+  console.log(widgetsData);
+
+  if (!widgetsData || !panelData) return null;
+
+  const widgets = widgetsData.map((widget) => ({
+    id: widget.id,
+    title: "Financials",
+    content: <FinancialsWidget id={widget.id} />,
+    position: (widget.position as {
+      x: number;
+      y: number;
+      w: number;
+      h: number;
+    }) || { x: 0, y: 0, w: 1, h: 1 },
+  }));
+
   return (
     <Sheet open={isAddWidgetOpen} onOpenChange={setIsAddWidgetOpen}>
       <SheetTrigger asChild>
@@ -53,7 +98,7 @@ export const Panel = ({ widgets }: { widgets: Widget[] }) => {
       </SheetTrigger>
       <AddWidgetDrawer />
       <ResponsiveGridLayout
-        className="layout"
+        className="layout min-h-screen w-full"
         layouts={{
           lg: generateLayout(widgets),
           md: generateLayout(widgets),
@@ -63,8 +108,37 @@ export const Panel = ({ widgets }: { widgets: Widget[] }) => {
         cols={{ lg: 48, md: 40, sm: 31 }}
         rowHeight={40}
         margin={[8, 8]}
-        onDrop={() => {
+        onDrop={async (layoutItem) => {
           setIsAddWidgetOpen(true);
+          console.log(layoutItem);
+          console.log(draggedWidgetType);
+          if (draggedWidgetType) {
+            switch (draggedWidgetType) {
+              case "metrics":
+                const annualData = await fetch("/api/metrics", {
+                  method: "POST",
+                  body: JSON.stringify({ symbol: "AAPL" }),
+                })
+                  .then((res) => res.json())
+                  .catch((err) => {
+                    console.log(err);
+                  });
+
+                insertWidget({
+                  panel_id: panelData.id,
+                  user_id: userId,
+                  type: "metrics",
+                  config: { selectedTab: "income", period: "annual" },
+                  data: { annual: annualData },
+                  position: {
+                    x: layoutItem[0].x,
+                    y: layoutItem[0].y,
+                    w: layoutItem[0].w,
+                    h: layoutItem[0].h,
+                  },
+                });
+            }
+          }
         }}
         containerPadding={[8, 8]}
         // onLayoutChange={handleLayoutChange}
@@ -107,7 +181,7 @@ export const Panel = ({ widgets }: { widgets: Widget[] }) => {
                 </div>
               </CardHeader>
               <CardContent className="p-0 h-full">
-                <div className="h-full w-full">{widget.content}</div>
+                <div className="h-full w-full pb-2">{widget.content}</div>
               </CardContent>
             </Card>
           </div>

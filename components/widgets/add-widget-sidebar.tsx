@@ -7,12 +7,15 @@ const widgets = [
   {
     id: "metrics",
     name: "Metrics",
+    type: "metrics",
     image: "/metrics.png",
   },
 ];
 
 export const AddWidgetDrawer = () => {
-  const { setIsAddWidgetOpen } = useSidebarStore((state) => state);
+  const { setIsAddWidgetOpen, setDraggedWidgetType } = useSidebarStore(
+    (state) => state
+  );
 
   return (
     <SheetContent
@@ -39,7 +42,7 @@ export const AddWidgetDrawer = () => {
               onDragStart={(e) => {
                 e.dataTransfer.setData("text/plain", "");
                 setIsAddWidgetOpen(false);
-                e.currentTarget.style.cursor = "cursor-grabbing";
+                setDraggedWidgetType(widget.type);
               }}
             >
               <Image
