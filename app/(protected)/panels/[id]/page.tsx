@@ -6,6 +6,13 @@ import { Card, CardContent } from "@/components/ui/card";
 import TechnicalAnalysisWidget from "@/components/widgets/technical-analysis";
 import StockScreenerWidget from "@/components/widgets/stock-screener";
 import { FinancialsWidget } from "@/components/widgets/financials";
+import { fetchAllWidgets } from "@/lib/queries";
+import {
+  dehydrate,
+  HydrationBoundary,
+  QueryClient,
+} from "@tanstack/react-query";
+import { prefetchQuery } from "@supabase-cache-helpers/postgrest-react-query";
 
 export default async function PanelPage({
   params,
@@ -21,6 +28,10 @@ export default async function PanelPage({
   if (!user) {
     return redirect("/sign-in");
   }
+
+  const queryClient = new QueryClient();
+
+  await prefetchQuery(queryClient, fetchAllWidgets(supabase, params.id));
 
   // Fetch panel data using the id from params
   // const { data: panel, error } = await supabase
@@ -92,5 +103,9 @@ export default async function PanelPage({
     // },
   ];
 
-  return <Panel widgets={sampleWidgets} />;
+  return (
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <Panel panelUrl={params.id} userId={user.id} />
+    </HydrationBoundary>
+  );
 }

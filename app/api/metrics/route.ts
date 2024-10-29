@@ -16,11 +16,13 @@ const cleanRes = (res: any) => {
         return;
 
       const metricData = res[key].results.reduce((acc: any, item: any) => {
-        acc[item.fiscal_year.slice(0, 4)] = item[metric];
+        acc[item.period_ending.slice(0, 4)] = item[metric];
         return acc;
       }, {});
 
-      data[key as keyof typeof data].push(metricData);
+      data[key as keyof typeof data].push(
+        Object.assign(metricData, { metric })
+      );
     });
   });
 
@@ -33,6 +35,9 @@ export async function POST(req: NextRequest) {
   try {
     const response = await fetch(`${API_BASE_URL}/financials`, {
       method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify(config),
     });
 
