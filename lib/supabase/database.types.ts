@@ -75,6 +75,39 @@ export type Database = {
         }
         Relationships: []
       }
+      tickers: {
+        Row: {
+          asset_type: string
+          delisting_date: string | null
+          exchange: string
+          id: string
+          ipo_date: string | null
+          name: string
+          status: string
+          symbol: string
+        }
+        Insert: {
+          asset_type: string
+          delisting_date?: string | null
+          exchange: string
+          id?: string
+          ipo_date?: string | null
+          name: string
+          status: string
+          symbol: string
+        }
+        Update: {
+          asset_type?: string
+          delisting_date?: string | null
+          exchange?: string
+          id?: string
+          ipo_date?: string | null
+          name?: string
+          status?: string
+          symbol?: string
+        }
+        Relationships: []
+      }
       widgets: {
         Row: {
           config: Json

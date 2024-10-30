@@ -4,9 +4,9 @@ import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
 import "@/styles/react-grid-layout.css";
 
-import React from "react";
-import { Responsive, WidthProvider } from "react-grid-layout";
-import { Widget } from "@/types/panel";
+import React, { useState } from "react";
+import { Layout, Responsive, WidthProvider } from "react-grid-layout";
+import { Stock, Widget } from "@/types/panel";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   GripHorizontal,
@@ -24,10 +24,12 @@ import { useSidebarStore } from "@/providers/sidebarStoreProvider";
 import {
   useInsertMutation,
   useQuery,
+  useUpdateMutation,
 } from "@supabase-cache-helpers/postgrest-react-query";
 import { createClient } from "@/lib/supabase/client";
 import { fetchAllWidgets, fetchPanelByUrl } from "@/lib/queries";
 import { FinancialsWidget } from "@/components/widgets/financials";
+import { StockPicker } from "@/components/widgets/stock-picker";
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
@@ -68,10 +70,38 @@ export const Panel = ({
     "id"
   );
 
-  console.log(panelData);
-  console.log(widgetsData);
+  const { mutateAsync: updateWidget } = useUpdateMutation(
+    client.from("widgets"),
+    ["id"],
+    "id"
+  );
+
+  const [currentStock, setCurrentStock] = useState<Stock | null>(null);
 
   if (!widgetsData || !panelData) return null;
+
+  const handleLayoutChange = (layout: Layout[]) => {
+    console.log(layout);
+    layout.forEach((item) => {
+      const curLayout = {
+        x: item.x,
+        y: item.y,
+        w: item.w,
+        h: item.h,
+      };
+
+      if (
+        JSON.stringify(
+          widgetsData.find((widget) => widget.id === item.i)?.position
+        ) !== JSON.stringify(curLayout)
+      ) {
+        updateWidget({
+          id: item.i,
+          position: curLayout,
+        });
+      }
+    });
+  };
 
   const widgets = widgetsData.map((widget) => ({
     id: widget.id,
@@ -133,15 +163,15 @@ export const Panel = ({
                   position: {
                     x: layoutItem[0].x,
                     y: layoutItem[0].y,
-                    w: layoutItem[0].w,
-                    h: layoutItem[0].h,
+                    w: 24,
+                    h: 10,
                   },
                 });
             }
           }
         }}
         containerPadding={[8, 8]}
-        // onLayoutChange={handleLayoutChange}
+        onLayoutChange={handleLayoutChange}
         isResizable={true}
         // isDraggable={true}
         useCSSTransforms={true}
@@ -163,6 +193,7 @@ export const Panel = ({
                     <CardTitle className="text-sm font-medium dark:text-zinc-200">
                       {widget.title}
                     </CardTitle>
+                    <StockPicker currentStock={widget.config.currentStock} />
                   </div>
                   <div className="flex items-center space-x-1">
                     <button className="p-1 rounded-sm dark:hover:bg-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200">
