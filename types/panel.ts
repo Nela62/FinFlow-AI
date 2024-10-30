@@ -24,3 +24,10 @@ export type FinancialsConfig = WidgetConfig & {
   selected_tab: "income" | "balance" | "cash" | "metrics";
   period: "annual" | "quarterly";
 };
+
+export type Stock = {
+  ticker: string;
+  name: string;
+  exchange: string;
+  assetType: string;
+};
