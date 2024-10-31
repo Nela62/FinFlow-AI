@@ -23,7 +23,6 @@ export const StockPicker = ({
   currentStock: Stock;
 }) => {
   const client = createClient();
-  const queryClient = useQueryClient();
 
   const { data: widget } = useQuery(fetchWidgetById(client, widgetId));
 
@@ -33,6 +32,7 @@ export const StockPicker = ({
     "id"
   );
 
+  const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [tab, setTab] = useState("equity");
 
@@ -73,7 +73,7 @@ export const StockPicker = ({
   if (!widgetGroupId) return null;
 
   return (
-    <Dialog>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger>{currentStock.ticker}</DialogTrigger>
       <DialogContent className="sm:max-w-[600px] h-[80vh]">
         <div className="space-y-4">
@@ -110,29 +110,7 @@ export const StockPicker = ({
                     id: widgetGroupId,
                     ticker_id: stock.id,
                   });
-
-                  queryClient.invalidateQueries({
-                    queryKey: ["widgets"],
-                    refetchType: "all",
-                  });
-                  queryClient.invalidateQueries({
-                    queryKey: ["widget_groups"],
-                    refetchType: "all",
-                  });
-                  queryClient.invalidateQueries({
-                    queryKey: ["panels"],
-                    refetchType: "all",
-                  });
-
-                  // Force refetch the specific queries used in Panel component
-                  // await queryClient.refetchQueries({
-                  //   queryKey: ["widgets", panelUrl],
-                  //   exact: true,
-                  // });
-                  // await queryClient.refetchQueries({
-                  //   queryKey: ["widget_groups", panelData?.id],
-                  //   exact: true,
-                  // });
+                  setIsOpen(false);
                 }}
               >
                 <div className="flex gap-2 items-center">
