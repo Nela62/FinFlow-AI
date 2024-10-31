@@ -34,6 +34,8 @@ import {
 } from "@/lib/queries";
 import { FinancialsWidget } from "@/components/widgets/financials";
 import { StockPicker } from "@/components/widgets/stock-picker";
+import TechnicalAnalysisWidget from "@/components/widgets/technical-analysis";
+import StockScreenerWidget from "@/components/widgets/stock-screener";
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
@@ -47,6 +49,24 @@ const generateLayout = (widgets: Widget[]) => {
     minW: 3,
     minH: 2,
   }));
+};
+
+const getWidgetInfo = (type: string, props: any) => {
+  switch (type) {
+    default:
+    case "metrics":
+      return { title: "Financials", content: <FinancialsWidget {...props} /> };
+    case "technical_analysis":
+      return {
+        title: "Technical Analysis",
+        content: <TechnicalAnalysisWidget {...props} />,
+      };
+    case "stock_screener":
+      return {
+        title: "Stock Screener",
+        content: <StockScreenerWidget {...props} />,
+      };
+  }
 };
 
 export const Panel = ({
@@ -85,6 +105,7 @@ export const Panel = ({
 
   if (!widgetsData || !panelData) return null;
 
+  // FIX: make sure that it doesn't keep updating when the element is being dragged
   const handleLayoutChange = (layout: Layout[]) => {
     console.log(layout);
     layout.forEach((item) => {
@@ -98,7 +119,8 @@ export const Panel = ({
       if (
         JSON.stringify(
           widgetsData.find((widget) => widget.id === item.i)?.position
-        ) !== JSON.stringify(curLayout)
+        ) !== JSON.stringify(curLayout) &&
+        item.i !== "__dropping-elem__"
       ) {
         updateWidget({
           id: item.i,
@@ -108,25 +130,31 @@ export const Panel = ({
     });
   };
 
-  console.log(widgetGroupsData);
-
   const widgets = widgetsData.map((widget) => {
+    console.log(widgetGroupsData);
     const group = widgetGroupsData?.find(
       (group) => group.id === widget.widget_groups!.id
     );
 
+    const currentStock = {
+      id: group!.tickers!.id,
+      name: group!.tickers!.name,
+      ticker: group!.tickers!.symbol,
+      exchange: group!.tickers!.exchange,
+      assetType: group!.tickers!.asset_type,
+    };
+
+    const widgetInfo = getWidgetInfo(widget.type, {
+      id: widget.id,
+      currentStock,
+    });
+
     return {
       id: widget.id,
-      title: "Financials",
-      content: <FinancialsWidget id={widget.id} />,
+      title: widgetInfo.title,
+      content: widgetInfo.content,
       group: { id: group?.id, name: group?.name },
-      currentStock: {
-        id: group?.tickers!.id,
-        name: group?.tickers!.name,
-        ticker: group?.tickers!.symbol,
-        exchange: group?.tickers!.exchange,
-        assetType: group?.tickers!.asset_type,
-      },
+      currentStock,
       position: (widget.position as {
         x: number;
         y: number;
@@ -161,8 +189,8 @@ export const Panel = ({
         margin={[8, 8]}
         onDrop={async (layoutItem) => {
           setIsAddWidgetOpen(true);
-          console.log(layoutItem);
-          console.log(draggedWidgetType);
+          console.log("LAYOUT ITEM", layoutItem);
+
           if (draggedWidgetType) {
             switch (draggedWidgetType) {
               case "metrics":
@@ -175,22 +203,50 @@ export const Panel = ({
                     console.log(err);
                   });
 
-                insertWidget({
-                  panel_id: panelData.id,
-                  user_id: userId,
-                  type: "metrics",
-                  group_id: widgetGroupsData?.[0].id,
-                  config: { selectedTab: "income", period: "annual" },
-                  data: { annual: annualData },
-                  position: {
-                    x: layoutItem[0].x,
-                    y: layoutItem[0].y,
-                    w: 24,
-                    h: 10,
+                if (!widgetGroupsData?.[0].id) return;
+
+                insertWidget([
+                  {
+                    panel_id: panelData.id,
+                    user_id: userId,
+                    type: draggedWidgetType,
+                    group_id: widgetGroupsData?.[0].id,
+                    config: { selectedTab: "income", period: "annual" },
+                    data: { annual: annualData },
+                    position: {
+                      x: layoutItem[0].x,
+                      y: layoutItem[0].y,
+                      w: 24,
+                      h: 10,
+                    },
                   },
-                });
+                ]);
 
                 setDraggedWidgetType(null);
+                break;
+              case "technical_analysis":
+              case "stock_screener":
+                if (!widgetGroupsData?.[0].id) return;
+
+                insertWidget([
+                  {
+                    panel_id: panelData.id,
+                    user_id: userId,
+                    type: draggedWidgetType,
+                    group_id: widgetGroupsData?.[0].id,
+                    data: {},
+                    config: {},
+                    position: {
+                      x: layoutItem[0].x,
+                      y: layoutItem[0].y,
+                      w: 24,
+                      h: 10,
+                    },
+                  },
+                ]);
+
+                setDraggedWidgetType(null);
+                break;
             }
           }
         }}

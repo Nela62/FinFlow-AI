@@ -10,6 +10,20 @@ const widgets = [
     type: "metrics",
     image: "/metrics.png",
   },
+  {
+    id: "technical_analysis",
+    name: "Technical Analysis",
+    type: "technical_analysis",
+    image: "/metrics.png",
+    // image: "/technical-analysis.png",
+  },
+  {
+    id: "stock_screener",
+    name: "Stock Screener",
+    type: "stock_screener",
+    // image: "/stock-screener.png",
+    image: "/metrics.png",
+  },
 ];
 
 export const AddWidgetDrawer = () => {
@@ -28,7 +42,7 @@ export const AddWidgetDrawer = () => {
       onOpenAutoFocus={(e) => e.preventDefault()}
     >
       <div className="bg-zinc-50 h-full w-full grow p-5 flex flex-col rounded-[16px]">
-        <div className="w-full pt-4">
+        <div className="w-full pt-4 space-y-4">
           {widgets.map((widget) => (
             <div
               key={widget.id}
@@ -48,7 +62,7 @@ export const AddWidgetDrawer = () => {
               <Image
                 src={widget.image}
                 alt={widget.name}
-                className="w-full h-auto"
+                className="w-full h-auto border rounded-lg overflow-hidden"
                 fill
               />
               <p className="absolute bottom-2 left-2 font-semibold">
