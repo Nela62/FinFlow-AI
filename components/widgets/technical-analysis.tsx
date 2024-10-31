@@ -10,6 +10,7 @@ import { Stock } from "@/types/panel";
 function TechnicalAnalysisWidget({ currentStock }: { currentStock: Stock }) {
   const container = useRef<HTMLDivElement>(null);
   const { theme } = useTheme();
+  console.log("rendering technical analysis");
 
   useEffect(() => {
     const script = document.createElement("script");

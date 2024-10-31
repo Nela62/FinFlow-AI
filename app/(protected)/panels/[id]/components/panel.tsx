@@ -130,9 +130,10 @@ export const Panel = ({
     });
   };
 
+  if (!widgetGroupsData) return null;
+
   const widgets = widgetsData.map((widget) => {
-    console.log(widgetGroupsData);
-    const group = widgetGroupsData?.find(
+    const group = widgetGroupsData.find(
       (group) => group.id === widget.widget_groups!.id
     );
 
@@ -196,7 +197,7 @@ export const Panel = ({
               case "metrics":
                 const annualData = await fetch("/api/metrics", {
                   method: "POST",
-                  body: JSON.stringify({ symbol: "AAPL" }),
+                  body: JSON.stringify({ symbol: "AAPL", income: true }),
                 })
                   .then((res) => res.json())
                   .catch((err) => {
@@ -260,10 +261,9 @@ export const Panel = ({
         draggableHandle=".drag-handle"
         isDroppable={true}
       >
-        {/* {...widgets.map((item: any) => <div key={item.id}>{item.content}</div>)} */}
         {widgets.map((widget) => (
           <div key={widget.id} className="relative">
-            <Card className="h-full overflow-hidden dark:border-zinc-800 dark:bg-zinc-900/90 shadow-lg">
+            <Card className="h-full overflow-hidden dark:border-zinc-800 dark:bg-zinc-900/90 shadow-sm">
               <CardHeader className="p-2 border-b dark:border-zinc-800">
                 <div className="flex items-center justify-between">
                   <div className="flex gap-1 items-center justify-start">
