@@ -46,7 +46,7 @@ export function fetchWidgetById(client: TypedSupabaseClient, id: string) {
   return client
     .from("widgets")
     .select(
-      "id, user_id, widget_groups (id, name, tickers(id,name, symbol, exchange, asset_type)), data, config, last_updated"
+      "id, user_id, widget_groups (id, name, tickers(id, name, symbol, exchange, asset_type)), data, config, last_updated"
     )
     .eq("id", id)
     .maybeSingle()

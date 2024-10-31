@@ -11,6 +11,8 @@ const cleanRes = (res: any) => {
   };
 
   Object.keys(res).forEach((key) => {
+    if (!res[key] || !res[key].results) return;
+
     Object.keys(res[key].results[0]).forEach((metric) => {
       if (["period_ending", "fiscal_period", "fiscal_year"].includes(metric))
         return;
@@ -31,6 +33,7 @@ const cleanRes = (res: any) => {
 
 export async function POST(req: NextRequest) {
   const config = await req.json();
+  console.log(config);
 
   try {
     const response = await fetch(`${API_BASE_URL}/financials`, {
@@ -46,8 +49,10 @@ export async function POST(req: NextRequest) {
     }
 
     const data = await response.json();
+    console.log(data);
     return NextResponse.json(cleanRes(data));
   } catch (error) {
+    console.log(error);
     return NextResponse.json(
       { error: "Failed to fetch financial data" },
       { status: 500 }
