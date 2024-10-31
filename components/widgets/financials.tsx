@@ -1,7 +1,7 @@
 "use client";
 
 import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import { AgGridReact } from "ag-grid-react";
 import { ColDef } from "ag-grid-community";
 import { cn } from "@/lib/utils";
@@ -38,7 +38,7 @@ const fetchDataBasedOnConfig = async (
   return data;
 };
 
-export const FinancialsWidget = ({
+const FinancialsWidgetComponent = ({
   id,
   currentStock,
 }: {
@@ -86,6 +86,7 @@ export const FinancialsWidget = ({
     setMounted(true);
   }, []);
 
+  // FIX: Not a good solution since it rerenders too often and makes requests to the db
   useEffect(() => {
     console.log("stock changed");
     // Only refetch if currentStock exists and differs from widget's stock
@@ -94,6 +95,8 @@ export const FinancialsWidget = ({
       widgetData?.widget_groups?.tickers?.symbol !== currentStock.ticker
     ) {
       console.log("fetching data");
+      console.log("Current stock ", currentStock.ticker);
+      console.log("Widget stock ", widgetData?.widget_groups?.tickers?.symbol);
       fetchDataBasedOnConfig(selectedTab, selectedPeriod, currentStock.ticker)
         .then((newData) => {
           updateWidget({
@@ -132,3 +135,5 @@ export const FinancialsWidget = ({
     </div>
   );
 };
+
+export const FinancialsWidget = memo(FinancialsWidgetComponent);

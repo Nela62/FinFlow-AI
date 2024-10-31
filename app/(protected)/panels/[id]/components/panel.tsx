@@ -4,6 +4,7 @@ import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
 import "@/styles/react-grid-layout.css";
 
+import _ from "lodash";
 import React, { useState } from "react";
 import { Layout, Responsive, WidthProvider } from "react-grid-layout";
 import { Stock, Widget } from "@/types/panel";
@@ -107,8 +108,7 @@ export const Panel = ({
 
   // FIX: make sure that it doesn't keep updating when the element is being dragged
   const handleLayoutChange = (layout: Layout[]) => {
-    console.log(layout);
-    layout.forEach((item) => {
+    for (const item of layout) {
       const curLayout = {
         x: item.x,
         y: item.y,
@@ -117,17 +117,17 @@ export const Panel = ({
       };
 
       if (
-        JSON.stringify(
-          widgetsData.find((widget) => widget.id === item.i)?.position
-        ) !== JSON.stringify(curLayout) &&
-        item.i !== "__dropping-elem__"
+        _.isEqual(
+          widgetsData.find((widget) => widget.id === item.i)?.position,
+          curLayout
+        )
       ) {
         updateWidget({
           id: item.i,
           position: curLayout,
         });
       }
-    });
+    }
   };
 
   if (!widgetGroupsData) return null;
