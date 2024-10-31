@@ -27,7 +27,11 @@ import {
   useUpdateMutation,
 } from "@supabase-cache-helpers/postgrest-react-query";
 import { createClient } from "@/lib/supabase/client";
-import { fetchAllWidgets, fetchPanelByUrl } from "@/lib/queries";
+import {
+  fetchAllWidgetGroups,
+  fetchAllWidgets,
+  fetchPanelByUrl,
+} from "@/lib/queries";
 import { FinancialsWidget } from "@/components/widgets/financials";
 import { StockPicker } from "@/components/widgets/stock-picker";
 
@@ -62,6 +66,9 @@ export const Panel = ({
   const client = createClient();
 
   const { data: panelData } = useQuery(fetchPanelByUrl(client, panelUrl));
+  const { data: widgetGroupsData } = useQuery(
+    fetchAllWidgetGroups(client, panelUrl)
+  );
   const { data: widgetsData } = useQuery(fetchAllWidgets(client, panelUrl));
 
   const { mutateAsync: insertWidget } = useInsertMutation(
@@ -75,8 +82,6 @@ export const Panel = ({
     ["id"],
     "id"
   );
-
-  const [currentStock, setCurrentStock] = useState<Stock | null>(null);
 
   if (!widgetsData || !panelData) return null;
 
@@ -103,17 +108,33 @@ export const Panel = ({
     });
   };
 
-  const widgets = widgetsData.map((widget) => ({
-    id: widget.id,
-    title: "Financials",
-    content: <FinancialsWidget id={widget.id} />,
-    position: (widget.position as {
-      x: number;
-      y: number;
-      w: number;
-      h: number;
-    }) || { x: 0, y: 0, w: 1, h: 1 },
-  }));
+  console.log(widgetGroupsData);
+
+  const widgets = widgetsData.map((widget) => {
+    const group = widgetGroupsData?.find(
+      (group) => group.id === widget.widget_groups!.id
+    );
+
+    return {
+      id: widget.id,
+      title: "Financials",
+      content: <FinancialsWidget id={widget.id} />,
+      group: { id: group?.id, name: group?.name },
+      currentStock: {
+        id: group?.tickers!.id,
+        name: group?.tickers!.name,
+        ticker: group?.tickers!.symbol,
+        exchange: group?.tickers!.exchange,
+        assetType: group?.tickers!.asset_type,
+      },
+      position: (widget.position as {
+        x: number;
+        y: number;
+        w: number;
+        h: number;
+      }) || { x: 0, y: 0, w: 1, h: 1 },
+    };
+  });
 
   return (
     <Sheet open={isAddWidgetOpen} onOpenChange={setIsAddWidgetOpen}>
@@ -158,6 +179,7 @@ export const Panel = ({
                   panel_id: panelData.id,
                   user_id: userId,
                   type: "metrics",
+                  group_id: widgetGroupsData?.[0].id,
                   config: { selectedTab: "income", period: "annual" },
                   data: { annual: annualData },
                   position: {
@@ -167,6 +189,8 @@ export const Panel = ({
                     h: 10,
                   },
                 });
+
+                setDraggedWidgetType(null);
             }
           }
         }}
@@ -193,7 +217,10 @@ export const Panel = ({
                     <CardTitle className="text-sm font-medium dark:text-zinc-200">
                       {widget.title}
                     </CardTitle>
-                    <StockPicker currentStock={widget.config.currentStock} />
+                    <StockPicker
+                      widgetId={widget.id}
+                      currentStock={widget.currentStock}
+                    />
                   </div>
                   <div className="flex items-center space-x-1">
                     <button className="p-1 rounded-sm dark:hover:bg-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200">
