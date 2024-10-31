@@ -22,10 +22,22 @@ export function fetchPanelByUrl(client: TypedSupabaseClient, url: string) {
     .throwOnError();
 }
 
+export function fetchAllWidgetGroups(client: TypedSupabaseClient, url: string) {
+  return client
+    .from("widget_groups")
+    .select(
+      "id, name, tickers (id, name, symbol, exchange, asset_type), panels (url)"
+    )
+    .eq("panels.url", url)
+    .throwOnError();
+}
+
 export function fetchAllWidgets(client: TypedSupabaseClient, panelId: string) {
   return client
     .from("widgets")
-    .select("id, panels (id, url), type, last_updated, data, config, position")
+    .select(
+      "id, panels (id, url), widget_groups (id, name, tickers(id, name, symbol, exchange, asset_type)),type, last_updated, data, config, position"
+    )
     .eq("panels.url", panelId)
     .throwOnError();
 }
@@ -33,7 +45,9 @@ export function fetchAllWidgets(client: TypedSupabaseClient, panelId: string) {
 export function fetchWidgetById(client: TypedSupabaseClient, id: string) {
   return client
     .from("widgets")
-    .select("id, user_id, data, config, last_updated")
+    .select(
+      "id, user_id, widget_groups (id, name, tickers(id,name, symbol, exchange, asset_type)), data, config, last_updated"
+    )
     .eq("id", id)
     .maybeSingle()
     .throwOnError();

@@ -28,7 +28,15 @@ export type Database = {
           url?: string | null
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "panels_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       sec_filings: {
         Row: {
@@ -79,6 +87,7 @@ export type Database = {
         Row: {
           asset_type: string
           delisting_date: string | null
+          display_name: string | null
           exchange: string
           id: string
           ipo_date: string | null
@@ -89,6 +98,7 @@ export type Database = {
         Insert: {
           asset_type: string
           delisting_date?: string | null
+          display_name?: string | null
           exchange: string
           id?: string
           ipo_date?: string | null
@@ -99,6 +109,7 @@ export type Database = {
         Update: {
           asset_type?: string
           delisting_date?: string | null
+          display_name?: string | null
           exchange?: string
           id?: string
           ipo_date?: string | null
@@ -108,10 +119,60 @@ export type Database = {
         }
         Relationships: []
       }
+      widget_groups: {
+        Row: {
+          created_at: string | null
+          id: string
+          name: string
+          panel_id: string
+          ticker_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          name: string
+          panel_id: string
+          ticker_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          name?: string
+          panel_id?: string
+          ticker_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "widget_groups_panel_id_fkey"
+            columns: ["panel_id"]
+            isOneToOne: false
+            referencedRelation: "panels"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "widget_groups_ticker_id_fkey"
+            columns: ["ticker_id"]
+            isOneToOne: false
+            referencedRelation: "tickers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "widget_groups_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       widgets: {
         Row: {
           config: Json
           data: Json
+          group_id: string
           id: string
           last_updated: string
           panel_id: string
@@ -122,6 +183,7 @@ export type Database = {
         Insert: {
           config: Json
           data: Json
+          group_id: string
           id?: string
           last_updated?: string
           panel_id: string
@@ -132,6 +194,7 @@ export type Database = {
         Update: {
           config?: Json
           data?: Json
+          group_id?: string
           id?: string
           last_updated?: string
           panel_id?: string
@@ -141,10 +204,24 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "widgets_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "widget_groups"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "widgets_panel_id_fkey"
             columns: ["panel_id"]
             isOneToOne: false
             referencedRelation: "panels"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "widgets_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
             referencedColumns: ["id"]
           },
         ]
