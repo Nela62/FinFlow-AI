@@ -2,8 +2,12 @@
 
 import React, { useEffect, useRef, memo } from "react";
 import { useTheme } from "next-themes";
+import { useQuery } from "@supabase-cache-helpers/postgrest-react-query";
+import { fetchAllWidgetGroups } from "@/lib/queries";
+import { createClient } from "@/lib/supabase/client";
+import { Stock } from "@/types/panel";
 
-function TechnicalAnalysisWidget() {
+function TechnicalAnalysisWidget({ currentStock }: { currentStock: Stock }) {
   const container = useRef<HTMLDivElement>(null);
   const { theme } = useTheme();
 
@@ -16,7 +20,7 @@ function TechnicalAnalysisWidget() {
     script.innerHTML = `
         {
 			  "autosize": true,
-			  "symbol": "NASDAQ:AAPL",
+			  "symbol": "${currentStock.exchange}:${currentStock.ticker}",
 			  "interval": "D",
 			  "support_host": "https://www.tradingview.com",
 			  "timezone": "exchange",

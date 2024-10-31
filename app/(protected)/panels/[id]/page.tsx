@@ -71,24 +71,6 @@ export default async function PanelPage({
   };
 
   const sampleWidgets: Widget[] = [
-    {
-      id: "1",
-      title: "Financials",
-      content: <FinancialsWidget id="1" />,
-      position: { x: 0, y: 0, w: 24, h: 10 },
-    },
-    {
-      id: "2",
-      title: "Technical Analysis",
-      content: <TechnicalAnalysisWidget />,
-      position: { x: 25, y: 0, w: 24, h: 10 },
-    },
-    {
-      id: "3",
-      title: "Stock Screener",
-      content: <StockScreenerWidget />,
-      position: { x: 0, y: 11, w: 24, h: 10 },
-    },
     // {
     //   id: "2",
     //   type: "FinancialTable",

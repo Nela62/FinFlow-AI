@@ -87,7 +87,7 @@ export const StockPicker = ({
           {currentStock.ticker} • {currentStock.exchange}
         </p>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[600px] h-[80vh]">
+      <DialogContent className="sm:max-w-[600px] h-[562px]">
         <div className="space-y-4">
           <div className="relative mr-4">
             <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
