@@ -64,6 +64,8 @@ export const StockPicker = ({
     return query;
   };
 
+  // TODO: Add a dialog title
+
   const { data: stocks, isLoading } = useQuery(
     fetchTickers(client, search, tab)
   );
@@ -73,8 +75,18 @@ export const StockPicker = ({
   if (!widgetGroupId) return null;
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger>{currentStock.ticker}</DialogTrigger>
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        setIsOpen(open);
+        setSearch("");
+      }}
+    >
+      <DialogTrigger className="bg-accent-foreground/10 hover:bg-accent-foreground/20 py-1 px-2 rounded-full ml-2">
+        <p className="text-xs text-accent-foreground">
+          {currentStock.ticker} • {currentStock.exchange}
+        </p>
+      </DialogTrigger>
       <DialogContent className="sm:max-w-[600px] h-[80vh]">
         <div className="space-y-4">
           <div className="relative mr-4">
@@ -111,6 +123,7 @@ export const StockPicker = ({
                     ticker_id: stock.id,
                   });
                   setIsOpen(false);
+                  setSearch("");
                 }}
               >
                 <div className="flex gap-2 items-center">
