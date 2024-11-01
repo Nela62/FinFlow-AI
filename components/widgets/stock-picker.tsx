@@ -3,17 +3,20 @@ import {
   useQuery,
   useUpdateMutation,
 } from "@supabase-cache-helpers/postgrest-react-query";
-import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogTrigger,
+} from "../ui/dialog";
 import { Stock } from "@/types/panel";
-import { Loader2, Search } from "lucide-react";
+import { Search } from "lucide-react";
 import { Input } from "../ui/input";
 import { Tabs, TabsList, TabsTrigger } from "../ui/tabs";
-import { Button } from "../ui/button";
-import { keepPreviousData, useQueryClient } from "@tanstack/react-query";
+import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
 import { useState } from "react";
-import InfiniteScroll from "../ui/infinite-scroll";
 import { TypedSupabaseClient } from "@/types/supabase";
-import { fetchAllWidgets, fetchWidgetById } from "@/lib/queries";
+import { fetchWidgetById } from "@/lib/queries";
 
 export const StockPicker = ({
   widgetId,
@@ -87,7 +90,10 @@ export const StockPicker = ({
           {currentStock.ticker} • {currentStock.exchange}
         </p>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[600px] h-[562px]">
+      <DialogContent className="sm:max-w-[600px] h-[562px] ">
+        <VisuallyHidden.Root>
+          <DialogTitle>Select a stock</DialogTitle>
+        </VisuallyHidden.Root>
         <div className="space-y-4">
           <div className="relative mr-4">
             <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
