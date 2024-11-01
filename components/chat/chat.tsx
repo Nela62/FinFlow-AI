@@ -90,7 +90,7 @@ export default function Chat() {
 
   return (
     <>
-      <ScrollArea className="h-96 pr-4 w-full">
+      <ScrollArea className="h-full pr-4 w-full">
         <div className="flex flex-col gap-4">
           {messages.map((message) => (
             <div
