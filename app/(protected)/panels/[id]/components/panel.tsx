@@ -7,7 +7,6 @@ import "@/styles/react-grid-layout.css";
 import _ from "lodash";
 import React, { useState } from "react";
 import { Layout, Responsive, WidthProvider } from "react-grid-layout";
-import GridLayout from "react-grid-layout";
 import { Stock, Widget } from "@/types/panel";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -191,11 +190,13 @@ export const Panel = ({
         </Button>
       </SheetTrigger>
       <AddWidgetDrawer />
-      <GridLayout
+      <ResponsiveGridLayout
         className="layout min-h-screen w-full"
-        layout={generateLayout(widgets)}
-        // breakpoints={{ md: 996, sm: 768 }}
-        cols={50}
+        layouts={{
+          lg: generateLayout(widgets),
+        }}
+        breakpoints={{ lg: 1200, md: 996, sm: 768 }}
+        cols={{ lg: 48, md: 40, sm: 31 }}
         rowHeight={40}
         margin={[8, 8]}
         onDrop={async (layoutItem) => {
@@ -310,7 +311,7 @@ export const Panel = ({
             </Card>
           </div>
         ))}
-      </GridLayout>
+      </ResponsiveGridLayout>
     </Sheet>
   );
 };
