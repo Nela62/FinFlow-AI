@@ -184,7 +184,7 @@ export const Panel = ({
         <Button
           variant="outline"
           size="icon"
-          className="absolute bottom-2 right-2 z-10"
+          className="absolute bottom-2 right-2 z-10 shadow-md"
         >
           <Plus className="h-6 w-6" />
         </Button>

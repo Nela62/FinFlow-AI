@@ -102,17 +102,15 @@ export default function Chat() {
             >
               <div
                 className={cn(
-                  message.role === "user"
-                    ? "bg-accent p-4"
-                    : "bg-background py-4 pr-4",
-                  "w-fit max-w-2xl rounded-lg"
+                  message.role === "user" ? "bg-accent" : "bg-background",
+                  "w-fit max-w-2xl rounded-lg px-3 py-2 border"
                 )}
               >
                 <Markdown
                   remarkPlugins={[remarkGfm]}
                   className={cn(
                     message.role === "user" ? "" : "[&>p]:mb-4",
-                    ""
+                    "text-sm"
                   )}
                 >
                   {message.content}

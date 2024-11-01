@@ -25,7 +25,7 @@ export default function ProtectedLayout({
     <SidebarProvider>
       <AppSidebar />
       <div className="px-2 bg-sidebar w-full max-h-screen">
-        <ResizablePanelGroup direction="horizontal" className="gap-2">
+        <ResizablePanelGroup direction="horizontal" className="">
           <ResizablePanel defaultSize={75}>
             <Card className="flex-1 my-2 h-[calc(100vh-16px)] flex flex-col w-full">
               <div className="flex items-center gap-2 p-2">
@@ -35,9 +35,9 @@ export default function ProtectedLayout({
               <ScrollArea className="">{children}</ScrollArea>
             </Card>
           </ResizablePanel>
-          <ResizableHandle />
+          <ResizableHandle className="bg-transparent hover:bg-border mx-2" />
           <ResizablePanel defaultSize={25}>
-            <div className="flex-1 my-2 h-[calc(100vh-16px)] flex flex-col w-full p-2">
+            <div className="flex-1 my-2 h-[calc(100vh-16px)] flex flex-col w-full">
               <Chat />
             </div>
           </ResizablePanel>
