@@ -26,6 +26,7 @@ import {
   useInsertMutation,
   useQuery,
   useUpdateMutation,
+  useUpsertMutation,
 } from "@supabase-cache-helpers/postgrest-react-query";
 import { createClient } from "@/lib/supabase/client";
 import {
@@ -107,24 +108,36 @@ export const Panel = ({
   if (!widgetsData || !panelData) return null;
 
   // FIX: make sure that it doesn't keep updating when the element is being dragged
-  const handleLayoutChange = (layout: Layout[]) => {
+  const handleLayoutChange = async (layout: Layout[]) => {
+    console.log(layout);
+
+    const newData = [];
+
     for (const item of layout) {
-      const curLayout = {
+      const newPosition = {
         x: item.x,
         y: item.y,
         w: item.w,
         h: item.h,
       };
 
-      if (
-        _.isEqual(
-          widgetsData.find((widget) => widget.id === item.i)?.position,
-          curLayout
-        )
-      ) {
-        updateWidget({
+      const curPosition = widgetsData.find(
+        (widget) => widget.id === item.i
+      )?.position;
+
+      if (!_.isEqual(curPosition, newPosition)) {
+        console.log(
+          "updating widget ",
+          item.i,
+          "from ",
+          curPosition,
+          "to ",
+          newPosition
+        );
+
+        await updateWidget({
           id: item.i,
-          position: curLayout,
+          position: newPosition,
         });
       }
     }
