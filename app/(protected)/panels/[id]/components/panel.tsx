@@ -125,7 +125,10 @@ export const Panel = ({
         (widget) => widget.id === item.i
       )?.position;
 
-      if (!_.isEqual(curPosition, newPosition)) {
+      if (
+        !_.isEqual(curPosition, newPosition) &&
+        item.i !== "__dropping-elem__"
+      ) {
         console.log(
           "updating widget ",
           item.i,
