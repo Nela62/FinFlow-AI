@@ -37,7 +37,7 @@ export default function ProtectedLayout({
           </ResizablePanel>
           <ResizableHandle className="bg-transparent hover:bg-border mx-2" />
           <ResizablePanel defaultSize={25}>
-            <div className="flex-1 my-2 h-[calc(100vh-16px)] flex flex-col w-full">
+            <div className="my-2 h-[calc(100vh-16px)] flex flex-col w-full">
               <Chat />
             </div>
           </ResizablePanel>

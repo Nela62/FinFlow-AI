@@ -1,13 +1,13 @@
 import { TypedSupabaseClient } from "@/types/supabase";
 
 export function fetchAllPanels(client: TypedSupabaseClient) {
-  return client.from("panels").select("id, name").throwOnError();
+  return client.from("panels").select("id, name, url").throwOnError();
 }
 
 export function fetchPanelById(client: TypedSupabaseClient, id: string) {
   return client
     .from("panels")
-    .select("id, name")
+    .select("id, name, url")
     .eq("id", id)
     .maybeSingle()
     .throwOnError();

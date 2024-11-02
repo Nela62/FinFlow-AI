@@ -90,27 +90,27 @@ export default function Chat() {
 
   return (
     <>
-      <ScrollArea className="h-full pr-4 w-full">
+      <ScrollArea className="h-full pr-4">
         <div className="flex flex-col gap-4">
           {messages.map((message) => (
             <div
               key={message.id}
               className={cn(
-                "w-full flex",
+                "flex",
                 message.role === "user" ? "justify-end" : "justify-start"
               )}
             >
               <div
                 className={cn(
                   message.role === "user" ? "bg-accent" : "bg-background",
-                  "w-fit max-w-2xl rounded-lg px-3 py-2 border"
+                  "max-w-full rounded-lg px-3 py-2 border"
                 )}
               >
                 <Markdown
                   remarkPlugins={[remarkGfm]}
                   className={cn(
                     message.role === "user" ? "" : "[&>p]:mb-4",
-                    "text-sm"
+                    "text-sm break-words"
                   )}
                 >
                   {message.content}
