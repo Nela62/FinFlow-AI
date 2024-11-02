@@ -22,6 +22,9 @@ import {
   SidebarMenuAction,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
   useSidebar,
 } from "@/components/ui/sidebar";
 import Link from "next/link";
@@ -33,8 +36,10 @@ export function NavList({
 }: {
   label: string;
   items: {
+    id: string;
     name: string;
     url: string;
+    tickers: string[];
   }[];
 }) {
   const { isMobile } = useSidebar();
@@ -44,15 +49,21 @@ export function NavList({
       <SidebarGroupLabel>{label}</SidebarGroupLabel>
       <SidebarMenu>
         <ScrollArea className="h-full">
-          {items.map((item) => (
-            <SidebarMenuItem key={item.name} className="">
-              <SidebarMenuButton asChild>
-                <Link href={item.url}>
-                  <span>{item.name}</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          ))}
+          <SidebarMenuSub>
+            {items.map((item) => (
+              <SidebarMenuSubItem key={item.name}>
+                <SidebarMenuSubButton className="px-1 w-full" asChild>
+                  <Link href={item.url}>
+                    <span className="text-xs font-semibold text-muted-foreground">
+                      {item.name.length > 20
+                        ? item.name.slice(0, 20) + "..."
+                        : item.name}
+                    </span>
+                  </Link>
+                </SidebarMenuSubButton>
+              </SidebarMenuSubItem>
+            ))}
+          </SidebarMenuSub>
         </ScrollArea>
       </SidebarMenu>
     </SidebarGroup>
