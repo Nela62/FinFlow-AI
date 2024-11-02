@@ -43,7 +43,13 @@ function TechnicalAnalysisWidget({ currentStock }: { currentStock: Stock }) {
 
     // Append the script to the container
     container.current?.appendChild(script);
-  }, []);
+
+    return () => {
+      if (container.current) {
+        container.current.innerHTML = "";
+      }
+    };
+  }, [currentStock, theme]);
 
   return (
     <div

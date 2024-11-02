@@ -29,3 +29,6 @@ ALTER TABLE widgets
 ALTER TABLE tickers
   ADD COLUMN display_name text GENERATED ALWAYS AS (symbol || ' - ' || name) STORED;
 
+ALTER TABLE panels
+  ALTER COLUMN url SET NOT NULL;
+

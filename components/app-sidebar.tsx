@@ -31,10 +31,15 @@ import {
 import { useQuery } from "@supabase-cache-helpers/postgrest-react-query";
 import { fetchAllPanels } from "@/lib/queries";
 import { createClient } from "@/lib/supabase/client";
+import { NavList } from "./nav-list";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const supabase = createClient();
   const { data: panels } = useQuery(fetchAllPanels(supabase));
+
+  if (!panels) return null;
+
+  const reports = [];
 
   const data = {
     user: {
@@ -77,13 +82,16 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       },
       {
         title: "Panels",
-        url: "/panels",
+        url: "/panels/new",
         icon: LayoutDashboard,
-        isActive: true,
+        addFn: async () => {
+          console.log("addFn");
+        },
         items:
           panels?.map((panel) => ({
             title: panel.name,
             url: `/panels/${panel.url}`,
+            tickers: ["NVDA"],
           })) ?? [],
       },
 
@@ -91,58 +99,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         title: "Reports",
         url: "#",
         icon: Files,
-        items: [
-          {
-            title: "General",
-            url: "#",
-          },
-          {
-            title: "Team",
-            url: "#",
-          },
-          {
-            title: "Billing",
-            url: "#",
-          },
-          {
-            title: "Limits",
-            url: "#",
-          },
-        ],
-      },
-    ],
-    projects: [
-      {
-        name: "Panel 1",
-        url: "#",
-        icon: Frame,
-      },
-      {
-        name: "Panel 2",
-        url: "#",
-        icon: PieChart,
-      },
-      {
-        name: "Panel 3",
-        url: "#",
-        icon: Map,
-      },
-    ],
-    reports: [
-      {
-        name: "Report 1",
-        url: "#",
-        icon: Frame,
-      },
-      {
-        name: "Report 2",
-        url: "#",
-        icon: PieChart,
-      },
-      {
-        name: "Report 3",
-        url: "#",
-        icon: Map,
+        addFn: async () => {
+          console.log("addFn");
+        },
+        items: [],
       },
     ],
   };
@@ -155,8 +115,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
-        {/* <NavList label="Panels" items={data.projects} />
-        <NavList label="Reports" items={data.reports} /> */}
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={data.user} />

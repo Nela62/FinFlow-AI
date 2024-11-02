@@ -35,7 +35,7 @@ export default function ProtectedLayout({
               <ScrollArea className="">{children}</ScrollArea>
             </Card>
           </ResizablePanel>
-          <ResizableHandle className="bg-transparent hover:bg-border mx-2" />
+          <ResizableHandle className="bg-transparent hover:bg-border mx-2 w-[2px]" />
           <ResizablePanel defaultSize={25}>
             <div className="my-2 h-[calc(100vh-16px)] flex flex-col w-full">
               <Chat />

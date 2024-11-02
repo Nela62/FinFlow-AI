@@ -199,7 +199,7 @@ export const Panel = ({
           lg: generateLayout(widgets),
         }}
         breakpoints={{ lg: 1200, md: 996, sm: 768 }}
-        cols={{ lg: 48, md: 40, sm: 31 }}
+        cols={{ lg: 60, md: 60, sm: 60 }}
         rowHeight={40}
         margin={[8, 8]}
         onDrop={async (layoutItem) => {
