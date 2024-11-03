@@ -20,7 +20,7 @@ import {
 } from "lucide-react";
 import { Sheet, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { AddWidgetDrawer } from "@/components/widgets/add-widget-sidebar";
+// import { AddWidgetDrawer } from "@/components/widgets/add-widget-sidebar";
 import { useSidebarStore } from "@/providers/sidebarStoreProvider";
 import {
   useInsertMutation,
@@ -105,6 +105,12 @@ export const Panel = ({
     "id"
   );
 
+  const { mutateAsync: updateWidgetGroup } = useUpdateMutation(
+    client.from("widget_groups"),
+    ["id"],
+    "id"
+  );
+
   if (!widgetsData || !panelData) return null;
 
   // FIX: make sure that it doesn't keep updating when the element is being dragged
@@ -183,7 +189,7 @@ export const Panel = ({
 
   return (
     <Sheet open={isAddWidgetOpen} onOpenChange={setIsAddWidgetOpen}>
-      <SheetTrigger asChild>
+      {/* <SheetTrigger asChild>
         <Button
           variant="outline"
           size="icon"
@@ -191,8 +197,8 @@ export const Panel = ({
         >
           <Plus className="h-6 w-6" />
         </Button>
-      </SheetTrigger>
-      <AddWidgetDrawer />
+      </SheetTrigger> */}
+      {/* <AddWidgetDrawer /> */}
       <ResponsiveGridLayout
         className="layout min-h-screen w-full"
         layouts={{
@@ -289,7 +295,13 @@ export const Panel = ({
                     </CardTitle>
                     <StockPicker
                       widgetId={widget.id}
-                      currentStock={widget.currentStock}
+                      currentStockTicker={widget.currentStock.ticker}
+                      onStockClick={async (stockId) => {
+                        await updateWidgetGroup({
+                          id: widget.group.id,
+                          ticker_id: stockId,
+                        });
+                      }}
                     />
                   </div>
                   <div className="flex items-center space-x-1">

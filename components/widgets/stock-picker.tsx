@@ -16,23 +16,24 @@ import { Tabs, TabsList, TabsTrigger } from "../ui/tabs";
 import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
 import { useState } from "react";
 import { TypedSupabaseClient } from "@/types/supabase";
-import { fetchWidgetById } from "@/lib/queries";
+import { fetchStockByTicker, fetchWidgetById } from "@/lib/queries";
 
 export const StockPicker = ({
   widgetId,
-  currentStock,
+  currentStockTicker,
+  onStockClick,
 }: {
-  widgetId: string;
-  currentStock: Stock;
+  widgetId?: string;
+  currentStockTicker: string;
+  onStockClick: (stockId: string) => void;
 }) => {
   const client = createClient();
 
-  const { data: widget } = useQuery(fetchWidgetById(client, widgetId));
-
-  const { mutateAsync: updateWidgetGroup } = useUpdateMutation(
-    client.from("widget_groups"),
-    ["id"],
-    "id"
+  const { data: widget } = useQuery(fetchWidgetById(client, widgetId ?? ""), {
+    enabled: !!widgetId,
+  });
+  const { data: currentStock } = useQuery(
+    fetchStockByTicker(client, currentStockTicker)
   );
 
   const [isOpen, setIsOpen] = useState(false);
@@ -75,7 +76,7 @@ export const StockPicker = ({
 
   const widgetGroupId = widget?.widget_groups?.id;
 
-  if (!widgetGroupId) return null;
+  if (!currentStock) return null;
 
   return (
     <Dialog
@@ -87,7 +88,7 @@ export const StockPicker = ({
     >
       <DialogTrigger className="bg-accent-foreground/10 hover:bg-accent-foreground/20 py-1 px-2 rounded-full ml-2">
         <p className="text-xs text-accent-foreground">
-          {currentStock.ticker} • {currentStock.exchange}
+          {currentStock.symbol} • {currentStock.exchange}
         </p>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[600px] h-[562px] ">
@@ -124,10 +125,7 @@ export const StockPicker = ({
                 key={stock.symbol}
                 className="flex justify-between p-2 hover:bg-muted/100 items-center cursor-pointer"
                 onClick={() => {
-                  updateWidgetGroup({
-                    id: widgetGroupId,
-                    ticker_id: stock.id,
-                  });
+                  onStockClick(stock.id);
                   setIsOpen(false);
                   setSearch("");
                 }}
