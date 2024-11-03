@@ -52,3 +52,24 @@ export function fetchWidgetById(client: TypedSupabaseClient, id: string) {
     .maybeSingle()
     .throwOnError();
 }
+
+export function fetchStockByTicker(
+  client: TypedSupabaseClient,
+  ticker: string
+) {
+  return client
+    .from("tickers")
+    .select("id, symbol, name, exchange, asset_type, status")
+    .eq("symbol", ticker)
+    .maybeSingle()
+    .throwOnError();
+}
+
+export function fetchStockById(client: TypedSupabaseClient, id: string) {
+  return client
+    .from("tickers")
+    .select("id, symbol, name, exchange, asset_type, status")
+    .eq("id", id)
+    .maybeSingle()
+    .throwOnError();
+}
