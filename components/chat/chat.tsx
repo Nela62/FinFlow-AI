@@ -7,12 +7,34 @@ import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { ScrollArea } from "../ui/scroll-area";
 import { cn } from "@/lib/utils";
-import { useCallback, useState } from "react";
+import { Fragment, useCallback, useState } from "react";
 import { Message } from "@/types/message";
+import { createClient } from "@/lib/supabase/client";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
+import { Button } from "../ui/button";
+import { ChevronDown, MessageCirclePlus } from "lucide-react";
+import { useQuery } from "@supabase-cache-helpers/postgrest-react-query";
+import { fetchAIChats } from "@/lib/queries";
+import { Separator } from "../ui/separator";
+import { format } from "date-fns";
+
+// TODO: Separate them into different components
 
 export default function Chat() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
+  const [sessionId, setSessionId] = useState<string | null>(null);
+
+  const supabase = createClient();
+
+  const { data: chats } = useQuery(fetchAIChats(supabase));
+
+  console.log(chats);
 
   const handleInputChange = (
     e:
@@ -37,14 +59,21 @@ export default function Chat() {
       setInput("");
 
       try {
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+
+        if (!session) throw new Error("No session found");
+
         const response = await fetch(
           process.env.NEXT_PUBLIC_API_URL + "/chat",
           {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
+              Authorization: `Bearer ${session.access_token}`,
             },
-            body: JSON.stringify({ messages: [...messages, userMessage] }),
+            body: JSON.stringify({ message: input, session_id: sessionId }),
           }
         );
 
@@ -77,6 +106,8 @@ export default function Chat() {
                   ...prevMessages.slice(0, -1),
                   { ...assistantMessage },
                 ]);
+              } else if (data.session_id && data.session_id !== sessionId) {
+                setSessionId(data.session_id);
               }
             }
           }
@@ -89,8 +120,42 @@ export default function Chat() {
   );
 
   return (
-    <>
-      <ScrollArea className="h-full pr-4">
+    <div className="flex flex-col h-full pr-2">
+      <div className="flex gap-2 mb-4">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="outline"
+              className="w-full h-8 flex items-center justify-between px-2"
+            >
+              <p>Chat History</p>
+              <ChevronDown className="w-4 h-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="" align="start">
+            {chats?.map((chat, i) => (
+              <Fragment key={chat.session_id}>
+                <DropdownMenuItem className="w-full text-sm flex justify-between">
+                  <p className="text-sm">
+                    {/* @ts-ignore */}
+                    {chat?.memory?.runs[0]?.message.content}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {format(new Date(Number(chat.updated_at) * 1000), "MMM d")}
+                  </p>
+                </DropdownMenuItem>
+                {i !== chats.length - 1 && (
+                  <Separator orientation="horizontal" />
+                )}
+              </Fragment>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+        <Button variant="outline" size="icon" className="h-8">
+          <MessageCirclePlus className="w-4 h-4" />
+        </Button>
+      </div>
+      <ScrollArea className="h-full">
         <div className="flex flex-col gap-4">
           {messages.map((message) => (
             <div
@@ -109,7 +174,7 @@ export default function Chat() {
                 <Markdown
                   remarkPlugins={[remarkGfm]}
                   className={cn(
-                    message.role === "user" ? "" : "[&>p]:mb-4",
+                    // message.role === "user" ? "" : "[&>p]:mb-4",
                     "text-sm break-words"
                   )}
                 >
@@ -125,6 +190,6 @@ export default function Chat() {
         handleInputChange={handleInputChange}
         handleSubmit={handleSubmit}
       />
-    </>
+    </div>
   );
 }
