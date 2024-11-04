@@ -9,28 +9,104 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      agent_memory: {
+        Row: {
+          created_at: string | null
+          id: string
+          memory: Json
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          memory: Json
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          memory?: Json
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agent_memory_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       panels: {
         Row: {
           id: string
           name: string
-          url: string | null
+          url: string
           user_id: string
         }
         Insert: {
           id?: string
           name: string
-          url?: string | null
+          url: string
           user_id: string
         }
         Update: {
           id?: string
           name?: string
-          url?: string | null
+          url?: string
           user_id?: string
         }
         Relationships: [
           {
             foreignKeyName: "panels_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      personalized_agent_sessions: {
+        Row: {
+          agent_data: Json
+          agent_id: string
+          created_at: number | null
+          memory: Json
+          session_data: Json
+          session_id: string
+          updated_at: number | null
+          user_data: Json | null
+          user_id: string
+        }
+        Insert: {
+          agent_data: Json
+          agent_id: string
+          created_at?: number | null
+          memory: Json
+          session_data: Json
+          session_id?: string
+          updated_at?: number | null
+          user_data?: Json | null
+          user_id: string
+        }
+        Update: {
+          agent_data?: Json
+          agent_id?: string
+          created_at?: number | null
+          memory?: Json
+          session_data?: Json
+          session_id?: string
+          updated_at?: number | null
+          user_data?: Json | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "personalized_agent_sessions_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"

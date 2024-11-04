@@ -6,7 +6,7 @@
     "build": "next build",
     "start": "next start",
     "update-types": "supabase gen types typescript --linked --schema=public > lib/supabase/database.types.ts",
-    "update-local-types": "supabase gen types typescript --local --schema=public > lib/supabase/database.types.ts",
+    "update-local-types": "supabase gen types typescript --local --schema=public,ai > lib/supabase/database.types.ts",
     "get-seed-data": "supabase db dump --data-only -f supabase/seed.sql"
   },
   "dependencies": {
@@ -36,6 +36,7 @@
     "autoprefixer": "10.4.17",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
+    "date-fns": "^4.1.0",
     "debounce": "^2.2.0",
     "geist": "^1.2.1",
     "lodash": "^4.17.21",

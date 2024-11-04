@@ -73,3 +73,10 @@ export function fetchStockById(client: TypedSupabaseClient, id: string) {
     .maybeSingle()
     .throwOnError();
 }
+
+export function fetchAIChats(client: TypedSupabaseClient) {
+  return client
+    .from("personalized_agent_sessions")
+    .select("session_id, memory, agent_data, created_at, updated_at")
+    .throwOnError();
+}
