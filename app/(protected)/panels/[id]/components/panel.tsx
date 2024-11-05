@@ -5,7 +5,7 @@ import "react-resizable/css/styles.css";
 import "@/styles/react-grid-layout.css";
 
 import _ from "lodash";
-import React, { useState } from "react";
+import React from "react";
 import { Layout, Responsive, WidthProvider } from "react-grid-layout";
 import { Stock, Widget } from "@/types/panel";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";

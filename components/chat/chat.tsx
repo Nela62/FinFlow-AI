@@ -134,7 +134,7 @@ export default function Chat() {
           </DropdownMenuTrigger>
           <DropdownMenuContent className="" align="start">
             {chats?.map((chat, i) => (
-              <Fragment key={chat.session_id}>
+              <Fragment key={chat.id}>
                 <DropdownMenuItem className="w-full text-sm flex justify-between">
                   <p className="text-sm">
                     {/* @ts-ignore */}

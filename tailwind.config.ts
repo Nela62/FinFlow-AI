@@ -62,6 +62,7 @@ const config = {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        azure: "#4078BF",
       },
       borderRadius: {
         lg: "var(--radius)",

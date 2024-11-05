@@ -9,34 +9,47 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      agent_memory: {
+      chat_history: {
         Row: {
           created_at: string | null
           id: string
-          memory: Json
+          messages: Json
+          summary: string
           updated_at: string | null
           user_id: string
+          workspace_id: string
         }
         Insert: {
           created_at?: string | null
           id?: string
-          memory: Json
+          messages: Json
+          summary: string
           updated_at?: string | null
           user_id: string
+          workspace_id: string
         }
         Update: {
           created_at?: string | null
           id?: string
-          memory?: Json
+          messages?: Json
+          summary?: string
           updated_at?: string | null
           user_id?: string
+          workspace_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "agent_memory_user_id_fkey"
+            foreignKeyName: "chat_history_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "chat_history_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
             referencedColumns: ["id"]
           },
         ]
@@ -47,18 +60,21 @@ export type Database = {
           name: string
           url: string
           user_id: string
+          workspace_id: string
         }
         Insert: {
           id?: string
           name: string
           url: string
           user_id: string
+          workspace_id: string
         }
         Update: {
           id?: string
           name?: string
           url?: string
           user_id?: string
+          workspace_id?: string
         }
         Relationships: [
           {
@@ -68,48 +84,11 @@ export type Database = {
             referencedRelation: "users"
             referencedColumns: ["id"]
           },
-        ]
-      }
-      personalized_agent_sessions: {
-        Row: {
-          agent_data: Json
-          agent_id: string
-          created_at: number | null
-          memory: Json
-          session_data: Json
-          session_id: string
-          updated_at: number | null
-          user_data: Json | null
-          user_id: string
-        }
-        Insert: {
-          agent_data: Json
-          agent_id: string
-          created_at?: number | null
-          memory: Json
-          session_data: Json
-          session_id?: string
-          updated_at?: number | null
-          user_data?: Json | null
-          user_id: string
-        }
-        Update: {
-          agent_data?: Json
-          agent_id?: string
-          created_at?: number | null
-          memory?: Json
-          session_data?: Json
-          session_id?: string
-          updated_at?: number | null
-          user_data?: Json | null
-          user_id?: string
-        }
-        Relationships: [
           {
-            foreignKeyName: "personalized_agent_sessions_user_id_fkey"
-            columns: ["user_id"]
+            foreignKeyName: "panels_workspace_id_fkey"
+            columns: ["workspace_id"]
             isOneToOne: false
-            referencedRelation: "users"
+            referencedRelation: "workspaces"
             referencedColumns: ["id"]
           },
         ]
@@ -158,6 +137,44 @@ export type Database = {
           year?: number | null
         }
         Relationships: []
+      }
+      settings: {
+        Row: {
+          created_at: string | null
+          credit_limit: number
+          email: string | null
+          id: string
+          plan: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          credit_limit?: number
+          email?: string | null
+          id?: string
+          plan?: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          credit_limit?: number
+          email?: string | null
+          id?: string
+          plan?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "settings_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       tickers: {
         Row: {
@@ -295,6 +312,38 @@ export type Database = {
           },
           {
             foreignKeyName: "widgets_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      workspaces: {
+        Row: {
+          created_at: string | null
+          id: string
+          name: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          name: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          name?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workspaces_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"

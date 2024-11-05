@@ -41,12 +41,12 @@ export const updateSession = async (request: NextRequest) => {
 
     // protected routes
     if (
-      !request.nextUrl.pathname.startsWith("/sign-in") &&
+      !request.nextUrl.pathname.startsWith("/login") &&
       !request.nextUrl.pathname.startsWith("/sign-up") &&
       !request.nextUrl.pathname.startsWith("/forgot-password") &&
       user.error
     ) {
-      return NextResponse.redirect(new URL("/sign-in", request.url));
+      return NextResponse.redirect(new URL("/login", request.url));
     }
 
     if (request.nextUrl.pathname === "/" && !user.error) {
