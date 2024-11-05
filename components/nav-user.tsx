@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import {
   BadgeCheck,
@@ -7,13 +7,9 @@ import {
   CreditCard,
   LogOut,
   Sparkles,
-} from "lucide-react"
+} from "lucide-react";
 
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui/avatar"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,25 +18,28 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
+import { createClient } from "@/lib/supabase/client";
+import { useRouter } from "next/navigation";
 
 export function NavUser({
   user,
 }: {
   user: {
-    name: string
-    email: string
-    avatar: string
-  }
+    name: string;
+    email: string;
+    avatar: string;
+  };
 }) {
-  const { isMobile } = useSidebar()
-
+  const { isMobile } = useSidebar();
+  const supabase = createClient();
+  const router = useRouter();
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -82,33 +81,42 @@ export function NavUser({
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem>
-                <Sparkles />
+                <Sparkles className="w-4 h-4 mr-2" />
                 Upgrade to Pro
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem>
-                <BadgeCheck />
+                <BadgeCheck className="w-4 h-4 mr-2" />
                 Account
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <CreditCard />
+                <CreditCard className="w-4 h-4 mr-2" />
                 Billing
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <Bell />
+                <Bell className="w-4 h-4 mr-2" />
                 Notifications
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <LogOut />
+            <DropdownMenuItem
+              onClick={async () => {
+                const { error } = await supabase.auth.signOut();
+                if (error) {
+                  console.error(error);
+                }
+
+                router.push("/login");
+              }}
+            >
+              <LogOut className="w-4 h-4 mr-2" />
               Log out
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>
     </SidebarMenu>
-  )
+  );
 }

@@ -10,7 +10,7 @@ export default async function ChatPage() {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return redirect("/sign-in");
+    return redirect("/login");
   }
 
   const handleSend = async (message: string) => {

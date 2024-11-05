@@ -26,7 +26,7 @@ export default async function PanelPage({
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return redirect("/sign-in");
+    return redirect("/login");
   }
 
   const queryClient = new QueryClient();
