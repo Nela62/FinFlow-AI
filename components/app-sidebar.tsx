@@ -2,25 +2,17 @@
 
 import * as React from "react";
 import {
-  AudioWaveform,
-  BookOpen,
   Bot,
-  Command,
   Database,
   Files,
-  Frame,
   GalleryVerticalEnd,
   LayoutDashboard,
-  Map,
-  PieChart,
-  Settings2,
   SquareDashedKanban,
-  SquareTerminal,
 } from "lucide-react";
 
 import { NavMain } from "@/components/nav-main";
 import { NavUser } from "@/components/nav-user";
-import { TeamSwitcher } from "@/components/team-switcher";
+import { WorkspaceSwitcher } from "@/components/workspace-switcher";
 import {
   Sidebar,
   SidebarContent,
@@ -29,41 +21,44 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 import { useQuery } from "@supabase-cache-helpers/postgrest-react-query";
-import { fetchAllPanels } from "@/lib/queries";
+import {
+  fetchAllPanels,
+  fetchAllWorkspaces,
+  fetchSettings,
+} from "@/lib/queries";
 import { createClient } from "@/lib/supabase/client";
-import { NavList } from "./nav-list";
+import { useSidebarStore } from "@/providers/sidebarStoreProvider";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const supabase = createClient();
-  const { data: panels } = useQuery(fetchAllPanels(supabase));
+  const { data: workspaces } = useQuery(fetchAllWorkspaces(supabase));
 
-  if (!panels) return null;
+  const { workspaceId, setWorkspaceId } = useSidebarStore((state) => state);
 
-  const reports = [];
+  React.useEffect(() => {
+    console.log("workspaces", workspaces);
+    console.log("workspaceId", workspaceId);
+    if (workspaces && !workspaceId) {
+      setWorkspaceId(workspaces[0].id);
+    }
+  }, [workspaces, workspaceId]);
+
+  const { data: panels } = useQuery(
+    fetchAllPanels(supabase, workspaceId ?? ""),
+    {
+      enabled: !!workspaceId,
+    }
+  );
+  const { data: settings } = useQuery(fetchSettings(supabase));
+
+  if (!panels || !settings) return null;
 
   const data = {
     user: {
-      name: "shadcn",
-      email: "m@example.com",
-      avatar: "/avatars/shadcn.jpg",
+      name: "Name",
+      email: settings.email,
+      avatar: "",
     },
-    teams: [
-      {
-        name: "Acme Inc",
-        logo: GalleryVerticalEnd,
-        plan: "Enterprise",
-      },
-      {
-        name: "Acme Corp.",
-        logo: AudioWaveform,
-        plan: "Startup",
-      },
-      {
-        name: "Evil Corp.",
-        logo: Command,
-        plan: "Free",
-      },
-    ],
     navMain: [
       {
         title: "Data Sources",
@@ -94,7 +89,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             tickers: ["NVDA"],
           })) ?? [],
       },
-
       {
         title: "Reports",
         url: "#",
@@ -111,7 +105,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <TeamSwitcher teams={data.teams} />
+        <WorkspaceSwitcher />
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />

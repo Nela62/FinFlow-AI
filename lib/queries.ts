@@ -1,7 +1,18 @@
 import { TypedSupabaseClient } from "@/types/supabase";
 
-export function fetchAllPanels(client: TypedSupabaseClient) {
-  return client.from("panels").select("id, name, url").throwOnError();
+export function fetchAllWorkspaces(client: TypedSupabaseClient) {
+  return client.from("workspaces").select("id, name").throwOnError();
+}
+
+export function fetchAllPanels(
+  client: TypedSupabaseClient,
+  workspaceId: string
+) {
+  return client
+    .from("panels")
+    .select("id, name, url, workspace_id")
+    .eq("workspace_id", workspaceId)
+    .throwOnError();
 }
 
 export function fetchPanelById(client: TypedSupabaseClient, id: string) {
@@ -78,5 +89,13 @@ export function fetchAIChats(client: TypedSupabaseClient) {
   return client
     .from("chat_history")
     .select("id, summary, messages, created_at, updated_at")
+    .throwOnError();
+}
+
+export function fetchSettings(client: TypedSupabaseClient) {
+  return client
+    .from("settings")
+    .select("id, email, plan, credit_limit")
+    .maybeSingle()
     .throwOnError();
 }

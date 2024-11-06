@@ -109,14 +109,22 @@ export const initUser = async (userId: string, email: string) => {
   try {
     const supabase = createClient();
 
-    await supabase.auth.updateUser({ data: { finished_onboarding: false } });
+    // await supabase.auth.updateUser({ data: { finished_onboarding: false } });
 
-    const { error: updateError } = await supabase
+    const { error: insertSettingsError } = await supabase
       .from("settings")
-      .insert({ user_id: userId, plan: "free", name, email });
+      .insert({ user_id: userId, email, plan: "free", credit_limit: 1000 });
 
-    if (updateError) {
-      return { error: updateError };
+    const { error: insertWorkspaceError } = await supabase
+      .from("workspaces")
+      .insert({ user_id: userId, name: "Main Workspace" });
+
+    if (insertSettingsError) {
+      return { error: insertSettingsError };
+    }
+
+    if (insertWorkspaceError) {
+      return { error: insertWorkspaceError };
     }
 
     return { error: null };
@@ -153,24 +161,31 @@ export const verifyOtp = async (
     }
 
     // TODO: Check if user settings exist, if not, create settings and workspace
-    if (data?.user) {
-      const { error } = await initUser(data.user.id, email);
+    if (data.user) {
+      const { data: settings } = await supabase
+        .from("settings")
+        .select("id")
+        .eq("user_id", data.user.id);
 
-      if (error) {
-        log.error("Error occurred", {
-          error,
-          fnName: "verifyOtp",
-          fnInputs: { email, token, name },
-          sql: `await supabase.from('profiles').insert({ user_id: ${data.user.id}, plan: 'free', ${name} })`,
-        });
+      if (!settings) {
+        const { error } = await initUser(data.user.id, email);
 
-        return { error: "Could not authenticate user" };
+        if (error) {
+          log.error("Error occurred", {
+            error,
+            fnName: "verifyOtp",
+            fnInputs: { email, token },
+            sql: `await supabase.from('profiles').insert({ user_id: ${data.user.id}, plan: 'free' })`,
+          });
+
+          return { error: "Could not authenticate user" };
+        }
       }
     } else {
       log.error("Error occurred", {
         message: "Could not find authenticated user after verifying Otp",
         fnName: "verifyOtp",
-        fnInputs: { email, token, name },
+        fnInputs: { email, token },
       });
       return { error: "Could not authenticate user" };
     }
@@ -180,7 +195,6 @@ export const verifyOtp = async (
     return handleUnexpectedError(err, "verifyOtp", {
       email,
       token,
-      name,
     });
   }
 };

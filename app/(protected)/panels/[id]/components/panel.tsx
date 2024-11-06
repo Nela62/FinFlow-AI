@@ -78,13 +78,6 @@ export const Panel = ({
   panelUrl: string;
   userId: string;
 }) => {
-  const {
-    isAddWidgetOpen,
-    setIsAddWidgetOpen,
-    draggedWidgetType,
-    setDraggedWidgetType,
-  } = useSidebarStore((state) => state);
-
   const client = createClient();
 
   const { data: panelData } = useQuery(fetchPanelByUrl(client, panelUrl));
@@ -188,145 +181,133 @@ export const Panel = ({
   });
 
   return (
-    <Sheet open={isAddWidgetOpen} onOpenChange={setIsAddWidgetOpen}>
-      {/* <SheetTrigger asChild>
-        <Button
-          variant="outline"
-          size="icon"
-          className="absolute bottom-2 right-2 z-10 shadow-md"
-        >
-          <Plus className="h-6 w-6" />
-        </Button>
-      </SheetTrigger> */}
-      {/* <AddWidgetDrawer /> */}
-      <ResponsiveGridLayout
-        className="layout min-h-screen w-full"
-        layouts={{
-          lg: generateLayout(widgets),
-        }}
-        breakpoints={{ lg: 1200, md: 996, sm: 768 }}
-        cols={{ lg: 60, md: 60, sm: 60 }}
-        rowHeight={40}
-        margin={[8, 8]}
-        onDrop={async (layoutItem) => {
-          setIsAddWidgetOpen(true);
-          console.log("LAYOUT ITEM", layoutItem);
+    <ResponsiveGridLayout
+      className="layout min-h-screen w-full"
+      layouts={{
+        lg: generateLayout(widgets),
+      }}
+      breakpoints={{ lg: 1200, md: 996, sm: 768 }}
+      cols={{ lg: 60, md: 60, sm: 60 }}
+      rowHeight={40}
+      margin={[8, 8]}
+      // onDrop={async (layoutItem) => {
+      //   setIsAddWidgetOpen(true);
+      //   console.log("LAYOUT ITEM", layoutItem);
 
-          if (draggedWidgetType) {
-            switch (draggedWidgetType) {
-              case "metrics":
-                const annualData = await fetch("/api/metrics", {
-                  method: "POST",
-                  body: JSON.stringify({ symbol: "AAPL", income: true }),
-                })
-                  .then((res) => res.json())
-                  .catch((err) => {
-                    console.log(err);
-                  });
+      //   if (draggedWidgetType) {
+      //     switch (draggedWidgetType) {
+      //       case "metrics":
+      //         const annualData = await fetch("/api/metrics", {
+      //           method: "POST",
+      //           body: JSON.stringify({ symbol: "AAPL", income: true }),
+      //         })
+      //           .then((res) => res.json())
+      //           .catch((err) => {
+      //             console.log(err);
+      //           });
 
-                if (!widgetGroupsData?.[0].id) return;
+      //         if (!widgetGroupsData?.[0].id) return;
 
-                insertWidget([
-                  {
-                    panel_id: panelData.id,
-                    user_id: userId,
-                    type: draggedWidgetType,
-                    group_id: widgetGroupsData?.[0].id,
-                    config: { selectedTab: "income", period: "annual" },
-                    data: { annual: annualData },
-                    position: {
-                      x: layoutItem[0].x,
-                      y: layoutItem[0].y,
-                      w: 24,
-                      h: 10,
-                    },
-                  },
-                ]);
+      //         insertWidget([
+      //           {
+      //             panel_id: panelData.id,
+      //             user_id: userId,
+      //             type: draggedWidgetType,
+      //             group_id: widgetGroupsData?.[0].id,
+      //             config: { selectedTab: "income", period: "annual" },
+      //             data: { annual: annualData },
+      //             position: {
+      //               x: layoutItem[0].x,
+      //               y: layoutItem[0].y,
+      //               w: 24,
+      //               h: 10,
+      //             },
+      //           },
+      //         ]);
 
-                setDraggedWidgetType(null);
-                break;
-              case "technical_analysis":
-              case "stock_screener":
-                if (!widgetGroupsData?.[0].id) return;
+      //         setDraggedWidgetType(null);
+      //         break;
+      //       case "technical_analysis":
+      //       case "stock_screener":
+      //         if (!widgetGroupsData?.[0].id) return;
 
-                insertWidget([
-                  {
-                    panel_id: panelData.id,
-                    user_id: userId,
-                    type: draggedWidgetType,
-                    group_id: widgetGroupsData?.[0].id,
-                    data: {},
-                    config: {},
-                    position: {
-                      x: layoutItem[0].x,
-                      y: layoutItem[0].y,
-                      w: 24,
-                      h: 10,
-                    },
-                  },
-                ]);
+      //         insertWidget([
+      //           {
+      //             panel_id: panelData.id,
+      //             user_id: userId,
+      //             type: draggedWidgetType,
+      //             group_id: widgetGroupsData?.[0].id,
+      //             data: {},
+      //             config: {},
+      //             position: {
+      //               x: layoutItem[0].x,
+      //               y: layoutItem[0].y,
+      //               w: 24,
+      //               h: 10,
+      //             },
+      //           },
+      //         ]);
 
-                setDraggedWidgetType(null);
-                break;
-            }
-          }
-        }}
-        containerPadding={[8, 8]}
-        onLayoutChange={handleLayoutChange}
-        isResizable={true}
-        // isDraggable={true}
-        useCSSTransforms={true}
-        resizeHandles={["se"]}
-        compactType="vertical"
-        draggableHandle=".drag-handle"
-        isDroppable={true}
-      >
-        {widgets.map((widget) => (
-          <div key={widget.id} className="relative">
-            <Card className="h-full overflow-hidden dark:border-zinc-800 dark:bg-zinc-900/90 shadow-sm">
-              <CardHeader className="p-2 border-b dark:border-zinc-800">
-                <div className="flex items-center justify-between">
-                  <div className="flex gap-1 items-center justify-start">
-                    <div className="cursor-move drag-handle">
-                      <GripVertical className="text-zinc-400 h-4" />
-                    </div>
-                    <CardTitle className="text-sm font-medium dark:text-zinc-200">
-                      {widget.title}
-                    </CardTitle>
-                    <StockPicker
-                      widgetId={widget.id}
-                      currentStockTicker={widget.currentStock.ticker}
-                      onStockClick={async (stockId) => {
-                        await updateWidgetGroup({
-                          id: widget.group.id,
-                          ticker_id: stockId,
-                        });
-                      }}
-                    />
+      //         setDraggedWidgetType(null);
+      //         break;
+      //     }
+      //   }
+      // }}
+      containerPadding={[8, 8]}
+      onLayoutChange={handleLayoutChange}
+      isResizable={true}
+      // isDraggable={true}
+      useCSSTransforms={true}
+      resizeHandles={["se"]}
+      compactType="vertical"
+      draggableHandle=".drag-handle"
+      isDroppable={true}
+    >
+      {widgets.map((widget) => (
+        <div key={widget.id} className="relative">
+          <Card className="h-full overflow-hidden dark:border-zinc-800 dark:bg-zinc-900/90 shadow-sm">
+            <CardHeader className="p-2 border-b dark:border-zinc-800">
+              <div className="flex items-center justify-between">
+                <div className="flex gap-1 items-center justify-start">
+                  <div className="cursor-move drag-handle">
+                    <GripVertical className="text-zinc-400 h-4" />
                   </div>
-                  <div className="flex items-center space-x-1">
-                    <button className="p-1 rounded-sm dark:hover:bg-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200">
-                      <RefreshCw size={14} />
-                    </button>
-                    <button className="p-1 rounded-sm dark:hover:bg-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200">
-                      <Maximize2 size={14} />
-                    </button>
-                    <button className="p-1 rounded-sm dark:hover:bg-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200">
-                      <MoreHorizontal size={14} />
-                    </button>
-                    <button className="p-1 rounded-sm dark:hover:bg-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200">
-                      <X size={14} />
-                    </button>
-                  </div>
+                  <CardTitle className="text-sm font-medium dark:text-zinc-200">
+                    {widget.title}
+                  </CardTitle>
+                  <StockPicker
+                    widgetId={widget.id}
+                    currentStockTicker={widget.currentStock.ticker}
+                    onStockClick={async (stockId) => {
+                      await updateWidgetGroup({
+                        id: widget.group.id,
+                        ticker_id: stockId,
+                      });
+                    }}
+                  />
                 </div>
-              </CardHeader>
-              <CardContent className="p-0 h-full">
-                <div className="h-full w-full pb-2">{widget.content}</div>
-              </CardContent>
-            </Card>
-          </div>
-        ))}
-      </ResponsiveGridLayout>
-    </Sheet>
+                <div className="flex items-center space-x-1">
+                  <button className="p-1 rounded-sm dark:hover:bg-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200">
+                    <RefreshCw size={14} />
+                  </button>
+                  <button className="p-1 rounded-sm dark:hover:bg-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200">
+                    <Maximize2 size={14} />
+                  </button>
+                  <button className="p-1 rounded-sm dark:hover:bg-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200">
+                    <MoreHorizontal size={14} />
+                  </button>
+                  <button className="p-1 rounded-sm dark:hover:bg-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200">
+                    <X size={14} />
+                  </button>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="p-0 h-full">
+              <div className="h-full w-full pb-2">{widget.content}</div>
+            </CardContent>
+          </Card>
+        </div>
+      ))}
+    </ResponsiveGridLayout>
   );
 };

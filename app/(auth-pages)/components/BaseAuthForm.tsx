@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
-import { ArrowLeft, CircleChevronRight, Loader2Icon } from "lucide-react";
+import { ArrowLeft, Loader2Icon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Separator } from "@/components/ui/separator";
 import {

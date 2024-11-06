@@ -41,7 +41,7 @@ export function NavMain({
       {/* <SidebarGroupLabel>Settings</SidebarGroupLabel> */}
       <SidebarMenu>
         {items.map((item) => (
-          <SidebarMenuItem className="h-fit max-h-[300px]">
+          <SidebarMenuItem className="h-fit max-h-[300px]" key={item.title}>
             <SidebarMenuButton tooltip={item.title} asChild>
               <Link href={item.url}>
                 {item.icon && <item.icon />}
