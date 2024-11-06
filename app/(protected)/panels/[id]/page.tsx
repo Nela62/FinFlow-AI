@@ -2,10 +2,6 @@ import { createClient } from "@/lib/supabase/server";
 import { Widget } from "@/types/panel";
 import { redirect } from "next/navigation";
 import { Panel } from "./components/panel";
-import { Card, CardContent } from "@/components/ui/card";
-import TechnicalAnalysisWidget from "@/components/widgets/technical-analysis";
-import StockScreenerWidget from "@/components/widgets/stock-screener";
-import { FinancialsWidget } from "@/components/widgets/financials";
 import { fetchAllWidgets } from "@/lib/queries";
 import {
   dehydrate,

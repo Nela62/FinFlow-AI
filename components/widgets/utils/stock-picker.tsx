@@ -8,13 +8,13 @@ import {
   DialogContent,
   DialogTitle,
   DialogTrigger,
-} from "../ui/dialog";
+} from "@/components/ui/dialog";
 import { Stock } from "@/types/panel";
 import { Search } from "lucide-react";
-import { Input } from "../ui/input";
-import { Tabs, TabsList, TabsTrigger } from "../ui/tabs";
+import { Input } from "@/components/ui/input";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { TypedSupabaseClient } from "@/types/supabase";
 import { fetchStockByTicker, fetchWidgetById } from "@/lib/queries";
 
@@ -43,30 +43,29 @@ export const StockPicker = ({
   // const [page, setPage] = useState(0);
   // const [hasMore, setHasMore] = useState(true);
 
-  const fetchTickers = (
-    client: TypedSupabaseClient,
-    search: string,
-    tab: string
-  ) => {
-    const query = client
-      .from("tickers")
-      .select("id, symbol, name, exchange, asset_type, status")
-      .eq("status", "Active")
-      .in(
-        "asset_type",
-        tab === "all"
-          ? ["ETF", "Stock"]
-          : tab === "equity"
-            ? ["Stock"]
-            : ["ETF"]
-      )
-      .limit(10)
-      .throwOnError();
+  const fetchTickers = useCallback(
+    (client: TypedSupabaseClient, search: string, tab: string) => {
+      const query = client
+        .from("tickers")
+        .select("id, symbol, name, exchange, asset_type, status")
+        .eq("status", "Active")
+        .in(
+          "asset_type",
+          tab === "all"
+            ? ["ETF", "Stock"]
+            : tab === "equity"
+              ? ["Stock"]
+              : ["ETF"]
+        )
+        .limit(10)
+        .throwOnError();
 
-    if (search) return query.ilike("display_name", `%${search}%`);
+      if (search) return query.ilike("display_name", `%${search}%`);
 
-    return query;
-  };
+      return query;
+    },
+    [client, search, tab] // Dependencies for useCallback
+  );
 
   // TODO: Add a dialog title
 

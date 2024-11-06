@@ -4,28 +4,34 @@ import React, { useEffect, useRef, memo } from "react";
 import { useTheme } from "next-themes";
 import { Stock } from "@/types/panel";
 
-// https://www.tradingview.com/widget-docs/widgets/symbol-details/technical-analysis/
-function TechnicalAnalysisWidget({ currentStock }: { currentStock: Stock }) {
+// https://www.tradingview.com/widget-docs/widgets/heatmaps/forex-cross-rates/
+function ForexRatesWidget({ currentStock }: { currentStock: Stock }) {
   const container = useRef<HTMLDivElement>(null);
   const { theme } = useTheme();
 
   useEffect(() => {
     const script = document.createElement("script");
     script.src =
-      "https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js";
+      "https://s3.tradingview.com/external-embedding/embed-widget-forex-cross-rates.js";
     script.type = "text/javascript";
     script.async = true;
     script.innerHTML = `
         {
-          "interval": "1m",
           "width": "100%",
-          "isTransparent": true,
           "height": "100%",
-          "symbol": "${currentStock.exchange}:${currentStock.ticker}",
-          "showIntervalTabs": true,
-          "displayMode": "single",
-          "locale": "en",
-          "colorTheme": "${theme}"
+          "currencies": [
+            "EUR",
+            "USD",
+            "JPY",
+            "GBP",
+            "CHF",
+            "AUD",
+            "CAD",
+            "NZD"
+          ],
+          "isTransparent": true,
+          "colorTheme": "${theme}",
+          "locale": "en"
         }`;
 
     // Append the script to the container
@@ -61,4 +67,4 @@ function TechnicalAnalysisWidget({ currentStock }: { currentStock: Stock }) {
   );
 }
 
-export default memo(TechnicalAnalysisWidget);
+export default memo(ForexRatesWidget);

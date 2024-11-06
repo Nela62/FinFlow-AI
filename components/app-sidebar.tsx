@@ -29,15 +29,15 @@ import {
 import { createClient } from "@/lib/supabase/client";
 import { useSidebarStore } from "@/providers/sidebarStoreProvider";
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+const AppSidebarComponent = ({
+  ...props
+}: React.ComponentProps<typeof Sidebar>) => {
   const supabase = createClient();
   const { data: workspaces } = useQuery(fetchAllWorkspaces(supabase));
 
   const { workspaceId, setWorkspaceId } = useSidebarStore((state) => state);
 
   React.useEffect(() => {
-    console.log("workspaces", workspaces);
-    console.log("workspaceId", workspaceId);
     if (workspaces && !workspaceId) {
       setWorkspaceId(workspaces[0].id);
     }
@@ -51,6 +51,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   );
   const { data: settings } = useQuery(fetchSettings(supabase));
 
+  // TODO: This shouldn't be null but rather a skeleton
   if (!panels || !settings) return null;
 
   const data = {
@@ -72,7 +73,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       },
       {
         title: "Workflows",
-        url: "#",
+        url: "/workflows",
         icon: Bot,
       },
       {
@@ -91,7 +92,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       },
       {
         title: "Reports",
-        url: "#",
+        url: "/reports",
         icon: Files,
         addFn: async () => {
           console.log("addFn");
@@ -116,4 +117,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarRail />
     </Sidebar>
   );
-}
+};
+
+export const AppSidebar = React.memo(AppSidebarComponent);

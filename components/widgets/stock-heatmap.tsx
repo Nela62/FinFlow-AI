@@ -2,28 +2,38 @@
 
 import React, { useEffect, useRef, memo } from "react";
 import { useTheme } from "next-themes";
+import { Stock } from "@/types/panel";
 
-function StockScreenerWidget() {
+// TODO: add more filters
+// https://www.tradingview.com/widget-docs/widgets/heatmaps/stock-heatmap/
+function StockHeatmapWidget() {
   const container = useRef<HTMLDivElement>(null);
   const { theme } = useTheme();
 
   useEffect(() => {
     const script = document.createElement("script");
     script.src =
-      "https://s3.tradingview.com/external-embedding/embed-widget-screener.js";
+      "https://s3.tradingview.com/external-embedding/embed-widget-stock-heatmap.js";
     script.type = "text/javascript";
     script.async = true;
     script.innerHTML = `
       {
-      "width": "100%",
-      "height": "100%",
-      "defaultColumn": "overview",
-      "defaultScreen": "most_capitalized",
-      "showToolbar": true,
-      "locale": "en",
-      "market": "us",
-      "colorTheme": "${theme}"
-    }`;
+          "exchanges": [],
+          "dataSource": "SPX500",
+          "grouping": "sector",
+          "blockSize": "market_cap_basic",
+          "blockColor": "change",
+          "locale": "en",
+          "symbolUrl": "https://finpanel.com/",
+          "colorTheme": "${theme}",
+          "hasTopBar": true,
+          "isDataSetEnabled": true,
+          "isZoomEnabled": true,
+          "hasSymbolTooltip": true,
+          "isMonoSize": false,
+          "width": "100%",
+          "height": "100%"
+        }`;
 
     // Append the script to the container
     container.current?.appendChild(script);
@@ -51,4 +61,4 @@ function StockScreenerWidget() {
   );
 }
 
-export default memo(StockScreenerWidget);
+export default memo(StockHeatmapWidget);

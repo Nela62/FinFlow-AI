@@ -2,28 +2,31 @@
 
 import React, { useEffect, useRef, memo } from "react";
 import { useTheme } from "next-themes";
+import { Stock } from "@/types/panel";
 
-function StockScreenerWidget() {
+// TODO: add ability to view all symbols and by market
+// https://www.tradingview.com/widget-docs/widgets/news/top-stories/
+function NewsWidget({ currentStock }: { currentStock: Stock }) {
   const container = useRef<HTMLDivElement>(null);
   const { theme } = useTheme();
 
   useEffect(() => {
     const script = document.createElement("script");
     script.src =
-      "https://s3.tradingview.com/external-embedding/embed-widget-screener.js";
+      "https://s3.tradingview.com/external-embedding/embed-widget-timeline.js";
     script.type = "text/javascript";
     script.async = true;
     script.innerHTML = `
       {
-      "width": "100%",
-      "height": "100%",
-      "defaultColumn": "overview",
-      "defaultScreen": "most_capitalized",
-      "showToolbar": true,
-      "locale": "en",
-      "market": "us",
-      "colorTheme": "${theme}"
-    }`;
+        "feedMode": "symbol",
+        "symbol": "${currentStock.exchange}:${currentStock.ticker}",
+        "isTransparent": true,
+        "displayMode": "regular",
+        "width": "100%",
+        "height": "100%",
+        "colorTheme": "${theme}",
+        "locale": "en"
+      }`;
 
     // Append the script to the container
     container.current?.appendChild(script);
@@ -33,7 +36,7 @@ function StockScreenerWidget() {
         container.current.innerHTML = "";
       }
     };
-  }, [theme]);
+  }, [theme, currentStock]);
 
   return (
     <div className="tradingview-widget-container" ref={container}>
@@ -51,4 +54,4 @@ function StockScreenerWidget() {
   );
 }
 
-export default memo(StockScreenerWidget);
+export default memo(NewsWidget);

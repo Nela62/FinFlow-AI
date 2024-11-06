@@ -7,26 +7,11 @@ import "@/styles/react-grid-layout.css";
 import _ from "lodash";
 import React from "react";
 import { Layout, Responsive, WidthProvider } from "react-grid-layout";
-import { Stock, Widget } from "@/types/panel";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  GripHorizontal,
-  GripVertical,
-  Maximize2,
-  MoreHorizontal,
-  Plus,
-  RefreshCw,
-  X,
-} from "lucide-react";
-import { Sheet, SheetTrigger } from "@/components/ui/sheet";
-import { Button } from "@/components/ui/button";
-// import { AddWidgetDrawer } from "@/components/widgets/add-widget-sidebar";
-import { useSidebarStore } from "@/providers/sidebarStoreProvider";
+import { Widget } from "@/types/panel";
 import {
   useInsertMutation,
   useQuery,
   useUpdateMutation,
-  useUpsertMutation,
 } from "@supabase-cache-helpers/postgrest-react-query";
 import { createClient } from "@/lib/supabase/client";
 import {
@@ -34,10 +19,19 @@ import {
   fetchAllWidgets,
   fetchPanelByUrl,
 } from "@/lib/queries";
-import { FinancialsWidget } from "@/components/widgets/financials";
-import { StockPicker } from "@/components/widgets/stock-picker";
-import TechnicalAnalysisWidget from "@/components/widgets/technical-analysis";
+import { FundamentalDataWidget } from "@/components/widgets/fundamental-data";
+import { StockPicker } from "@/components/widgets/utils/stock-picker";
 import StockScreenerWidget from "@/components/widgets/stock-screener";
+import TechnicalAnalysisWidget from "@/components/widgets/technical-analysis";
+import { widgetsList } from "@/components/widgets/utils/widgets-list";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  GripVertical,
+  Maximize2,
+  MoreHorizontal,
+  RefreshCw,
+  X,
+} from "lucide-react";
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
@@ -53,24 +47,6 @@ const generateLayout = (widgets: Widget[]) => {
   }));
 };
 
-const getWidgetInfo = (type: string, props: any) => {
-  switch (type) {
-    default:
-    case "metrics":
-      return { title: "Financials", content: <FinancialsWidget {...props} /> };
-    case "technical_analysis":
-      return {
-        title: "Technical Analysis",
-        content: <TechnicalAnalysisWidget {...props} />,
-      };
-    case "stock_screener":
-      return {
-        title: "Stock Screener",
-        content: <StockScreenerWidget {...props} />,
-      };
-  }
-};
-
 export const Panel = ({
   panelUrl,
   userId,
@@ -79,12 +55,21 @@ export const Panel = ({
   userId: string;
 }) => {
   const client = createClient();
+  console.log("rendering panel", panelUrl);
 
-  const { data: panelData } = useQuery(fetchPanelByUrl(client, panelUrl));
-  const { data: widgetGroupsData } = useQuery(
-    fetchAllWidgetGroups(client, panelUrl)
+  const { data: panelData, error: panelError } = useQuery(
+    fetchPanelByUrl(client, panelUrl)
   );
-  const { data: widgetsData } = useQuery(fetchAllWidgets(client, panelUrl));
+
+  const panelId = panelData?.id;
+  const { data: widgetGroupsData, error: widgetGroupsError } = useQuery(
+    fetchAllWidgetGroups(client, panelId ?? ""),
+    { enabled: !!panelId }
+  );
+  const { data: widgetsData, error: widgetsError } = useQuery(
+    fetchAllWidgets(client, panelId ?? ""),
+    { enabled: !!panelId }
+  );
 
   const { mutateAsync: insertWidget } = useInsertMutation(
     client.from("widgets"),
@@ -104,53 +89,65 @@ export const Panel = ({
     "id"
   );
 
-  if (!widgetsData || !panelData) return null;
+  if (!widgetsData || !panelData || !widgetGroupsData) {
+    return <div>Loading...</div>;
+  }
 
   // FIX: make sure that it doesn't keep updating when the element is being dragged
   const handleLayoutChange = async (layout: Layout[]) => {
-    console.log(layout);
+    try {
+      console.log("LAYOUT ", layout);
 
-    const newData = [];
+      const newData = [];
 
-    for (const item of layout) {
-      const newPosition = {
-        x: item.x,
-        y: item.y,
-        w: item.w,
-        h: item.h,
-      };
+      for (const item of layout) {
+        const newPosition = {
+          x: item.x,
+          y: item.y,
+          w: item.w,
+          h: item.h,
+        };
 
-      const curPosition = widgetsData.find(
-        (widget) => widget.id === item.i
-      )?.position;
+        const curPosition = widgetsData.find(
+          (widget) => widget.id === item.i
+        )?.position;
 
-      if (
-        !_.isEqual(curPosition, newPosition) &&
-        item.i !== "__dropping-elem__"
-      ) {
-        console.log(
-          "updating widget ",
-          item.i,
-          "from ",
-          curPosition,
-          "to ",
-          newPosition
-        );
+        if (
+          !_.isEqual(curPosition, newPosition) &&
+          item.i !== "__dropping-elem__"
+        ) {
+          console.log(
+            "updating widget ",
+            item.i,
+            "from ",
+            curPosition,
+            "to ",
+            newPosition
+          );
 
-        await updateWidget({
-          id: item.i,
-          position: newPosition,
-        });
+          const res = await updateWidget({
+            id: item.i,
+            position: newPosition,
+          });
+
+          console.log("update widget res ", res);
+        }
       }
+    } catch (e) {
+      console.error(e);
     }
   };
-
-  if (!widgetGroupsData) return null;
 
   const widgets = widgetsData.map((widget) => {
     const group = widgetGroupsData.find(
       (group) => group.id === widget.widget_groups!.id
     );
+
+    const widgetInfo = widgetsList.find((w) => w.id === widget.type);
+
+    if (!widgetInfo) {
+      throw new Error(`Widget info not found for widget type ${widget.type}`);
+    }
 
     const currentStock = {
       id: group!.tickers!.id,
@@ -160,23 +157,18 @@ export const Panel = ({
       assetType: group!.tickers!.asset_type,
     };
 
-    const widgetInfo = getWidgetInfo(widget.type, {
-      id: widget.id,
-      currentStock,
-    });
-
     return {
       id: widget.id,
-      title: widgetInfo.title,
-      content: widgetInfo.content,
+      title: widgetInfo.name,
+      content: <widgetInfo.component currentStock={currentStock} />,
       group: { id: group?.id, name: group?.name },
       currentStock,
-      position: (widget.position as {
+      position: widget.position as {
         x: number;
         y: number;
         w: number;
         h: number;
-      }) || { x: 0, y: 0, w: 1, h: 1 },
+      },
     };
   });
 
@@ -188,7 +180,7 @@ export const Panel = ({
       }}
       breakpoints={{ lg: 1200, md: 996, sm: 768 }}
       cols={{ lg: 60, md: 60, sm: 60 }}
-      rowHeight={40}
+      rowHeight={30}
       margin={[8, 8]}
       // onDrop={async (layoutItem) => {
       //   setIsAddWidgetOpen(true);
@@ -259,9 +251,8 @@ export const Panel = ({
       // isDraggable={true}
       useCSSTransforms={true}
       resizeHandles={["se"]}
-      compactType="vertical"
+      // compactType=
       draggableHandle=".drag-handle"
-      isDroppable={true}
     >
       {widgets.map((widget) => (
         <div key={widget.id} className="relative">
