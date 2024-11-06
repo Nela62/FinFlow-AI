@@ -142,7 +142,7 @@ export type Database = {
         Row: {
           created_at: string | null
           credit_limit: number
-          email: string | null
+          email: string
           id: string
           plan: string
           updated_at: string | null
@@ -151,7 +151,7 @@ export type Database = {
         Insert: {
           created_at?: string | null
           credit_limit?: number
-          email?: string | null
+          email: string
           id?: string
           plan?: string
           updated_at?: string | null
@@ -160,7 +160,7 @@ export type Database = {
         Update: {
           created_at?: string | null
           credit_limit?: number
-          email?: string | null
+          email?: string
           id?: string
           plan?: string
           updated_at?: string | null
@@ -345,7 +345,7 @@ export type Database = {
           {
             foreignKeyName: "workspaces_user_id_fkey"
             columns: ["user_id"]
-            isOneToOne: false
+            isOneToOne: true
             referencedRelation: "users"
             referencedColumns: ["id"]
           },

@@ -28,47 +28,47 @@ const FormFieldContext = React.createContext<FormFieldContextValue>(
   {} as FormFieldContextValue
 );
 
-// const FormField = <
-//   TFieldValues extends FieldValues = FieldValues,
-//   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
-// >({
-//   ...props
-// }: ControllerProps<TFieldValues, TName>) => {
-//   return (
-//     <FormFieldContext.Provider value={{ name: props.name }}>
-//       <Controller {...props} />
-//     </FormFieldContext.Provider>
-//   );
-// };
-
-const FormField = React.memo(
-  <
-    TFieldValues extends FieldValues = FieldValues,
-    TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
-  >({
-    ...props
-  }: ControllerProps<TFieldValues, TName>) => {
-    const value = React.useMemo(() => ({ name: props.name }), [props.name]);
-
-    const render = React.useCallback(
-      (fieldProps: ControllerProps<TFieldValues, TName>) => (
-        <Controller {...fieldProps} />
-      ),
-      []
-    );
-
-    return (
-      <FormFieldContext.Provider value={value}>
-        {render(props)}
-      </FormFieldContext.Provider>
-    );
-  }
-) as <
+const FormField = <
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
->(
-  props: ControllerProps<TFieldValues, TName>
-) => React.ReactElement;
+>({
+  ...props
+}: ControllerProps<TFieldValues, TName>) => {
+  return (
+    <FormFieldContext.Provider value={{ name: props.name }}>
+      <Controller {...props} />
+    </FormFieldContext.Provider>
+  );
+};
+
+// const FormField = React.memo(
+//   <
+//     TFieldValues extends FieldValues = FieldValues,
+//     TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
+//   >({
+//     ...props
+//   }: ControllerProps<TFieldValues, TName>) => {
+//     const value = React.useMemo(() => ({ name: props.name }), [props.name]);
+
+//     const render = React.useCallback(
+//       (fieldProps: ControllerProps<TFieldValues, TName>) => (
+//         <Controller {...fieldProps} />
+//       ),
+//       []
+//     );
+
+//     return (
+//       <FormFieldContext.Provider value={value}>
+//         {render(props)}
+//       </FormFieldContext.Provider>
+//     );
+//   }
+// ) as <
+//   TFieldValues extends FieldValues = FieldValues,
+//   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
+// >(
+//   props: ControllerProps<TFieldValues, TName>
+// ) => React.ReactElement;
 
 const useFormField = () => {
   const fieldContext = React.useContext(FormFieldContext);

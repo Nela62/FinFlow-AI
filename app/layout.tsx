@@ -1,12 +1,6 @@
 import { Raleway } from "next/font/google";
-import DeployButton from "@/components/deploy-button";
-import { EnvVarWarning } from "@/components/env-var-warning";
-import HeaderAuth from "@/components/header-auth";
-import { ThemeSwitcher } from "@/components/theme-switcher";
-import { hasEnvVars } from "@/lib/supabase/check-env-vars";
 // import { GeistSans } from "geist/font/sans";
 import { ThemeProvider } from "next-themes";
-import Link from "next/link";
 import "./globals.css";
 import { AIStoreProvider } from "@/providers/aiStoreProvider";
 import { SidebarStoreProvider } from "@/providers/sidebarStoreProvider";

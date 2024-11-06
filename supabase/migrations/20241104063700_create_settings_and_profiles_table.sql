@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS public.settings(
   id uuid DEFAULT "gen_random_uuid"() PRIMARY KEY,
   user_id uuid NOT NULL REFERENCES auth.users(id),
-  email text,
+  email text NOT NULL,
   plan text NOT NULL DEFAULT 'free',
   credit_limit int NOT NULL DEFAULT 1000,
   created_at timestamptz DEFAULT now(),
@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS public.settings(
 
 CREATE TABLE IF NOT EXISTS public.workspaces(
   id uuid DEFAULT "gen_random_uuid"() PRIMARY KEY,
-  user_id uuid NOT NULL REFERENCES auth.users(id),
+  user_id uuid UNIQUE NOT NULL REFERENCES auth.users(id),
   name text NOT NULL,
   created_at timestamptz DEFAULT now(),
   updated_at timestamptz DEFAULT now()
