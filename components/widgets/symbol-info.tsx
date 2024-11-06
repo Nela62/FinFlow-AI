@@ -2,28 +2,27 @@
 
 import React, { useEffect, useRef, memo } from "react";
 import { useTheme } from "next-themes";
+import { Stock } from "@/types/panel";
 
-function StockScreenerWidget() {
+// https://www.tradingview.com/widget-docs/widgets/symbol-details/symbol-info/
+function SymbolInfoWidget({ currentStock }: { currentStock: Stock }) {
   const container = useRef<HTMLDivElement>(null);
   const { theme } = useTheme();
 
   useEffect(() => {
     const script = document.createElement("script");
     script.src =
-      "https://s3.tradingview.com/external-embedding/embed-widget-screener.js";
+      "https://s3.tradingview.com/external-embedding/embed-widget-symbol-info.js";
     script.type = "text/javascript";
     script.async = true;
     script.innerHTML = `
-      {
-      "width": "100%",
-      "height": "100%",
-      "defaultColumn": "overview",
-      "defaultScreen": "most_capitalized",
-      "showToolbar": true,
-      "locale": "en",
-      "market": "us",
-      "colorTheme": "${theme}"
-    }`;
+         {
+            "symbol": "${currentStock.exchange}:${currentStock.ticker}",
+            "width": "100%",
+            "locale": "en",
+            "colorTheme": "${theme}",
+            "isTransparent": true
+          }`;
 
     // Append the script to the container
     container.current?.appendChild(script);
@@ -33,11 +32,18 @@ function StockScreenerWidget() {
         container.current.innerHTML = "";
       }
     };
-  }, [theme]);
+  }, [currentStock, theme]);
 
   return (
-    <div className="tradingview-widget-container" ref={container}>
-      <div className="tradingview-widget-container__widget"></div>
+    <div
+      className="tradingview-widget-container"
+      ref={container}
+      style={{ height: "100%", width: "100%" }}
+    >
+      <div
+        className="tradingview-widget-container__widget"
+        style={{ height: "calc(100% - 32px)", width: "100%" }}
+      ></div>
       <div className="tradingview-widget-copyright">
         <a
           href="https://www.tradingview.com/"
@@ -51,4 +57,4 @@ function StockScreenerWidget() {
   );
 }
 
-export default memo(StockScreenerWidget);
+export default memo(SymbolInfoWidget);

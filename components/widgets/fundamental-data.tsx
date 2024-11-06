@@ -38,7 +38,7 @@ const fetchDataBasedOnConfig = async (
   return data;
 };
 
-const FinancialsWidgetComponent = ({
+const FundamentalDataWidgetComponent = ({
   id,
   currentStock,
 }: {
@@ -136,4 +136,4 @@ const FinancialsWidgetComponent = ({
   );
 };
 
-export const FinancialsWidget = memo(FinancialsWidgetComponent);
+export const FundamentalDataWidget = memo(FundamentalDataWidgetComponent);

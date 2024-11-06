@@ -1,9 +1,11 @@
 import { TypedSupabaseClient } from "@/types/supabase";
 
+// WORKSPACES
 export function fetchAllWorkspaces(client: TypedSupabaseClient) {
   return client.from("workspaces").select("id, name").throwOnError();
 }
 
+// PANELS
 export function fetchAllPanels(
   client: TypedSupabaseClient,
   workspaceId: string
@@ -18,7 +20,7 @@ export function fetchAllPanels(
 export function fetchPanelById(client: TypedSupabaseClient, id: string) {
   return client
     .from("panels")
-    .select("id, name, url")
+    .select("id, name, url, workspace_id")
     .eq("id", id)
     .maybeSingle()
     .throwOnError();
@@ -27,29 +29,35 @@ export function fetchPanelById(client: TypedSupabaseClient, id: string) {
 export function fetchPanelByUrl(client: TypedSupabaseClient, url: string) {
   return client
     .from("panels")
-    .select("id, name, url")
+    .select("id, name, url, workspace_id")
     .eq("url", url)
     .maybeSingle()
     .throwOnError();
 }
 
-export function fetchAllWidgetGroups(client: TypedSupabaseClient, url: string) {
+// FIX: for some reason join on panels returns null
+// WIDGET GROUPS
+export function fetchAllWidgetGroups(
+  client: TypedSupabaseClient,
+  panelId: string
+) {
   return client
     .from("widget_groups")
     .select(
-      "id, name, tickers (id, name, symbol, exchange, asset_type), panels (url)"
+      "id, name, tickers (id, name, symbol, exchange, asset_type), panel_id"
     )
-    .eq("panels.url", url)
+    .eq("panel_id", panelId)
     .throwOnError();
 }
 
+// WIDGETS
 export function fetchAllWidgets(client: TypedSupabaseClient, panelId: string) {
   return client
     .from("widgets")
     .select(
-      "id, panels (id, url), widget_groups (id, name, tickers(id, name, symbol, exchange, asset_type)),type, last_updated, data, config, position"
+      "id, panel_id, widget_groups (id, name, tickers (id, name, symbol, exchange, asset_type)), type, last_updated, data, config, position"
     )
-    .eq("panels.url", panelId)
+    .eq("panel_id", panelId)
     .throwOnError();
 }
 
@@ -64,6 +72,7 @@ export function fetchWidgetById(client: TypedSupabaseClient, id: string) {
     .throwOnError();
 }
 
+// STOCKS
 export function fetchStockByTicker(
   client: TypedSupabaseClient,
   ticker: string

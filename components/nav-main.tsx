@@ -41,7 +41,7 @@ export function NavMain({
       {/* <SidebarGroupLabel>Settings</SidebarGroupLabel> */}
       <SidebarMenu>
         {items.map((item) => (
-          <SidebarMenuItem className="h-fit max-h-[300px]" key={item.title}>
+          <SidebarMenuItem className="h-fit max-h-[300px]" key={item.url}>
             <SidebarMenuButton tooltip={item.title} asChild>
               <Link href={item.url}>
                 {item.icon && <item.icon />}
@@ -62,7 +62,7 @@ export function NavMain({
               <ScrollArea className="h-full">
                 <SidebarMenuSub>
                   {item.items.map((subItem) => (
-                    <SidebarMenuSubItem key={subItem.title}>
+                    <SidebarMenuSubItem key={subItem.url}>
                       <SidebarMenuSubButton className="px-1 w-full" asChild>
                         <Link href={subItem.url}>
                           <span className="text-xs font-semibold text-muted-foreground">

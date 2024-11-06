@@ -4,29 +4,38 @@ import React, { useEffect, useRef, memo } from "react";
 import { useTheme } from "next-themes";
 import { Stock } from "@/types/panel";
 
-// https://www.tradingview.com/widget-docs/widgets/symbol-details/technical-analysis/
-function TechnicalAnalysisWidget({ currentStock }: { currentStock: Stock }) {
+function ChartingWidget({ currentStock }: { currentStock: Stock }) {
   const container = useRef<HTMLDivElement>(null);
   const { theme } = useTheme();
 
   useEffect(() => {
     const script = document.createElement("script");
     script.src =
-      "https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js";
+      "https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js";
     script.type = "text/javascript";
     script.async = true;
     script.innerHTML = `
         {
-          "interval": "1m",
-          "width": "100%",
-          "isTransparent": true,
-          "height": "100%",
-          "symbol": "${currentStock.exchange}:${currentStock.ticker}",
-          "showIntervalTabs": true,
-          "displayMode": "single",
-          "locale": "en",
-          "colorTheme": "${theme}"
-        }`;
+			  "autosize": true,
+			  "symbol": "${currentStock.exchange}:${currentStock.ticker}",
+			  "interval": "D",
+			  "support_host": "https://www.tradingview.com",
+			  "timezone": "exchange",
+			  "theme": "${theme}",
+			  "style": "1",
+			  "withdateranges": true,
+			  "hide_side_toolbar": false,
+			  "allow_symbol_change": true,
+			  "save_image": false,
+			  "studies": [
+				"ROC@tv-basicstudies",
+				"StochasticRSI@tv-basicstudies",
+				"MASimple@tv-basicstudies"
+			  ],
+			  "show_popup_button": true,
+			  "popup_width": "1000",
+			  "popup_height": "650"
+			}`;
 
     // Append the script to the container
     container.current?.appendChild(script);
@@ -61,4 +70,4 @@ function TechnicalAnalysisWidget({ currentStock }: { currentStock: Stock }) {
   );
 }
 
-export default memo(TechnicalAnalysisWidget);
+export default memo(ChartingWidget);
