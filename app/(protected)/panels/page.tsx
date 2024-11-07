@@ -1,19 +1,33 @@
-import { fetchAllPanels } from "@/lib/queries";
-import { createClient } from "@/lib/supabase/server";
+"use client";
+
+import { fetchAllPanels, fetchAllWorkspaces } from "@/lib/queries";
+import { createClient } from "@/lib/supabase/client";
 import { useSidebarStore } from "@/providers/sidebarStoreProvider";
 import { useQuery } from "@supabase-cache-helpers/postgrest-react-query";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 
-export default async function Panels() {
+export default function Panels() {
   const supabase = createClient();
-  const { workspaceId } = useSidebarStore((state) => state);
+  const router = useRouter();
+
+  const { workspaceId, setWorkspaceId } = useSidebarStore((state) => state);
+
+  const { data: workspaces } = useQuery(fetchAllWorkspaces(supabase));
 
   const { data: panels } = useQuery(
     fetchAllPanels(supabase, workspaceId ?? ""),
     { enabled: !!workspaceId }
   );
 
+  if (!workspaceId && workspaces && workspaces.length > 0) {
+    setWorkspaceId(workspaces?.[0].id);
+  }
+
   if (panels) {
-    redirect(`/panels/${panels[0].url}`);
+    if (panels.length > 0) {
+      router.push(`/panels/${panels[0].url}`);
+    } else {
+      router.push("/panels/new");
+    }
   }
 }

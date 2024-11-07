@@ -167,7 +167,7 @@ export const verifyOtp = async (
         .select("id")
         .eq("user_id", data.user.id);
 
-      if (!settings) {
+      if (!settings || settings.length === 0) {
         const { error } = await initUser(data.user.id, email);
 
         if (error) {
