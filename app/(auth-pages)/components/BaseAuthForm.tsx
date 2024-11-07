@@ -155,7 +155,7 @@ export const BaseAuthForm: React.FC<BaseAuthFormProps> = ({
 
           await identifyUser(supabase);
           // analytics.track("User logged in");
-          router.push("/reports");
+          router.push("/panels");
         } else {
           setPassword(true);
           setIsLoading(false);

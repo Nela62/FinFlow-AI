@@ -2,6 +2,7 @@ import { fetchAllPanels } from "@/lib/queries";
 import { createClient } from "@/lib/supabase/server";
 import { useSidebarStore } from "@/providers/sidebarStoreProvider";
 import { useQuery } from "@supabase-cache-helpers/postgrest-react-query";
+import { redirect } from "next/navigation";
 
 export default async function Panels() {
   const supabase = createClient();
@@ -12,5 +13,7 @@ export default async function Panels() {
     { enabled: !!workspaceId }
   );
 
-  return <div>{JSON.stringify(panels)}</div>;
+  if (panels) {
+    redirect(`/panels/${panels[0].url}`);
+  }
 }
