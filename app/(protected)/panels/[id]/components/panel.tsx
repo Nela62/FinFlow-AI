@@ -88,103 +88,125 @@ export const Panel = ({
     ["id"],
     "id"
   );
-
-  if (!widgetsData || !panelData || !widgetGroupsData) {
-    return <div>Loading...</div>;
-  }
-
   // FIX: make sure that it doesn't keep updating when the element is being dragged
-  const handleLayoutChange = async (layout: Layout[]) => {
-    try {
-      console.log("LAYOUT ", layout);
+  const handleLayoutChange = useCallback(
+    async (layout: Layout[]) => {
+      try {
+        console.log("LAYOUT ", layout);
 
-      const newData = [];
+        const newData = [];
 
-      for (const item of layout) {
-        const newPosition = {
-          x: item.x,
-          y: item.y,
-          w: item.w,
-          h: item.h,
-        };
+        for (const item of layout) {
+          const newPosition = {
+            x: item.x,
+            y: item.y,
+            w: item.w,
+            h: item.h,
+          };
 
-        const curPosition = widgetsData.find(
-          (widget) => widget.id === item.i
-        )?.position;
+          const curPosition = widgetsData?.find(
+            (widget) => widget.id === item.i
+          )?.position;
 
-        if (
-          !_.isEqual(curPosition, newPosition) &&
-          item.i !== "__dropping-elem__"
-        ) {
-          console.log(
-            "updating widget ",
-            item.i,
-            "from ",
-            curPosition,
-            "to ",
-            newPosition
-          );
+          if (
+            !_.isEqual(curPosition, newPosition) &&
+            item.i !== "__dropping-elem__"
+          ) {
+            console.log(
+              "updating widget ",
+              item.i,
+              "from ",
+              curPosition,
+              "to ",
+              newPosition
+            );
 
-          const res = await updateWidget({
-            id: item.i,
-            position: newPosition,
-          });
+            const res = await updateWidget({
+              id: item.i,
+              position: newPosition,
+            });
 
-          console.log("update widget res ", res);
+            console.log("update widget res ", res);
+          }
         }
+      } catch (e) {
+        console.error(e);
       }
-    } catch (e) {
-      console.error(e);
-    }
-  };
+    },
+    [widgetsData, updateWidget]
+  );
 
-  const widgets = widgetsData.map((widget) => {
-    const group = widgetGroupsData.find(
-      (group) => group.id === widget.widget_groups!.id
+  const groupStockMap = useMemo(() => {
+    return widgetGroupsData?.reduce(
+      (acc, group) => {
+        acc[group.id] = {
+          id: group.tickers!.id,
+          name: group.tickers!.name,
+          ticker: group.tickers!.symbol,
+          exchange: group.tickers!.exchange,
+          assetType: group.tickers!.asset_type,
+        };
+        return acc;
+      },
+      {} as Record<
+        string,
+        {
+          id: string;
+          name: string;
+          ticker: string;
+          exchange: string;
+          assetType: string;
+        }
+      >
     );
+  }, [widgetGroupsData]);
 
-    const widgetInfo = widgetsList.find((w) => w.id === widget.type);
+  const widgets = useMemo(() => {
+    return widgetsData?.map((widget) => {
+      const group = widgetGroupsData?.find(
+        (group) => group.id === widget.widget_groups!.id
+      );
 
-    if (!widgetInfo) {
-      throw new Error(`Widget info not found for widget type ${widget.type}`);
-    }
+      const widgetInfo = widgetsList.find((w) => w.id === widget.type);
 
-    const currentStock = useMemo(
-      () => ({
-        id: group!.tickers!.id,
-        name: group!.tickers!.name,
-        ticker: group!.tickers!.symbol,
-        exchange: group!.tickers!.exchange,
-        assetType: group!.tickers!.asset_type,
-      }),
-      [group]
-    );
+      if (!widgetInfo) {
+        throw new Error(`Widget info not found for widget type ${widget.type}`);
+      }
 
-    const onStockClick = useCallback(
-      async (stockId: string) => {
-        await updateWidgetGroup({
-          id: widget.widget_groups?.id,
+      const onStockClick = (stockId: string) =>
+        updateWidgetGroup({
+          id: widget.widget_groups?.id ?? "",
           ticker_id: stockId,
         });
-      },
-      [updateWidgetGroup, widget.widget_groups?.id]
-    );
 
-    return {
-      id: widget.id,
-      title: widgetInfo.name,
-      content: <widgetInfo.component currentStock={currentStock} />,
-      group: { id: group?.id, name: group?.name },
-      currentStock,
-      position: widget.position as {
-        x: number;
-        y: number;
-        w: number;
-        h: number;
-      },
-      onStockClick,
-    };
-  });
+      return {
+        id: widget.id,
+        title: widgetInfo.name,
+        content: (
+          <widgetInfo.component currentStock={groupStockMap?.[group!.id]} />
+        ),
+        group: { id: group?.id, name: group?.name },
+        currentStock: groupStockMap?.[group!.id],
+        position: widget.position as {
+          x: number;
+          y: number;
+          w: number;
+          h: number;
+        },
+        onStockClick,
+      };
+    });
+  }, [widgetsData, widgetGroupsData, groupStockMap, updateWidgetGroup]);
+
+  if (
+    !widgetsData ||
+    !panelData ||
+    !widgetGroupsData ||
+    !widgets ||
+    !groupStockMap
+  ) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <ResponsiveGridLayout
@@ -282,7 +304,7 @@ export const Panel = ({
                   </CardTitle>
                   <StockPicker
                     widgetId={widget.id}
-                    currentStockTicker={widget.currentStock.ticker}
+                    currentStockTicker={widget.currentStock?.ticker ?? "AAPL"}
                     onStockClick={widget.onStockClick}
                   />
                 </div>
