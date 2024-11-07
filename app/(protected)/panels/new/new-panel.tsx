@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { nanoid } from "nanoid";
 import { StockPicker } from "@/components/widgets/utils/stock-picker";
 import { fetchStockById } from "@/lib/queries";
@@ -122,6 +122,16 @@ export const NewPanelComponent = ({ userId }: { userId: string }) => {
     router.push(`/panels/${panelUrl}`);
   };
 
+  const memoizedAddWidgetComponent = useMemo(
+    () => (
+      <AddWidgetComponent
+        selectedWidgets={selectedWidgets}
+        setSelectedWidgets={setSelectedWidgets}
+      />
+    ),
+    [selectedWidgets]
+  );
+
   return (
     <div className="flex w-full justify-center items-center">
       <div className="space-y-4 max-w-5xl pt-2 pb-4">
@@ -135,10 +145,7 @@ export const NewPanelComponent = ({ userId }: { userId: string }) => {
           currentStockTicker={stock?.symbol ?? "AAPL"}
           onStockClick={(stockId) => setStockId(stockId)}
         />
-        <AddWidgetComponent
-          selectedWidgets={selectedWidgets}
-          setSelectedWidgets={setSelectedWidgets}
-        />
+        {memoizedAddWidgetComponent}
         <div className="w-full flex justify-end absolute bottom-0 right-0 left-0 py-3 px-6">
           <Button onClick={handleComplete}>
             Create Panel <ArrowRight className="w-4 h-4 ml-2" />

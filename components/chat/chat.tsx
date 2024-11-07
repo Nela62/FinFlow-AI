@@ -7,7 +7,7 @@ import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { ScrollArea } from "../ui/scroll-area";
 import { cn } from "@/lib/utils";
-import { Fragment, useCallback, useState } from "react";
+import { Fragment, memo, useCallback, useState } from "react";
 import { Message } from "@/types/message";
 import { createClient } from "@/lib/supabase/client";
 import {
@@ -25,7 +25,8 @@ import { format } from "date-fns";
 
 // TODO: Separate them into different components
 
-export default function Chat() {
+const Chat = memo(function Chat() {
+  // Wrap Chat with memo
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [sessionId, setSessionId] = useState<string | null>(null);
@@ -192,4 +193,6 @@ export default function Chat() {
       />
     </div>
   );
-}
+});
+
+export default Chat;

@@ -5,7 +5,7 @@ import "react-resizable/css/styles.css";
 import "@/styles/react-grid-layout.css";
 
 import _ from "lodash";
-import React from "react";
+import React, { useCallback, useMemo } from "react";
 import { Layout, Responsive, WidthProvider } from "react-grid-layout";
 import { Widget } from "@/types/panel";
 import {
@@ -149,13 +149,26 @@ export const Panel = ({
       throw new Error(`Widget info not found for widget type ${widget.type}`);
     }
 
-    const currentStock = {
-      id: group!.tickers!.id,
-      name: group!.tickers!.name,
-      ticker: group!.tickers!.symbol,
-      exchange: group!.tickers!.exchange,
-      assetType: group!.tickers!.asset_type,
-    };
+    const currentStock = useMemo(
+      () => ({
+        id: group!.tickers!.id,
+        name: group!.tickers!.name,
+        ticker: group!.tickers!.symbol,
+        exchange: group!.tickers!.exchange,
+        assetType: group!.tickers!.asset_type,
+      }),
+      [group]
+    );
+
+    const onStockClick = useCallback(
+      async (stockId: string) => {
+        await updateWidgetGroup({
+          id: widget.widget_groups?.id,
+          ticker_id: stockId,
+        });
+      },
+      [updateWidgetGroup, widget.widget_groups?.id]
+    );
 
     return {
       id: widget.id,
@@ -169,6 +182,7 @@ export const Panel = ({
         w: number;
         h: number;
       },
+      onStockClick,
     };
   });
 
@@ -269,12 +283,7 @@ export const Panel = ({
                   <StockPicker
                     widgetId={widget.id}
                     currentStockTicker={widget.currentStock.ticker}
-                    onStockClick={async (stockId) => {
-                      await updateWidgetGroup({
-                        id: widget.group.id,
-                        ticker_id: stockId,
-                      });
-                    }}
+                    onStockClick={widget.onStockClick}
                   />
                 </div>
                 <div className="flex items-center space-x-1">
