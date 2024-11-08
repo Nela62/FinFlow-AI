@@ -13,6 +13,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { TopBarAddWidgets } from "@/components/widgets/top-bar-add-widgets";
+import { usePathname } from "next/navigation";
 
 export const LayoutComponent = ({
   children,
@@ -21,6 +22,10 @@ export const LayoutComponent = ({
   children: React.ReactNode;
   userId: string;
 }) => {
+  const pathname = usePathname();
+  const paths = pathname.split("/");
+  const isWorkflowsPage = paths[paths.length - 1] === "workflows";
+
   return (
     <SidebarProvider>
       <AppSidebar />
@@ -41,12 +46,16 @@ export const LayoutComponent = ({
               <ScrollArea className="">{children}</ScrollArea>
             </Card>
           </ResizablePanel>
-          <ResizableHandle className="bg-transparent hover:bg-border mx-2 w-[2px]" />
-          <ResizablePanel defaultSize={25}>
-            <div className="my-2 h-[calc(100vh-16px)] flex flex-col w-full">
-              <Chat />
-            </div>
-          </ResizablePanel>
+          {!isWorkflowsPage && (
+            <>
+              <ResizableHandle className="bg-transparent hover:bg-border mx-2 w-[2px]" />
+              <ResizablePanel defaultSize={25}>
+                <div className="my-2 h-[calc(100vh-16px)] flex flex-col w-full">
+                  <Chat />
+                </div>
+              </ResizablePanel>
+            </>
+          )}
         </ResizablePanelGroup>
       </div>
     </SidebarProvider>
