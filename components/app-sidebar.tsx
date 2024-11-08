@@ -22,7 +22,7 @@ import {
 } from "@/components/ui/sidebar";
 import { useQuery } from "@supabase-cache-helpers/postgrest-react-query";
 import {
-  fetchAllPanels,
+  fetchAllPanelsByWorkspaceId,
   fetchAllWorkspaces,
   fetchSettings,
 } from "@/lib/queries";
@@ -44,7 +44,7 @@ const AppSidebarComponent = ({
   }, [workspaces, workspaceId]);
 
   const { data: panels } = useQuery(
-    fetchAllPanels(supabase, workspaceId ?? ""),
+    fetchAllPanelsByWorkspaceId(supabase, workspaceId ?? ""),
     {
       enabled: !!workspaceId,
     }

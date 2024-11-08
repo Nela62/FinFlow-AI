@@ -65,10 +65,8 @@ export function NavMain({
                     <SidebarMenuSubItem key={subItem.url}>
                       <SidebarMenuSubButton className="px-1 w-full" asChild>
                         <Link href={subItem.url}>
-                          <span className="text-xs font-semibold text-muted-foreground">
-                            {subItem.title.length > 20
-                              ? subItem.title.slice(0, 20) + "..."
-                              : subItem.title}
+                          <span className="text-xs font-semibold text-muted-foreground truncate">
+                            {subItem.title}
                           </span>
                         </Link>
                       </SidebarMenuSubButton>

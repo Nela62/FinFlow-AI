@@ -1,6 +1,6 @@
 "use client";
 
-import { fetchAllPanels, fetchAllWorkspaces } from "@/lib/queries";
+import { fetchAllPanelsByWorkspaceId, fetchAllWorkspaces } from "@/lib/queries";
 import { createClient } from "@/lib/supabase/client";
 import { useSidebarStore } from "@/providers/sidebarStoreProvider";
 import { useQuery } from "@supabase-cache-helpers/postgrest-react-query";
@@ -15,7 +15,7 @@ export default function Panels() {
   const { data: workspaces } = useQuery(fetchAllWorkspaces(supabase));
 
   const { data: panels } = useQuery(
-    fetchAllPanels(supabase, workspaceId ?? ""),
+    fetchAllPanelsByWorkspaceId(supabase, workspaceId ?? ""),
     { enabled: !!workspaceId }
   );
 

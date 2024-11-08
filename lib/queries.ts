@@ -6,7 +6,14 @@ export function fetchAllWorkspaces(client: TypedSupabaseClient) {
 }
 
 // PANELS
-export function fetchAllPanels(
+export function fetchAllPanels(client: TypedSupabaseClient) {
+  return client
+    .from("panels")
+    .select("id, name, url, workspace_id")
+    .throwOnError();
+}
+
+export function fetchAllPanelsByWorkspaceId(
   client: TypedSupabaseClient,
   workspaceId: string
 ) {
