@@ -79,7 +79,9 @@ const DnDFlow = () => {
       >
         <ReactFlow
           nodes={nodes}
+          nodeTypes={nodeTypes}
           edges={edges}
+          edgeTypes={edgeTypes}
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
           onConnect={onConnect}

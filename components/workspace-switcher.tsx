@@ -22,8 +22,9 @@ import { useSidebarStore } from "@/providers/sidebarStoreProvider";
 import { createClient } from "@/lib/supabase/client";
 import { fetchAllWorkspaces } from "@/lib/queries";
 import { useQuery } from "@supabase-cache-helpers/postgrest-react-query";
+import React from "react";
 
-export function WorkspaceSwitcher() {
+export const WorkspaceSwitcher = React.memo(function WorkspaceSwitcher() {
   const supabase = createClient();
   const { isMobile } = useSidebar();
   const { workspaceId, setWorkspaceId } = useSidebarStore((state) => state);
@@ -91,4 +92,4 @@ export function WorkspaceSwitcher() {
       </SidebarMenuItem>
     </SidebarMenu>
   );
-}
+});
