@@ -43,6 +43,10 @@ import {
   DcfModelNode,
   DcfModelNodeType,
 } from "@/components/flow/nodes/dcf-model";
+import {
+  AppenderNode,
+  AppenderNodeType,
+} from "@/components/flow/nodes/appender";
 
 export const edgeTypes = {
   "button-edge": ButtonEdge,
@@ -57,6 +61,7 @@ export const nodeTypes = {
   summarizer: SummarizerNode,
   switch: SwitchNode,
   "dcf-model": DcfModelNode,
+  appender: AppenderNode,
 } satisfies NodeTypes;
 
 export type AppNode =
@@ -65,7 +70,8 @@ export type AppNode =
   | ApiConnectorNodeType
   | SwitchNodeType
   | SummarizerNodeType
-  | DcfModelNodeType;
+  | DcfModelNodeType
+  | AppenderNodeType;
 
 export type NodesState = {
   nodes: AppNode[];
@@ -113,6 +119,12 @@ const defaultNodes: AppNode[] = [
     position: { x: 200, y: 700 },
     data: { label: "DCF Model" },
   },
+  {
+    id: "f",
+    type: "appender",
+    position: { x: 0, y: 1000 },
+    data: { label: "Appender" },
+  },
 ];
 const defaultEdges: Edge[] = [
   {
@@ -128,6 +140,20 @@ const defaultEdges: Edge[] = [
     target: "c",
     targetHandle: "handle-1",
     type: "button-edge",
+  },
+  {
+    id: "d->f",
+    source: "d",
+    target: "f",
+    type: "button-edge",
+    targetHandle: "handle-0",
+  },
+  {
+    id: "e->f",
+    source: "e",
+    target: "f",
+    type: "button-edge",
+    targetHandle: "handle-1",
   },
 ];
 

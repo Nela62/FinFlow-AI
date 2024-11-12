@@ -4,38 +4,37 @@ import type { SVGProps } from "react";
 import type { Node, NodeProps } from "@xyflow/react";
 import { Handle, Position, useUpdateNodeInternals } from "@xyflow/react";
 import { useMemo, useState } from "react";
+import { Label } from "@/components/ui/label";
+import { NodeHeader } from "./utils/header";
 import { Button } from "@/components/ui/button";
 import { useNodesStore } from "@/providers/nodesProvider";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { NodeHeader } from "./utils/header";
-import { Label } from "@/components/ui/label";
+import SortableList from "./utils/sortableList";
 
-export type SwitchNodeData = {};
+export type AppenderNodeData = {};
 
-export type SwitchNode = Node<SwitchNodeData>;
+export type AppenderNodeType = Node<AppenderNodeData>;
 
-function MdiSwitch(props: SVGProps<SVGSVGElement>) {
+function FluentMerge16Filled(props: SVGProps<SVGSVGElement>) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width="1em"
       height="1em"
-      viewBox="0 0 24 24"
+      viewBox="0 0 16 16"
       {...props}
     >
       <path
         fill="currentColor"
-        d="M13 18h1a1 1 0 0 1 1 1h7v2h-7a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1H2v-2h7a1 1 0 0 1 1-1h1v-2H8a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h8a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1h-3zm0-12h1V4h-1zM9 4v2h2V4zm0 4v2h2V8zm0 4v2h2v-2z"
+        d="M2 4.25a.75.75 0 0 1 .75-.75h1.789c.835 0 1.625.38 2.147 1.032l1.499 1.874a2.25 2.25 0 0 0 1.757.844h1.785l-1.572-2.043a.75.75 0 0 1 1.19-.914l2.5 3.25a.75.75 0 0 1 0 .914l-2.5 3.25a.75.75 0 0 1-1.19-.914l1.572-2.043H9.71c-.38 0-.739.173-.976.47l-1.499 1.873A3.75 3.75 0 0 1 4.308 12.5H2.75a.75.75 0 0 1 0-1.5h1.558c.684 0 1.33-.31 1.757-.844l1.499-1.874a3 3 0 0 1 .203-.227a3.8 3.8 0 0 1-.753-.712l-1.5-1.874A1.25 1.25 0 0 0 4.54 5H2.75A.75.75 0 0 1 2 4.25"
       ></path>
     </svg>
   );
 }
 
-function SwitchNodeComponent({ id, data }: NodeProps<SwitchNode>) {
+function AppenderNodeComponent({ id, data }: NodeProps<AppenderNodeType>) {
   const updateNodeInternals = useUpdateNodeInternals();
   const [handleCount, setHandleCount] = useState(2);
-
-  console.log("render");
 
   const { nodes, edges } = useNodesStore((state) => state);
 
@@ -72,36 +71,32 @@ function SwitchNodeComponent({ id, data }: NodeProps<SwitchNode>) {
       ))}
 
       <NodeHeader
-        title="Switch"
+        title="Appender"
         bgColor="bg-gray-200"
         iconBgColor="bg-gray-400"
         textColor="text-gray-900"
-        iconFn={MdiSwitch}
+        iconFn={FluentMerge16Filled}
       />
-      <RadioGroup
-        defaultValue={switchNodes[0].id}
-        className="px-2 py-2 space-y-2"
-      >
-        {switchNodes.map((node, i) => (
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value={node.id} id={node.id} />
-            <Label htmlFor={node.id}>
-              {/* @ts-ignore */}
-              Input {i + 1}: {node.data.label ?? node.type}
-            </Label>
-          </div>
-        ))}
-      </RadioGroup>
-      {/* FIX: Edges don't rerender on new edge */}
-      <Button
-        variant="outline"
-        onClick={() => {
-          setHandleCount(handleCount + 1);
-          updateNodeInternals(id);
-        }}
-      >
-        Add Input
-      </Button>
+      <div className="space-y-4 px-2 pt-2">
+        <p className="text-sm font-semibold">Order</p>
+        <SortableList
+          items={switchNodes.map((node) => ({
+            id: node.id,
+            title: node.data.label ?? node.type,
+          }))}
+        />
+
+        <Button
+          variant="outline"
+          onClick={() => {
+            setHandleCount(handleCount + 1);
+            updateNodeInternals(id);
+          }}
+        >
+          Add Input
+        </Button>
+      </div>
+
       <Handle
         style={{
           height: "12px",
@@ -116,4 +111,4 @@ function SwitchNodeComponent({ id, data }: NodeProps<SwitchNode>) {
   );
 }
 
-export const SwitchNode = React.memo(SwitchNodeComponent);
+export const AppenderNode = React.memo(AppenderNodeComponent);
