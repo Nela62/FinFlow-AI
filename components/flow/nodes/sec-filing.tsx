@@ -14,10 +14,18 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { NodeHeader } from "./utils/header";
+import { NodeSection } from "@/types/node-section";
 
 export type SecFilingNodeData = {};
 
 export type SecFilingNode = Node<SecFilingNodeData>;
+
+type FilingType = {
+  type: string;
+  description: string;
+  sections: NodeSection[];
+};
 
 const filingTypes = [
   {
@@ -62,7 +70,7 @@ const outputFormats = [
   { type: ".txt", image: "/output/txt_logo.png" },
 ];
 
-export default function SecFilingNode({ data }: NodeProps<SecFilingNode>) {
+export function SecFilingNode({ data }: NodeProps<SecFilingNode>) {
   const [selectedStockTicker, setSelectedStockTicker] =
     useState<string>("AAPL");
   const [selectedFilingType, setSelectedFilingType] = useState<string>("10-K");
@@ -80,16 +88,13 @@ export default function SecFilingNode({ data }: NodeProps<SecFilingNode>) {
   return (
     // We add this class to use the same styles as React Flow's default nodes.
     <div className="rounded-md bg-background p-1 pb-2 border max-w-[370px] space-y-2">
-      <div className="flex items-center gap-4 bg-steel-blue-200 rounded-md p-1.5">
-        <Image
-          src="/nodes/sec-filing.png"
-          alt="SEC Filing"
-          className="rounded-md"
-          width={50}
-          height={50}
-        />
-        <p className="text-steel-blue-900">SEC Filing Parser</p>
-      </div>
+      <NodeHeader
+        title="SEC Filing Parser"
+        bgColor="bg-steel-blue-200"
+        textColor="text-steel-blue-900"
+        image="/nodes/sec-filing.png"
+      />
+
       <div className="space-y-2 px-2">
         <p className="text-sm font-semibold">Company</p>
         <StockPicker

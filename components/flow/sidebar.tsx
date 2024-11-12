@@ -26,11 +26,11 @@ export default () => {
       </Card>
       <Card
         className="w-fit cursor-grab bg-muted"
-        onDragStart={(event) => onDragStart(event, "api-endpoint")}
+        onDragStart={(event) => onDragStart(event, "api-connector")}
         draggable
       >
         <CardContent className="select-none px-3 py-2">
-          API Endpoint
+          API Connector
         </CardContent>
       </Card>
       <Card
