@@ -15,10 +15,10 @@ import {
 
 import "@xyflow/react/dist/style.css";
 
-import { initialNodes, nodeTypes, type CustomNodeType } from "./nodes";
-import { initialEdges, edgeTypes, type CustomEdgeType } from "./edges";
 import { DnDProvider, useDnD } from "./dnd-context";
 import Sidebar from "./sidebar";
+import { useNodesStore } from "@/providers/nodesProvider";
+import { edgeTypes, nodeTypes } from "@/stores/nodesStore";
 
 let id = 0;
 const getId = () => `dndnode_${id++}`;
@@ -28,14 +28,8 @@ const DnDFlow = () => {
   const { screenToFlowPosition } = useReactFlow();
   const [type] = useDnD();
 
-  const [nodes, setNodes, onNodesChange] =
-    useNodesState<CustomNodeType>(initialNodes);
-  const [edges, setEdges, onEdgesChange] =
-    useEdgesState<CustomEdgeType>(initialEdges);
-  const onConnect: OnConnect = useCallback(
-    (connection) => setEdges((edges) => addEdge(connection, edges)),
-    [setEdges]
-  );
+  const { nodes, setNodes, onNodesChange, edges, onEdgesChange, onConnect } =
+    useNodesStore((state) => state);
 
   const onDragOver = useCallback((event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();

@@ -3,7 +3,7 @@ import type { SVGProps } from "react";
 
 import Image from "next/image";
 import type { Node, NodeProps } from "@xyflow/react";
-import { Handle, Position } from "@xyflow/react";
+import { Handle, Position, useUpdateNodeInternals } from "@xyflow/react";
 import { StockPicker } from "@/components/widgets/utils/stock-picker";
 import { useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
@@ -28,6 +28,8 @@ import { Button } from "@/components/ui/button";
 import { ChevronDown } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { NodeSection } from "@/types/node-section";
+import { useNodesStore } from "@/providers/nodesProvider";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 export type SwitchNodeData = {};
 
@@ -50,25 +52,44 @@ function MdiSwitch(props: SVGProps<SVGSVGElement>) {
   );
 }
 
-export function SwitchNode({ data }: NodeProps<SwitchNode>) {
-  const [inputsNum, setInputsNum] = useState<number>(2);
+export function SwitchNode({ id, data }: NodeProps<SwitchNode>) {
+  const updateNodeInternals = useUpdateNodeInternals();
+  const [handleCount, setHandleCount] = useState(2);
+
+  const { nodes, edges } = useNodesStore((state) => state);
+
+  const switchEdges = useMemo(() => {
+    return edges.filter((edge) => edge.target === id);
+  }, [edges]);
+
+  const sourceNodes = useMemo(() => {
+    return switchEdges.map((edge) => edge.source);
+  }, [switchEdges]);
+
+  const switchNodes = useMemo(() => {
+    return nodes.filter((node) => sourceNodes.includes(node.id));
+  }, [nodes, sourceNodes]);
 
   return (
-    // We add this class to use the same styles as React Flow's default nodes.
-    <div className="rounded-md bg-background p-1 pb-2 border max-w-[370px] space-y-2">
-      {Array.from({ length: inputsNum }).map((_, index) => (
+    <div className="rounded-md bg-background p-1 pb-2 border max-w-[370px] min-w-[250px] space-y-2">
+      {Array.from({ length: handleCount }).map((_, index) => (
         <Handle
           key={index}
+          type="target"
           style={{
+            left: `${(index + 1) * (100 / (handleCount + 1))}%`,
+            transform: "translateX(-50%)",
+            marginTop: "-5px",
             height: "12px",
             width: "12px",
             backgroundColor: "white",
             border: "1px solid #6b7280",
           }}
-          type="target"
           position={Position.Top}
+          id={`handle-${index}`}
         />
       ))}
+
       <NodeHeader
         title="Switch"
         bgColor="bg-gray-200"
@@ -76,6 +97,23 @@ export function SwitchNode({ data }: NodeProps<SwitchNode>) {
         textColor="text-gray-900"
         iconFn={MdiSwitch}
       />
+      <RadioGroup
+        defaultValue={switchNodes[0].id}
+        className="px-2 py-2 space-y-2"
+      >
+        {switchNodes.map((node, i) => (
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value={node.id} id={node.id} />
+            <Label htmlFor={node.id}>
+              Input {i + 1}: {node.data.label ?? node.type}
+            </Label>
+          </div>
+        ))}
+      </RadioGroup>
+      {/* FIX: Edges don't rerender on new edge */}
+      <Button variant="outline" onClick={() => setHandleCount(handleCount + 1)}>
+        Add Input
+      </Button>
       <Handle
         style={{
           height: "12px",

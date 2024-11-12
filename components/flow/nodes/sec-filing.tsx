@@ -17,7 +17,7 @@ import { Label } from "@/components/ui/label";
 import { NodeHeader } from "./utils/header";
 import { NodeSection } from "@/types/node-section";
 
-export type SecFilingNodeData = {};
+export type SecFilingNodeData = { label: string };
 
 export type SecFilingNode = Node<SecFilingNodeData>;
 

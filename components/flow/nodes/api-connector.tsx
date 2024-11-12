@@ -28,7 +28,8 @@ import { Button } from "@/components/ui/button";
 import { ChevronDown } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { NodeSection } from "@/types/node-section";
-export type ApiConnectorNodeData = {};
+
+export type ApiConnectorNodeData = { label: string };
 
 export type ApiConnectorNode = Node<ApiConnectorNodeData>;
 

@@ -5,6 +5,7 @@ import "./globals.css";
 import { AIStoreProvider } from "@/providers/aiStoreProvider";
 import { SidebarStoreProvider } from "@/providers/sidebarStoreProvider";
 import { ReactQueryClientProvider } from "@/providers/reactQueryClientProvider";
+import { NodesStoreProvider } from "@/providers/nodesProvider";
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -29,15 +30,17 @@ export default function RootLayout({
         <ReactQueryClientProvider>
           <SidebarStoreProvider>
             <AIStoreProvider>
-              <ThemeProvider
-                attribute="class"
-                // defaultTheme="system"
-                defaultTheme="light"
-                enableSystem
-                disableTransitionOnChange
-              >
-                <main className="min-h-screen">{children}</main>
-              </ThemeProvider>
+              <NodesStoreProvider>
+                <ThemeProvider
+                  attribute="class"
+                  // defaultTheme="system"
+                  defaultTheme="light"
+                  enableSystem
+                  disableTransitionOnChange
+                >
+                  <main className="min-h-screen">{children}</main>
+                </ThemeProvider>
+              </NodesStoreProvider>
             </AIStoreProvider>
           </SidebarStoreProvider>
         </ReactQueryClientProvider>
