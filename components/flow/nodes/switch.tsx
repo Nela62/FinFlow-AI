@@ -52,7 +52,7 @@ function MdiSwitch(props: SVGProps<SVGSVGElement>) {
   );
 }
 
-export function SwitchNode({ id, data }: NodeProps<SwitchNode>) {
+function SwitchNodeComponent({ id, data }: NodeProps<SwitchNode>) {
   const updateNodeInternals = useUpdateNodeInternals();
   const [handleCount, setHandleCount] = useState(2);
 
@@ -136,3 +136,5 @@ export function SwitchNode({ id, data }: NodeProps<SwitchNode>) {
     </div>
   );
 }
+
+export const SwitchNode = React.memo(SwitchNodeComponent);

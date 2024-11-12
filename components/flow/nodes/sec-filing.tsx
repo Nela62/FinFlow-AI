@@ -16,10 +16,11 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { NodeHeader } from "./utils/header";
 import { NodeSection } from "@/types/node-section";
+import React from "react";
 
 export type SecFilingNodeData = { label: string };
 
-export type SecFilingNode = Node<SecFilingNodeData>;
+export type SecFilingNodeType = Node<SecFilingNodeData>;
 
 type FilingType = {
   type: string;
@@ -27,7 +28,7 @@ type FilingType = {
   sections: NodeSection[];
 };
 
-const filingTypes = [
+const filingTypes: FilingType[] = [
   {
     type: "10-K",
     description: "Annual Report",
@@ -70,7 +71,7 @@ const outputFormats = [
   { type: ".txt", image: "/output/txt_logo.png" },
 ];
 
-export function SecFilingNode({ data }: NodeProps<SecFilingNode>) {
+function SecFilingNodeComponent({ data }: NodeProps<SecFilingNodeType>) {
   const [selectedStockTicker, setSelectedStockTicker] =
     useState<string>("AAPL");
   const [selectedFilingType, setSelectedFilingType] = useState<string>("10-K");
@@ -224,3 +225,5 @@ export function SecFilingNode({ data }: NodeProps<SecFilingNode>) {
     </div>
   );
 }
+
+export const SecFilingNode = React.memo(SecFilingNodeComponent);

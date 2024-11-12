@@ -1,27 +1,20 @@
 import Image from "next/image";
 import type { Node, NodeProps } from "@xyflow/react";
 import { Handle, Position } from "@xyflow/react";
-import { StockPicker } from "@/components/widgets/utils/stock-picker";
-import { SVGProps, useMemo, useState } from "react";
+import { SVGProps, useState } from "react";
 import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
-import {
-  NodeTabs,
-  NodeTabsContent,
-  NodeTabsList,
-  NodeTabsTrigger,
-} from "@/components/ui/node-tabs";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { NodeHeader } from "./utils/header";
-import { NodeSection } from "@/types/node-section";
 import { Slider as DoubleSlider } from "@/components/ui/double-slider";
 import { Slider } from "@/components/ui/slider";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
+import React from "react";
 
 function Fa6SolidArrowDownWideShort(props: SVGProps<SVGSVGElement>) {
   return (
@@ -51,7 +44,7 @@ const outputFormats = [
   { type: ".txt", image: "/output/txt_logo.png" },
 ];
 
-export function SummarizerNode({ data }: NodeProps<SummarizerNode>) {
+function SummarizerNodeComponent({ data }: NodeProps<SummarizerNode>) {
   const [wordCount, setWordCount] = useState<[number, number]>([100, 500]);
   const [keywords, setKeywords] = useState<string[]>([]);
   const [inputKeywords, setInputKeywords] = useState<string>("");
@@ -101,7 +94,7 @@ export function SummarizerNode({ data }: NodeProps<SummarizerNode>) {
         </div>
         <Separator orientation="horizontal" />
         <div className="space-y-4">
-          <p className="text-sm font-semibold">Keywords</p>
+          <p className="text-sm font-semibold">Semantic Keyword Focus</p>
           {keywords.length > 0 && (
             <div className="flex flex-wrap gap-2">
               {keywords.map((keyword) => (
@@ -244,3 +237,5 @@ export function SummarizerNode({ data }: NodeProps<SummarizerNode>) {
     </div>
   );
 }
+
+export const SummarizerNode = React.memo(SummarizerNodeComponent);

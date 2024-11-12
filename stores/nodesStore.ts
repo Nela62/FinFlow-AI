@@ -22,7 +22,7 @@ import PositionLoggerNode, {
 } from "@/components/flow/nodes/position-logger-node";
 import {
   SecFilingNode,
-  type SecFilingNode as SecFilingNodeType,
+  type SecFilingNodeType,
 } from "@/components/flow/nodes/sec-filing";
 import {
   ApiConnectorNode,
@@ -39,6 +39,10 @@ import {
   SummarizerNode,
   type SummarizerNode as SummarizerNodeType,
 } from "@/components/flow/nodes/summarizer";
+import {
+  DcfModelNode,
+  DcfModelNodeType,
+} from "@/components/flow/nodes/dcf-model";
 
 export const edgeTypes = {
   "button-edge": ButtonEdge,
@@ -52,6 +56,7 @@ export const nodeTypes = {
   "api-connector": ApiConnectorNode,
   summarizer: SummarizerNode,
   switch: SwitchNode,
+  "dcf-model": DcfModelNode,
 } satisfies NodeTypes;
 
 export type AppNode =
@@ -59,7 +64,8 @@ export type AppNode =
   | SecFilingNodeType
   | ApiConnectorNodeType
   | SwitchNodeType
-  | SummarizerNodeType;
+  | SummarizerNodeType
+  | DcfModelNodeType;
 
 export type NodesState = {
   nodes: AppNode[];
@@ -86,20 +92,26 @@ const defaultNodes: AppNode[] = [
   {
     id: "b",
     type: "api-connector",
-    position: { x: -100, y: 100 },
+    position: { x: 200, y: 0 },
     data: { label: "API Connector" },
   },
   {
     id: "c",
     type: "switch",
-    position: { x: 100, y: 100 },
+    position: { x: 100, y: 500 },
     data: { label: "Switch" },
   },
   {
     id: "d",
     type: "summarizer",
-    position: { x: 200, y: 100 },
+    position: { x: 0, y: 700 },
     data: { label: "Summarizer" },
+  },
+  {
+    id: "e",
+    type: "dcf-model",
+    position: { x: 200, y: 700 },
+    data: { label: "DCF Model" },
   },
 ];
 const defaultEdges: Edge[] = [

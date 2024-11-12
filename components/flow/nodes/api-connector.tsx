@@ -27,7 +27,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { ChevronDown } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { NodeSection } from "@/types/node-section";
 
 export type ApiConnectorNodeData = { label: string };
 
@@ -102,7 +101,7 @@ const outputFormats = [
   { type: ".xlsx", image: "/output/excel_logo.png" },
 ];
 
-export function ApiConnectorNode({ data }: NodeProps<ApiConnectorNode>) {
+function ApiConnectorNodeComponent({ data }: NodeProps<ApiConnectorNode>) {
   const [selectedStockTicker, setSelectedStockTicker] =
     useState<string>("AAPL");
   const [selectedApiProvider, setSelectedApiProvider] =
@@ -291,3 +290,5 @@ export function ApiConnectorNode({ data }: NodeProps<ApiConnectorNode>) {
     </div>
   );
 }
+
+export const ApiConnectorNode = React.memo(ApiConnectorNodeComponent);
