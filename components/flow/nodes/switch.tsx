@@ -56,6 +56,8 @@ export function SwitchNode({ id, data }: NodeProps<SwitchNode>) {
   const updateNodeInternals = useUpdateNodeInternals();
   const [handleCount, setHandleCount] = useState(2);
 
+  console.log("render");
+
   const { nodes, edges } = useNodesStore((state) => state);
 
   const switchEdges = useMemo(() => {
@@ -105,13 +107,20 @@ export function SwitchNode({ id, data }: NodeProps<SwitchNode>) {
           <div className="flex items-center space-x-2">
             <RadioGroupItem value={node.id} id={node.id} />
             <Label htmlFor={node.id}>
+              {/* @ts-ignore */}
               Input {i + 1}: {node.data.label ?? node.type}
             </Label>
           </div>
         ))}
       </RadioGroup>
       {/* FIX: Edges don't rerender on new edge */}
-      <Button variant="outline" onClick={() => setHandleCount(handleCount + 1)}>
+      <Button
+        variant="outline"
+        onClick={() => {
+          setHandleCount(handleCount + 1);
+          updateNodeInternals(id);
+        }}
+      >
         Add Input
       </Button>
       <Handle

@@ -35,6 +35,10 @@ import {
 import ButtonEdge, {
   type ButtonEdge as ButtonEdgeType,
 } from "@/components/flow/edges/button-edge";
+import {
+  SummarizerNode,
+  type SummarizerNode as SummarizerNodeType,
+} from "@/components/flow/nodes/summarizer";
 
 export const edgeTypes = {
   "button-edge": ButtonEdge,
@@ -46,6 +50,7 @@ export const nodeTypes = {
   "position-logger": PositionLoggerNode,
   "sec-filing": SecFilingNode,
   "api-connector": ApiConnectorNode,
+  summarizer: SummarizerNode,
   switch: SwitchNode,
 } satisfies NodeTypes;
 
@@ -53,7 +58,8 @@ export type AppNode =
   | BuiltInNode
   | SecFilingNodeType
   | ApiConnectorNodeType
-  | SwitchNodeType;
+  | SwitchNodeType
+  | SummarizerNodeType;
 
 export type NodesState = {
   nodes: AppNode[];
@@ -88,6 +94,12 @@ const defaultNodes: AppNode[] = [
     type: "switch",
     position: { x: 100, y: 100 },
     data: { label: "Switch" },
+  },
+  {
+    id: "d",
+    type: "summarizer",
+    position: { x: 200, y: 100 },
+    data: { label: "Summarizer" },
   },
 ];
 const defaultEdges: Edge[] = [
