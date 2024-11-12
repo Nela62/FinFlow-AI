@@ -21,6 +21,7 @@ import { Slider } from "@/components/ui/slider";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
 
 function Fa6SolidArrowDownWideShort(props: SVGProps<SVGSVGElement>) {
   return (
@@ -61,6 +62,16 @@ export function SummarizerNode({ data }: NodeProps<SummarizerNode>) {
   return (
     // We add this class to use the same styles as React Flow's default nodes.
     <div className="rounded-md bg-background p-1 pb-2 border w-[320px] space-y-2">
+      <Handle
+        style={{
+          height: "12px",
+          width: "12px",
+          backgroundColor: "white",
+          border: "1px solid #6b7280",
+        }}
+        type="target"
+        position={Position.Top}
+      />
       <NodeHeader
         title="Summarizer"
         bgColor="bg-orange-200"
@@ -70,7 +81,7 @@ export function SummarizerNode({ data }: NodeProps<SummarizerNode>) {
       />
 
       <div className="space-y-2 px-2">
-        <div className="space-y-2 nodrag pb-4">
+        <div className="space-y-2 nodrag">
           <p className="text-sm font-semibold">Word Count</p>
           <DoubleSlider
             min={100}
@@ -157,11 +168,26 @@ export function SummarizerNode({ data }: NodeProps<SummarizerNode>) {
               }}
             />
             <p
-              className="absolute top-2 text-muted-foreground"
+              className="absolute top-4 text-muted-foreground text-xs"
               style={{ left: `${relevanceThreshold * 100}%` }}
             >
               {relevanceThreshold}
             </p>
+          </div>
+        </div>
+        <Separator orientation="horizontal" />
+        <div className="space-y-2">
+          <p className="text-sm font-semibold">Custom Instructions</p>
+          <Textarea placeholder="Enter custom instructions" />
+          <div className="flex gap-2">
+            <Switch
+              defaultChecked={false}
+              id="generate-section-titles"
+              className=""
+            />
+            <Label htmlFor="generate-section-titles" className="text-xs">
+              Generate section titles
+            </Label>
           </div>
         </div>
         <Separator orientation="horizontal" />
