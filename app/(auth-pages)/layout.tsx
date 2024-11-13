@@ -22,7 +22,7 @@ export default async function Layout({
         <div className="bg-background shadow-md w-[330px] h-fit rounded-sm overflow-hidden flex flex-col justify-center items-center py-5 gap-2 px-6">
           <Image src="/logomark.png" alt="Logo" width={40} height={40} />
           <h1 className="text-lg font-semibold mt-2 mb-4">
-            Welcome to Finpanel
+            Welcome to {process.env.NEXT_PUBLIC_APP_NAME}
           </h1>
           <Suspense>{children}</Suspense>
         </div>
