@@ -120,7 +120,7 @@ function ApiConnectorNodeComponent({ data }: NodeProps<ApiConnectorNode>) {
 
   return (
     // We add this class to use the same styles as React Flow's default nodes.
-    <div className="rounded-md bg-background p-1 pb-2 border max-w-[370px] space-y-2">
+    <div className="rounded-md bg-background p-1 pb-2 border max-w-[370px] space-y-2 shadow-md">
       <NodeHeader
         title="API Connector"
         bgColor="bg-purple-200"

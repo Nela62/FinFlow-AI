@@ -51,6 +51,10 @@ import {
   DocumentCompilerNode,
   DocumentCompilerNodeType,
 } from "@/components/flow/nodes/document-compiler";
+import {
+  EmailSenderNode,
+  EmailSenderNodeType,
+} from "@/components/flow/nodes/email-sender";
 
 export const edgeTypes = {
   "button-edge": ButtonEdge,
@@ -67,6 +71,7 @@ export const nodeTypes = {
   "dcf-model": DcfModelNode,
   appender: AppenderNode,
   "document-compiler": DocumentCompilerNode,
+  "email-sender": EmailSenderNode,
 } satisfies NodeTypes;
 
 export type AppNode =
@@ -77,7 +82,8 @@ export type AppNode =
   | SummarizerNodeType
   | DcfModelNodeType
   | AppenderNodeType
-  | DocumentCompilerNodeType;
+  | DocumentCompilerNodeType
+  | EmailSenderNodeType;
 
 export type NodesState = {
   nodes: AppNode[];
@@ -136,6 +142,12 @@ const defaultNodes: AppNode[] = [
     type: "document-compiler",
     position: { x: 200, y: 1000 },
     data: { label: "Document Compiler" },
+  },
+  {
+    id: "h",
+    type: "email-sender",
+    position: { x: 0, y: 1200 },
+    data: { label: "Email Sender" },
   },
 ];
 const defaultEdges: Edge[] = [

@@ -52,7 +52,7 @@ function SwitchNodeComponent({ id, data }: NodeProps<SwitchNode>) {
   }, [nodes, sourceNodes]);
 
   return (
-    <div className="rounded-md bg-background p-1 pb-2 border max-w-[370px] min-w-[250px] space-y-2">
+    <div className="rounded-md bg-background p-1 pb-2 border max-w-[370px] min-w-[250px] space-y-2 shadow-md">
       {Array.from({ length: handleCount }).map((_, index) => (
         <Handle
           key={index}
