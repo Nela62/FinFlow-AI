@@ -47,6 +47,10 @@ import {
   AppenderNode,
   AppenderNodeType,
 } from "@/components/flow/nodes/appender";
+import {
+  DocumentCompilerNode,
+  DocumentCompilerNodeType,
+} from "@/components/flow/nodes/document-compiler";
 
 export const edgeTypes = {
   "button-edge": ButtonEdge,
@@ -62,6 +66,7 @@ export const nodeTypes = {
   switch: SwitchNode,
   "dcf-model": DcfModelNode,
   appender: AppenderNode,
+  "document-compiler": DocumentCompilerNode,
 } satisfies NodeTypes;
 
 export type AppNode =
@@ -71,7 +76,8 @@ export type AppNode =
   | SwitchNodeType
   | SummarizerNodeType
   | DcfModelNodeType
-  | AppenderNodeType;
+  | AppenderNodeType
+  | DocumentCompilerNodeType;
 
 export type NodesState = {
   nodes: AppNode[];
@@ -124,6 +130,12 @@ const defaultNodes: AppNode[] = [
     type: "appender",
     position: { x: 0, y: 1000 },
     data: { label: "Appender" },
+  },
+  {
+    id: "g",
+    type: "document-compiler",
+    position: { x: 200, y: 1000 },
+    data: { label: "Document Compiler" },
   },
 ];
 const defaultEdges: Edge[] = [

@@ -10,7 +10,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { NodeHeader } from "./utils/header";
 import { Label } from "@/components/ui/label";
 
-export type SwitchNodeData = {};
+export type SwitchNodeData = { label: string };
 
 export type SwitchNode = Node<SwitchNodeData>;
 

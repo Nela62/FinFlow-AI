@@ -11,7 +11,7 @@ import { useNodesStore } from "@/providers/nodesProvider";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import SortableList from "./utils/sortableList";
 
-export type AppenderNodeData = {};
+export type AppenderNodeData = { label: string };
 
 export type AppenderNodeType = Node<AppenderNodeData>;
 
@@ -72,9 +72,9 @@ function AppenderNodeComponent({ id, data }: NodeProps<AppenderNodeType>) {
 
       <NodeHeader
         title="Appender"
-        bgColor="bg-gray-200"
-        iconBgColor="bg-gray-400"
-        textColor="text-gray-900"
+        bgColor="bg-neutral-200"
+        iconBgColor="bg-neutral-400"
+        textColor="text-neutral-900"
         iconFn={FluentMerge16Filled}
       />
       <div className="space-y-4 px-2 pt-2">
