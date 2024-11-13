@@ -63,7 +63,6 @@ export const edgeTypes = {
 export type CustomEdgeType = BuiltInEdge | ButtonEdgeType;
 
 export const nodeTypes = {
-  "position-logger": PositionLoggerNode,
   "sec-filing": SecFilingNode,
   "api-connector": ApiConnectorNode,
   summarizer: SummarizerNode,
@@ -104,49 +103,49 @@ const defaultNodes: AppNode[] = [
   {
     id: "a",
     type: "sec-filing",
-    position: { x: 0, y: 0 },
+    position: { x: 500, y: 0 },
     data: { label: "SEC Filing" },
   },
   {
     id: "b",
     type: "api-connector",
-    position: { x: 200, y: 0 },
+    position: { x: 0, y: 0 },
     data: { label: "API Connector" },
   },
   {
     id: "c",
     type: "switch",
-    position: { x: 100, y: 500 },
+    position: { x: 200, y: 750 },
     data: { label: "Switch" },
   },
   {
     id: "d",
     type: "summarizer",
-    position: { x: 0, y: 700 },
+    position: { x: 900, y: 700 },
     data: { label: "Summarizer" },
   },
   {
     id: "e",
     type: "dcf-model",
-    position: { x: 200, y: 700 },
+    position: { x: 0, y: 1000 },
     data: { label: "DCF Model" },
   },
   {
     id: "f",
     type: "appender",
-    position: { x: 0, y: 1000 },
+    position: { x: 400, y: 1600 },
     data: { label: "Appender" },
   },
   {
     id: "g",
     type: "document-compiler",
-    position: { x: 200, y: 1000 },
+    position: { x: 400, y: 2000 },
     data: { label: "Document Compiler" },
   },
   {
     id: "h",
     type: "email-sender",
-    position: { x: 0, y: 1200 },
+    position: { x: 400, y: 2600 },
     data: { label: "Email Sender" },
   },
 ];
@@ -155,14 +154,20 @@ const defaultEdges: Edge[] = [
     id: "a->c",
     source: "a",
     target: "c",
-    targetHandle: "handle-0",
+    targetHandle: "handle-1",
     type: "button-edge",
   },
   {
     id: "b->c",
     source: "b",
     target: "c",
-    targetHandle: "handle-1",
+    targetHandle: "handle-0",
+    type: "button-edge",
+  },
+  {
+    id: "a->d",
+    source: "a",
+    target: "d",
     type: "button-edge",
   },
   {
@@ -170,14 +175,32 @@ const defaultEdges: Edge[] = [
     source: "d",
     target: "f",
     type: "button-edge",
-    targetHandle: "handle-0",
+    targetHandle: "handle-1",
+  },
+  {
+    id: "c->e",
+    source: "c",
+    target: "e",
+    type: "button-edge",
   },
   {
     id: "e->f",
     source: "e",
     target: "f",
     type: "button-edge",
-    targetHandle: "handle-1",
+    targetHandle: "handle-0",
+  },
+  {
+    id: "f->g",
+    source: "f",
+    target: "g",
+    type: "button-edge",
+  },
+  {
+    id: "g->h",
+    source: "g",
+    target: "h",
+    type: "button-edge",
   },
 ];
 

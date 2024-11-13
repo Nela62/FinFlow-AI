@@ -23,7 +23,7 @@ export const NodeHeader = ({
   return (
     <div
       className={cn(
-        "flex items-center gap-4 rounded-md p-1.5",
+        "flex items-center gap-4 rounded-md p-4 mb-4",
         bgColor,
         textColor
       )}

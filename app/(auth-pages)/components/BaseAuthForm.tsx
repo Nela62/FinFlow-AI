@@ -136,7 +136,10 @@ export const BaseAuthForm: React.FC<BaseAuthFormProps> = ({
     clearError();
 
     try {
-      if (values.email === "helen@finpanel.com") {
+      if (
+        values.email === "helen@finpanel.com" ||
+        values.email === "user@fin-flow.ai"
+      ) {
         if (isPassword) {
           setIsLoading(true);
 
