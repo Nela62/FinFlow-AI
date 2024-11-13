@@ -7,15 +7,13 @@ import { SidebarStoreProvider } from "@/providers/sidebarStoreProvider";
 import { ReactQueryClientProvider } from "@/providers/reactQueryClientProvider";
 import { NodesStoreProvider } from "@/providers/nodesProvider";
 
-const defaultUrl = process.env.VERCEL_URL
-  ? `https://${process.env.VERCEL_URL}`
-  : "http://localhost:3000";
+const defaultUrl = "http://localhost:3000";
 
 const raleway = Raleway({ subsets: ["latin"] });
 
 export const metadata = {
   metadataBase: new URL(defaultUrl),
-  title: "Finpanel",
+  title: process.env.NEXT_PUBLIC_APP_NAME,
   description: "Workflow automation for financial tasks.",
 };
 
