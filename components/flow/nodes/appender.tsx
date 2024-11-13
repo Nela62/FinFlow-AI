@@ -47,7 +47,9 @@ function AppenderNodeComponent({ id, data }: NodeProps<AppenderNodeType>) {
   }, [switchEdges]);
 
   const switchNodes = useMemo(() => {
-    return nodes.filter((node) => sourceNodes.includes(node.id));
+    return Array.isArray(nodes)
+      ? nodes?.filter((node) => sourceNodes.includes(node.id))
+      : [];
   }, [nodes, sourceNodes]);
 
   return (

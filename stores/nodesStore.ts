@@ -229,7 +229,11 @@ export const createNodesStore = (initState: NodesState = defaultInitState) => {
         }));
       },
       setNodes: (nodes) => {
-        set({ nodes });
+        if (Array.isArray(nodes)) {
+          set({ nodes });
+        } else {
+          console.log("nodes ", nodes);
+        }
       },
       setEdges: (edges) => {
         set({ edges });

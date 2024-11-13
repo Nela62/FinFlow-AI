@@ -35,20 +35,20 @@ function SwitchNodeComponent({ id, data }: NodeProps<SwitchNode>) {
   const updateNodeInternals = useUpdateNodeInternals();
   const [handleCount, setHandleCount] = useState(2);
 
-  console.log("render");
-
   const { nodes, edges } = useNodesStore((state) => state);
 
   const switchEdges = useMemo(() => {
-    return edges.filter((edge) => edge.target === id);
+    return edges?.filter((edge) => edge.target === id) ?? [];
   }, [edges]);
 
   const sourceNodes = useMemo(() => {
-    return switchEdges.map((edge) => edge.source);
+    return switchEdges.map((edge) => edge.source) ?? [];
   }, [switchEdges]);
 
   const switchNodes = useMemo(() => {
-    return nodes.filter((node) => sourceNodes.includes(node.id));
+    return Array.isArray(nodes)
+      ? nodes?.filter((node) => sourceNodes.includes(node.id))
+      : [];
   }, [nodes, sourceNodes]);
 
   return (
@@ -79,11 +79,11 @@ function SwitchNodeComponent({ id, data }: NodeProps<SwitchNode>) {
         iconFn={MdiSwitch}
       />
       <RadioGroup
-        defaultValue={switchNodes[0].id}
+        defaultValue={switchNodes?.[0]?.id ?? ""}
         className="px-2 py-2 space-y-2"
       >
-        {switchNodes.map((node, i) => (
-          <div className="flex items-center space-x-2">
+        {switchNodes?.map((node, i) => (
+          <div className="flex items-center space-x-2" key={node.id}>
             <RadioGroupItem value={node.id} id={node.id} />
             <Label htmlFor={node.id}>
               {/* @ts-ignore */}

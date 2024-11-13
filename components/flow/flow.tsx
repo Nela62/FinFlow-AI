@@ -59,8 +59,10 @@ const DnDFlow = () => {
         data: { label: `${type} node` },
       };
 
+      console.log("newNode", newNode);
+
       // @ts-ignore
-      setNodes((nds) => [...nds, newNode]);
+      setNodes([...nodes, newNode]);
     },
     [screenToFlowPosition, type]
   );

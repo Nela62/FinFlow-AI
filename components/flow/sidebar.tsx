@@ -33,6 +33,7 @@ export default () => {
           className="w-fit cursor-grab bg-muted"
           onDragStart={(event) => onDragStart(event, node.id)}
           draggable
+          key={node.id}
         >
           <CardContent className="select-none px-3 py-1 text-sm">
             {node.name}
