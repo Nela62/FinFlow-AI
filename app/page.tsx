@@ -11,5 +11,5 @@ export default async function Home() {
     return redirect("/login");
   }
 
-  return redirect("/panels/");
+  return redirect("/workflows/");
 }
