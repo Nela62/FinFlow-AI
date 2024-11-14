@@ -8,6 +8,7 @@ const nodes = [
   { id: "summarizer", name: "Summarizer" },
   { id: "switch", name: "Switch" },
   { id: "dcf-model", name: "DCF Model" },
+  { id: "financial-analysis", name: "Financial Analysis" },
   { id: "appender", name: "Appender" },
   { id: "document-compiler", name: "Document Compiler" },
   { id: "email-sender", name: "Email Sender" },

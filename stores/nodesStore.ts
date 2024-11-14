@@ -139,25 +139,25 @@ const defaultNodes: AppNode[] = [
   {
     id: "f",
     type: "appender",
-    position: { x: 400, y: 1600 },
+    position: { x: 468, y: 1800 },
     data: { label: "Appender" },
   },
   {
     id: "g",
     type: "document-compiler",
-    position: { x: 400, y: 2000 },
+    position: { x: 450, y: 2200 },
     data: { label: "Document Compiler" },
   },
   {
     id: "h",
     type: "email-sender",
-    position: { x: 400, y: 2600 },
+    position: { x: 450, y: 2800 },
     data: { label: "Email Sender" },
   },
   {
     id: "i",
     type: "financial-analysis",
-    position: { x: 0, y: 1600 },
+    position: { x: 400, y: 1100 },
     data: { label: "Financial Analysis" },
   },
 ];
@@ -187,7 +187,7 @@ const defaultEdges: Edge[] = [
     source: "d",
     target: "f",
     type: "button-edge",
-    targetHandle: "handle-1",
+    targetHandle: "handle-2",
   },
   {
     id: "c->e",
@@ -213,6 +213,19 @@ const defaultEdges: Edge[] = [
     source: "g",
     target: "h",
     type: "button-edge",
+  },
+  {
+    id: "e->i",
+    source: "e",
+    target: "i",
+    type: "button-edge",
+  },
+  {
+    id: "i->f",
+    source: "i",
+    target: "f",
+    type: "button-edge",
+    targetHandle: "handle-1",
   },
 ];
 

@@ -34,23 +34,24 @@ function FluentMerge16Filled(props: SVGProps<SVGSVGElement>) {
 
 function AppenderNodeComponent({ id, data }: NodeProps<AppenderNodeType>) {
   const updateNodeInternals = useUpdateNodeInternals();
-  const [handleCount, setHandleCount] = useState(2);
 
   const { nodes, edges } = useNodesStore((state) => state);
 
-  const switchEdges = useMemo(() => {
+  const appenderEdges = useMemo(() => {
     return edges.filter((edge) => edge.target === id);
   }, [edges]);
 
   const sourceNodes = useMemo(() => {
-    return switchEdges.map((edge) => edge.source);
-  }, [switchEdges]);
+    return appenderEdges.map((edge) => edge.source);
+  }, [appenderEdges]);
 
-  const switchNodes = useMemo(() => {
+  const appenderNodes = useMemo(() => {
     return Array.isArray(nodes)
       ? nodes?.filter((node) => sourceNodes.includes(node.id))
       : [];
   }, [nodes, sourceNodes]);
+
+  const [handleCount, setHandleCount] = useState(appenderNodes.length ?? 1);
 
   return (
     <div className="rounded-md bg-background p-1 pb-2 border max-w-[370px] min-w-[250px] space-y-2 shadow-md">
@@ -82,7 +83,7 @@ function AppenderNodeComponent({ id, data }: NodeProps<AppenderNodeType>) {
       <div className="space-y-4 px-2 pt-2">
         <p className="text-sm font-semibold">Order</p>
         <SortableList
-          items={switchNodes.map((node) => ({
+          items={appenderNodes.map((node) => ({
             id: node.id,
             title: node.data.label ?? node.type,
           }))}
