@@ -55,6 +55,10 @@ import {
   EmailSenderNode,
   EmailSenderNodeType,
 } from "@/components/flow/nodes/email-sender";
+import {
+  FinancialAnalysisNode,
+  FinancialAnalysisNodeType,
+} from "@/components/flow/nodes/financial-analysis";
 
 export const edgeTypes = {
   "button-edge": ButtonEdge,
@@ -68,6 +72,7 @@ export const nodeTypes = {
   summarizer: SummarizerNode,
   switch: SwitchNode,
   "dcf-model": DcfModelNode,
+  "financial-analysis": FinancialAnalysisNode,
   appender: AppenderNode,
   "document-compiler": DocumentCompilerNode,
   "email-sender": EmailSenderNode,
@@ -82,7 +87,8 @@ export type AppNode =
   | DcfModelNodeType
   | AppenderNodeType
   | DocumentCompilerNodeType
-  | EmailSenderNodeType;
+  | EmailSenderNodeType
+  | FinancialAnalysisNodeType;
 
 export type NodesState = {
   nodes: AppNode[];
@@ -147,6 +153,12 @@ const defaultNodes: AppNode[] = [
     type: "email-sender",
     position: { x: 400, y: 2600 },
     data: { label: "Email Sender" },
+  },
+  {
+    id: "i",
+    type: "financial-analysis",
+    position: { x: 0, y: 1600 },
+    data: { label: "Financial Analysis" },
   },
 ];
 const defaultEdges: Edge[] = [
@@ -225,7 +237,7 @@ export const createNodesStore = (initState: NodesState = defaultInitState) => {
       },
       onConnect: (connection) => {
         set((state) => ({
-          edges: addEdge(connection, state.edges),
+          edges: addEdge({ ...connection, type: "button-edge" }, state.edges),
         }));
       },
       setNodes: (nodes) => {

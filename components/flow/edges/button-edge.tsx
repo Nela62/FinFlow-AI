@@ -2,6 +2,8 @@ import {
   BaseEdge,
   EdgeLabelRenderer,
   getBezierPath,
+  getStraightPath,
+  getSmoothStepPath,
   useReactFlow,
   type EdgeProps,
   type Edge,
@@ -30,17 +32,17 @@ export default function ButtonEdge({
   targetY,
   sourcePosition,
   targetPosition,
-  style = {},
+  style = { stroke: "#3b82f6", strokeWidth: 3, strokeDasharray: "5,5" },
   markerEnd,
 }: EdgeProps<ButtonEdge>) {
   const { setEdges } = useReactFlow();
-  const [edgePath, labelX, labelY] = getBezierPath({
+  const [edgePath, labelX, labelY] = getSmoothStepPath({
     sourceX,
     sourceY,
-    sourcePosition,
+    // sourcePosition,
     targetX,
     targetY,
-    targetPosition,
+    // targetPosition,
   });
 
   const onEdgeClick = () => {

@@ -26,7 +26,7 @@ export default () => {
   };
 
   return (
-    <aside className="flex flex-col gap-4 w-fit absolute top-4 left-4 border rounded-sm bg-muted/10 p-4 shadow-sm">
+    <aside className="flex flex-col gap-4 w-fit absolute top-4 left-4 border rounded-sm bg-background p-4 shadow-sm">
       <div className="text-lg font-semibold">Node Library</div>
       {nodes.map((node) => (
         <Card
