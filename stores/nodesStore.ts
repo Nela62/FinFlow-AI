@@ -101,6 +101,7 @@ export type NodesActions = {
   onConnect: OnConnect;
   setNodes: (nodes: AppNode[]) => void;
   setEdges: (edges: Edge[]) => void;
+  deleteNode: (nodeId: string) => void;
 };
 
 export type NodesStore = NodesState & NodesActions;
@@ -262,6 +263,11 @@ export const createNodesStore = (initState: NodesState = defaultInitState) => {
       },
       setEdges: (edges) => {
         set({ edges });
+      },
+      deleteNode: (nodeId) => {
+        set((state) => ({
+          nodes: state.nodes.filter((node) => node.id !== nodeId),
+        }));
       },
     }))
   );

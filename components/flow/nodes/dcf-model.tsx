@@ -16,6 +16,7 @@ import { X } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import React from "react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Menu } from "./utils/menu";
 
 function MaterialSymbolsTableOutline(props: SVGProps<SVGSVGElement>) {
   return (
@@ -44,7 +45,7 @@ const outputFormats = [
   // { type: ".txt", image: "/output/txt_logo.png" },
 ];
 
-function DcfModelNodeComponent({ data }: NodeProps<DcfModelNodeType>) {
+function DcfModelNodeComponent({ id, data }: NodeProps<DcfModelNodeType>) {
   // const [discountRate, setDiscountRate] = useState<number>(0.1);
   // const [timeHorizon, setTimeHorizon] = useState<number>(10);
   const [selectedOutputFormat, setSelectedOutputFormat] =
@@ -52,7 +53,8 @@ function DcfModelNodeComponent({ data }: NodeProps<DcfModelNodeType>) {
 
   return (
     // We add this class to use the same styles as React Flow's default nodes.
-    <div className="rounded-md bg-background p-1 pb-2 border w-[320px] space-y-2 shadow-md">
+    <div className="group relative rounded-md bg-background p-1 pb-2 border w-[320px] space-y-2 shadow-md">
+      <Menu nodeId={id} />
       <Handle
         style={{
           height: "12px",

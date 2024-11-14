@@ -22,6 +22,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Menu } from "./utils/menu";
 
 function BxFile(props: SVGProps<SVGSVGElement>) {
   return (
@@ -53,6 +54,7 @@ const outputFormats = [
 ];
 
 function DocumentCompilerNodeComponent({
+  id,
   data,
 }: NodeProps<DocumentCompilerNodeType>) {
   const [templateStyle, setTemplateStyle] = useState<string>(
@@ -67,7 +69,8 @@ function DocumentCompilerNodeComponent({
 
   return (
     // We add this class to use the same styles as React Flow's default nodes.
-    <div className="rounded-md bg-background p-1 pb-2 border w-[320px] space-y-2 shadow-md">
+    <div className="group relative rounded-md bg-background p-1 pb-2 border w-[320px] space-y-2 shadow-md">
+      <Menu nodeId={id} />
       <Handle
         style={{
           height: "12px",

@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { useNodesStore } from "@/providers/nodesProvider";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import SortableList from "./utils/sortableList";
+import { Menu } from "./utils/menu";
 
 export type AppenderNodeData = { label: string };
 
@@ -54,7 +55,8 @@ function AppenderNodeComponent({ id, data }: NodeProps<AppenderNodeType>) {
   const [handleCount, setHandleCount] = useState(appenderNodes.length ?? 1);
 
   return (
-    <div className="rounded-md bg-background p-1 pb-2 border max-w-[370px] min-w-[250px] space-y-2 shadow-md">
+    <div className="group relativerounded-md bg-background p-1 pb-2 border max-w-[370px] min-w-[250px] space-y-2 shadow-md">
+      <Menu nodeId={id} />
       {Array.from({ length: handleCount }).map((_, index) => (
         <Handle
           key={index}

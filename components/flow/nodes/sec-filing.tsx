@@ -17,6 +17,7 @@ import { Label } from "@/components/ui/label";
 import { NodeHeader } from "./utils/header";
 import { NodeSection } from "@/types/node-section";
 import React from "react";
+import { Menu } from "./utils/menu";
 
 export type SecFilingNodeData = { label: string };
 
@@ -71,7 +72,7 @@ const outputFormats = [
   { type: ".txt", image: "/output/txt_logo.png" },
 ];
 
-function SecFilingNodeComponent({ data }: NodeProps<SecFilingNodeType>) {
+function SecFilingNodeComponent({ id, data }: NodeProps<SecFilingNodeType>) {
   const [selectedStockTicker, setSelectedStockTicker] =
     useState<string>("AAPL");
   const [selectedFilingType, setSelectedFilingType] = useState<string>("10-K");
@@ -88,7 +89,8 @@ function SecFilingNodeComponent({ data }: NodeProps<SecFilingNodeType>) {
 
   return (
     // We add this class to use the same styles as React Flow's default nodes.
-    <div className="rounded-md bg-background p-1 pb-2 border max-w-[370px] space-y-2 shadow-md">
+    <div className="group relative rounded-md bg-background p-1 pb-2 border max-w-[370px] space-y-2 shadow-md">
+      <Menu nodeId={id} />
       <NodeHeader
         title="SEC Filing Parser"
         bgColor="bg-steel-blue-200"

@@ -27,6 +27,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { ChevronDown } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Menu } from "./utils/menu";
 
 export type ApiConnectorNodeData = { label: string };
 
@@ -101,7 +102,7 @@ const outputFormats = [
   { type: ".xlsx", image: "/output/excel_logo.png" },
 ];
 
-function ApiConnectorNodeComponent({ data }: NodeProps<ApiConnectorNode>) {
+function ApiConnectorNodeComponent({ id, data }: NodeProps<ApiConnectorNode>) {
   const [selectedStockTicker, setSelectedStockTicker] =
     useState<string>("AAPL");
   const [selectedApiProvider, setSelectedApiProvider] =
@@ -120,7 +121,8 @@ function ApiConnectorNodeComponent({ data }: NodeProps<ApiConnectorNode>) {
 
   return (
     // We add this class to use the same styles as React Flow's default nodes.
-    <div className="rounded-md bg-background p-1 pb-2 border max-w-[370px] space-y-2 shadow-md">
+    <div className="group relative rounded-md bg-background p-1 pb-2 border max-w-[370px] space-y-2 shadow-md">
+      <Menu nodeId={id} />
       <NodeHeader
         title="API Connector"
         bgColor="bg-purple-200"

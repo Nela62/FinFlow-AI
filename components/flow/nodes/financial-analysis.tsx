@@ -23,6 +23,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Menu } from "./utils/menu";
 
 function MdiChartFinance(props: SVGProps<SVGSVGElement>) {
   return (
@@ -60,6 +61,7 @@ const outputFormats = [
 ];
 
 function FinancialAnalysisNodeComponent({
+  id,
   data,
 }: NodeProps<FinancialAnalysisNodeType>) {
   const [analysisType, setAnalysisType] = useState<string>(
@@ -73,7 +75,8 @@ function FinancialAnalysisNodeComponent({
 
   return (
     // We add this class to use the same styles as React Flow's default nodes.
-    <div className="rounded-md bg-background p-1 pb-2 border w-fit space-y-2 shadow-md">
+    <div className="group relative rounded-md bg-background p-1 pb-2 border w-fit space-y-2 shadow-md">
+      <Menu nodeId={id} />
       <Handle
         style={{
           height: "12px",
@@ -157,7 +160,6 @@ function FinancialAnalysisNodeComponent({
               }}
               className=""
             />
-
             <div className="flex justify-between mt-2 text-sm text-muted-foreground">
               <span>{wordCount[0]} </span>
               <span>{wordCount[1]} </span>

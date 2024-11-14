@@ -9,6 +9,7 @@ import { useNodesStore } from "@/providers/nodesProvider";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { NodeHeader } from "./utils/header";
 import { Label } from "@/components/ui/label";
+import { Menu } from "./utils/menu";
 
 export type SwitchNodeData = { label: string };
 
@@ -52,7 +53,8 @@ function SwitchNodeComponent({ id, data }: NodeProps<SwitchNode>) {
   }, [nodes, sourceNodes]);
 
   return (
-    <div className="rounded-md bg-background p-1 pb-2 border max-w-[370px] min-w-[250px] space-y-2 shadow-md">
+    <div className="group relative rounded-md bg-background p-1 pb-2 border max-w-[370px] min-w-[250px] space-y-2 shadow-md">
+      <Menu nodeId={id} />
       {Array.from({ length: handleCount }).map((_, index) => (
         <Handle
           key={index}

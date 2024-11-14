@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import React from "react";
+import { Menu } from "./utils/menu";
 
 function Fa6SolidArrowDownWideShort(props: SVGProps<SVGSVGElement>) {
   return (
@@ -44,7 +45,7 @@ const outputFormats = [
   { type: ".txt", image: "/output/txt_logo.png" },
 ];
 
-function SummarizerNodeComponent({ data }: NodeProps<SummarizerNode>) {
+function SummarizerNodeComponent({ id, data }: NodeProps<SummarizerNode>) {
   const [wordCount, setWordCount] = useState<[number, number]>([100, 500]);
   const [keywords, setKeywords] = useState<string[]>([]);
   const [inputKeywords, setInputKeywords] = useState<string>("");
@@ -54,7 +55,8 @@ function SummarizerNodeComponent({ data }: NodeProps<SummarizerNode>) {
 
   return (
     // We add this class to use the same styles as React Flow's default nodes.
-    <div className="rounded-md bg-background p-1 pb-2 border w-[320px] space-y-2 shadow-md">
+    <div className="group relative rounded-md bg-background p-1 pb-2 border w-[320px] space-y-2 shadow-md">
+      <Menu nodeId={id} />
       <Handle
         style={{
           height: "12px",
