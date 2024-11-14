@@ -169,6 +169,7 @@ const defaultEdges: Edge[] = [
     target: "c",
     targetHandle: "handle-1",
     type: "button-edge",
+    animated: true,
   },
   {
     id: "b->c",
@@ -176,12 +177,14 @@ const defaultEdges: Edge[] = [
     target: "c",
     targetHandle: "handle-0",
     type: "button-edge",
+    animated: true,
   },
   {
     id: "a->d",
     source: "a",
     target: "d",
     type: "button-edge",
+    animated: true,
   },
   {
     id: "d->f",
@@ -189,12 +192,14 @@ const defaultEdges: Edge[] = [
     target: "f",
     type: "button-edge",
     targetHandle: "handle-2",
+    animated: true,
   },
   {
     id: "c->e",
     source: "c",
     target: "e",
     type: "button-edge",
+    animated: true,
   },
   {
     id: "e->f",
@@ -202,24 +207,28 @@ const defaultEdges: Edge[] = [
     target: "f",
     type: "button-edge",
     targetHandle: "handle-0",
+    animated: true,
   },
   {
     id: "f->g",
     source: "f",
     target: "g",
     type: "button-edge",
+    animated: true,
   },
   {
     id: "g->h",
     source: "g",
     target: "h",
     type: "button-edge",
+    animated: true,
   },
   {
     id: "e->i",
     source: "e",
     target: "i",
     type: "button-edge",
+    animated: true,
   },
   {
     id: "i->f",
@@ -227,6 +236,7 @@ const defaultEdges: Edge[] = [
     target: "f",
     type: "button-edge",
     targetHandle: "handle-1",
+    animated: true,
   },
 ];
 
@@ -251,7 +261,10 @@ export const createNodesStore = (initState: NodesState = defaultInitState) => {
       },
       onConnect: (connection) => {
         set((state) => ({
-          edges: addEdge({ ...connection, type: "button-edge" }, state.edges),
+          edges: addEdge(
+            { ...connection, type: "button-edge", animated: true },
+            state.edges
+          ),
         }));
       },
       setNodes: (nodes) => {
