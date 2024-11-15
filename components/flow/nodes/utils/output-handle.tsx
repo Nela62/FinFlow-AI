@@ -34,6 +34,7 @@ export const OutputHandle = ({
       </div>
 
       <Handle
+        id={`handle-${output.dataType}`}
         style={{
           left: `${(index + 1) * (100 / (totalHandles + 1))}%`,
           transform: "translateX(-50%) translateY(50%)",

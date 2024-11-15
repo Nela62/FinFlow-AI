@@ -67,6 +67,7 @@ export const InputHandle = ({
       </div>
 
       <Handle
+        id={`handle-${input.label}`}
         style={{
           height: "12px",
           width: "12px",

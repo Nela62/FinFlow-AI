@@ -63,8 +63,8 @@ const defaultParams: Params = {
 };
 
 const outputs: NodeOutput[] = [
-  { label: "summary", dataType: "TXT" },
   { label: "summary", dataType: "MD" },
+  { label: "summary", dataType: "TXT" },
   { label: "summary", dataType: "PDF" },
   { label: "summary", dataType: "DOCX" },
 ];
@@ -85,7 +85,7 @@ export const defaultData: SummarizerNodeData = {
   label: "Summarizer",
   params: defaultParams,
   inputs,
-  outputs,
+  outputs: [{ label: "summary", dataType: "MD" }],
   runFn,
 };
 
@@ -103,7 +103,9 @@ function SummarizerNodeComponent({ id, data }: NodeProps<SummarizerNode>) {
   const { updateNodeData } = useReactFlow();
 
   const [inputKeywords, setInputKeywords] = useState<string>("");
-  const [selectedOutputs, setSelectedOutputs] = useState<NodeOutput[]>([]);
+  const [selectedOutputs, setSelectedOutputs] = useState<NodeOutput[]>(
+    data.outputs
+  );
 
   useEffect(() => {
     console.log("selectedOutputs", selectedOutputs);
@@ -263,7 +265,7 @@ function SummarizerNodeComponent({ id, data }: NodeProps<SummarizerNode>) {
         <Separator orientation="horizontal" />
         <Outputs
           nodeId={id}
-          outputs={data.outputs}
+          outputs={outputs}
           selectedOutputs={selectedOutputs}
           setSelectedOutputs={setSelectedOutputs}
         />
