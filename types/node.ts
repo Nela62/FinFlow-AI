@@ -22,21 +22,56 @@ export const dataTypesList: DataTypeListItem[] = [
     name: "JSON",
     extension: ".json",
     formats: ["JSON", "Text"],
-    imageLink: "",
+    imageLink: "/output/JSON-file.png",
   },
   {
     name: "CSV",
     extension: ".csv",
     formats: ["Tabular", "Text"],
-    imageLink: "",
+    imageLink: "/output/csv-file.png",
   },
-  { name: "Excel", extension: ".xlsx", formats: ["Tabular"], imageLink: "" },
-  { name: "TXT", extension: ".txt", formats: ["Text"], imageLink: "" },
-  { name: "MD", extension: ".md", formats: ["Text"], imageLink: "" },
-  { name: "PDF", extension: ".pdf", formats: ["PDF"], imageLink: "" },
-  { name: "HTML", extension: ".html", formats: ["Text"], imageLink: "" },
-  { name: "XML", extension: ".xml", formats: ["Text"], imageLink: "" },
-  { name: "DOCX", extension: ".docx", formats: ["DOCX"], imageLink: "" },
+  {
+    name: "Excel",
+    extension: ".xlsx",
+    formats: ["Tabular"],
+    imageLink: "/output/excel-file.png",
+  },
+  {
+    name: "TXT",
+    extension: ".txt",
+    formats: ["Text"],
+    imageLink: "/output/txt-file.png",
+  },
+  {
+    name: "MD",
+    extension: ".md",
+    formats: ["Text"],
+    imageLink: "/output/markdown-file.png",
+  },
+  {
+    name: "PDF",
+    extension: ".pdf",
+    formats: ["PDF"],
+    imageLink: "/output/pdf-file.png",
+  },
+  {
+    name: "HTML",
+    extension: ".html",
+    formats: ["Text"],
+    imageLink: "/output/html-file.png",
+  },
+  {
+    name: "XML",
+    extension: ".xml",
+    formats: ["Text"],
+    imageLink: "/output/xml-file.png",
+  },
+  {
+    name: "DOCX",
+    extension: ".docx",
+    formats: ["DOCX"],
+    imageLink: "/output/docx-file.png",
+  },
 ];
 
 export type NodeInput = {
@@ -46,7 +81,7 @@ export type NodeInput = {
 
 export type NodeOutput = {
   label: string;
-  dataTypes: DataType[];
+  dataType: DataType;
 };
 
 export type NodeData = {

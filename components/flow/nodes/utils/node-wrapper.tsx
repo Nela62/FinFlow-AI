@@ -1,29 +1,42 @@
 import { cn } from "@/lib/utils";
 import { Menu } from "./menu";
-import { NodeInput } from "@/types/node";
+import { NodeInput, NodeOutput } from "@/types/node";
 import { Position } from "@xyflow/react";
-import { DefaultHandle } from "./default-handle";
+import { InputHandle } from "./input-handle";
+import { OutputHandle } from "./output-handle";
 
 export const NodeWrapper = ({
   nodeId,
   inputs,
+  outputs,
   children,
   width = "w-fit",
 }: {
   nodeId: string;
   inputs: NodeInput[];
+  outputs: NodeOutput[];
   children: React.ReactNode;
   width?: string;
 }) => {
   return (
-    <div>
-      <div>
-        {inputs.map((input) => (
-          <DefaultHandle
+    <div className="">
+      <div className="">
+        {inputs.map((input, index) => (
+          <InputHandle
             key={input.label}
             input={input}
-            type="target"
-            position={Position.Top}
+            index={index}
+            totalHandles={inputs.length}
+          />
+        ))}
+      </div>
+      <div className="">
+        {outputs.map((output, index) => (
+          <OutputHandle
+            key={output.dataType}
+            output={output}
+            index={index}
+            totalHandles={outputs.length}
           />
         ))}
       </div>

@@ -23,7 +23,7 @@ export const NodeHeader = ({
   return (
     <div
       className={cn(
-        "flex items-center gap-4 rounded-md p-4 mb-4",
+        "flex items-center gap-4 rounded-md p-2 mb-4",
         bgColor,
         textColor
       )}
@@ -33,15 +33,15 @@ export const NodeHeader = ({
           src="/nodes/sec-filing.png"
           alt="Node Image"
           className="rounded-md"
-          width={50}
-          height={50}
+          width={60}
+          height={60}
         />
       ) : (
         iconFn &&
         iconBgColor && (
           <div
             className={cn(
-              "rounded-md p-3 w-[50px] h-[50px] shadow-sm",
+              "rounded-md p-3 w-[60px] h-[60px] shadow-sm",
               iconBgColor
             )}
           >
@@ -49,7 +49,7 @@ export const NodeHeader = ({
           </div>
         )
       )}
-      <p className="">{title}</p>
+      <p className="font-semibold text-lg">{title}</p>
     </div>
   );
 };

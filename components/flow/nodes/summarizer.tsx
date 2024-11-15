@@ -2,7 +2,12 @@ import React, { useEffect } from "react";
 import Image from "next/image";
 
 import type { Node, NodeProps } from "@xyflow/react";
-import { Handle, Position, useReactFlow } from "@xyflow/react";
+import {
+  Handle,
+  Position,
+  useReactFlow,
+  useUpdateNodeInternals,
+} from "@xyflow/react";
 import { SVGProps, useState } from "react";
 import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
@@ -16,9 +21,10 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
-import { NodeData, NodeInput, NodeOutput } from "@/types/node";
+import { DataType, NodeData, NodeInput, NodeOutput } from "@/types/node";
 import { NodeWrapper } from "./utils/node-wrapper";
 import { useDebouncedCallback } from "use-debounce";
+import { Outputs } from "./utils/outputs";
 
 function Fa6SolidArrowDownWideShort(props: SVGProps<SVGSVGElement>) {
   return (
@@ -57,7 +63,10 @@ const defaultParams: Params = {
 };
 
 const outputs: NodeOutput[] = [
-  { label: "summary", dataTypes: ["TXT", "MD", "PDF", "DOCX"] },
+  { label: "summary", dataType: "TXT" },
+  { label: "summary", dataType: "MD" },
+  { label: "summary", dataType: "PDF" },
+  { label: "summary", dataType: "DOCX" },
 ];
 
 const runFn = async (params: Record<string, any>) => {
@@ -82,14 +91,8 @@ export const defaultData: SummarizerNodeData = {
 
 export type SummarizerNode = Node<SummarizerNodeData>;
 
-const outputFormats = [
-  { type: ".json", image: "/output/json_logo.png" },
-  { type: ".csv", image: "/output/csv_logo.png" },
-  { type: ".xlsx", image: "/output/excel_logo.png" },
-  { type: ".txt", image: "/output/txt_logo.png" },
-];
-
 function SummarizerNodeComponent({ id, data }: NodeProps<SummarizerNode>) {
+  const updateNodeInternals = useUpdateNodeInternals();
   const [params, setParams] = useState<Record<string, any>>(data.params);
   const setParamsDebounced = useDebouncedCallback(
     (params: Record<string, any>) => {
@@ -100,15 +103,24 @@ function SummarizerNodeComponent({ id, data }: NodeProps<SummarizerNode>) {
   const { updateNodeData } = useReactFlow();
 
   const [inputKeywords, setInputKeywords] = useState<string>("");
-  const [selectedOutputFormat, setSelectedOutputFormat] =
-    useState<string>(".json");
+  const [selectedOutputs, setSelectedOutputs] = useState<NodeOutput[]>([]);
+
+  useEffect(() => {
+    console.log("selectedOutputs", selectedOutputs);
+    updateNodeInternals(id);
+  }, [selectedOutputs]);
 
   useEffect(() => {
     updateNodeData(id, params);
   }, [params]);
 
   return (
-    <NodeWrapper nodeId={id} width="w-[360px]" inputs={inputs}>
+    <NodeWrapper
+      nodeId={id}
+      width="w-[360px]"
+      inputs={inputs}
+      outputs={selectedOutputs}
+    >
       <NodeHeader
         title={data.label}
         bgColor="bg-orange-200"
@@ -140,6 +152,7 @@ function SummarizerNodeComponent({ id, data }: NodeProps<SummarizerNode>) {
           </div>
         </div>
         <Separator orientation="horizontal" />
+
         {/* Semantic Keyword Focus */}
         <div className="space-y-4">
           <p className="text-sm font-semibold">Semantic Keyword Focus</p>
@@ -231,6 +244,7 @@ function SummarizerNodeComponent({ id, data }: NodeProps<SummarizerNode>) {
           </div>
         </div>
         <Separator orientation="horizontal" />
+
         {/* Custom Instructions */}
         <div className="space-y-2">
           <p className="text-sm font-semibold">Custom Instructions</p>
@@ -247,35 +261,12 @@ function SummarizerNodeComponent({ id, data }: NodeProps<SummarizerNode>) {
           </div>
         </div>
         <Separator orientation="horizontal" />
-        <div className="space-y-2">
-          <p className="text-sm font-semibold">Output</p>
-          <div className="flex gap-4">
-            {outputFormats.map((outputFormat) => (
-              <div
-                key={outputFormat.type}
-                className={cn(
-                  "rounded-md p-1 space-y-1 border-2 cursor-pointer ",
-                  selectedOutputFormat === outputFormat.type
-                    ? "bg-steel-blue-200 border-steel-blue-500"
-                    : "bg-muted border-transparent"
-                )}
-                onClick={() => {
-                  setSelectedOutputFormat(outputFormat.type);
-                }}
-              >
-                <div className="flex items-center justify-center bg-background rounded-md p-1">
-                  <Image
-                    src={outputFormat.image}
-                    alt={outputFormat.type}
-                    width={40}
-                    height={40}
-                  />
-                </div>
-                <p className="text-xs px-1">{outputFormat.type}</p>
-              </div>
-            ))}
-          </div>
-        </div>
+        <Outputs
+          nodeId={id}
+          outputs={data.outputs}
+          selectedOutputs={selectedOutputs}
+          setSelectedOutputs={setSelectedOutputs}
+        />
         <Separator orientation="horizontal" />
         <div className="flex justify-between">
           <p className="text-xs">Cache output</p>
@@ -287,16 +278,6 @@ function SummarizerNodeComponent({ id, data }: NodeProps<SummarizerNode>) {
           </div>
         </div>
       </div>
-      <Handle
-        style={{
-          height: "12px",
-          width: "12px",
-          backgroundColor: "white",
-          border: "1px solid #6b7280",
-        }}
-        type="source"
-        position={Position.Bottom}
-      />
     </NodeWrapper>
   );
 }
