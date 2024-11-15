@@ -11,7 +11,7 @@ export const csv = `year, symbol, revenue, revenuePercentage, ebitda, ebitdaPerc
 "2029","AAPL","631734147383","10.07","203936738085","32.28","183897900530","29.11","20038837554","3.17","120316909203","19.05","96053677011","15.2","10167596127","1.61","101845034847","16.12","-17288478562","-2.74","228.22","1.24","15408095000","4.32","24.09","3.28","4.32","4.72","10.17","106629000000","3516435440900","3623064440900","2.94","97.06","9.98","16549050","153464546253","155814583110","485101326009","4","2710041794599","1684290991256","2169392317266","76686000000","2092706317266","135.82","162047166435",
 `;
 
-export const md = `**Apple Inc. DCF Valuation: Overvalued by 45% Based on Intrinsic Value Analysis**
+export const md = `## Apple Inc. DCF Valuation: Overvalued by 45% Based on Intrinsic Value Analysis
 
 | Year | Revenue ($B) | Net Margin (%) | Net Income ($B) | Free Cash Flow to Equity ($B) | Discount Factor (8.39%) | Present Value ($B) |
 | :---- | :---- | :---- | :---- | :---- | :---- | :---- |

@@ -4,7 +4,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { NodeRunResult } from "@/types/node";
 import Markdown from "react-markdown";
 
@@ -12,8 +12,9 @@ import remarkGfm from "remark-gfm";
 
 export const ResultContent = ({ result }: { result: NodeRunResult }) => {
   return (
-    <ScrollArea className="h-[calc(100vh-3rem)]">
-      <Accordion type="single">
+    <ScrollArea className="h-[calc(100vh-100px)] w-full">
+      <ScrollBar orientation="horizontal" />
+      <Accordion type="single" defaultValue="output">
         <AccordionItem value="input">
           <AccordionTrigger className="bg-background px-4 font-semibold">
             Input

@@ -1,4 +1,4 @@
-export const res = `**Apple Inc. 2024 10-K Analysis: Financial Performance, Risks, and Strategic Insights**
+export const res = `## Apple Inc. 2024 10-K Analysis: Financial Performance, Risks, and Strategic Insights
 
 Apple Inc.'s 2024 10-K filing highlights strong financial and operational performance, driven by its diverse product and service portfolio. For the fiscal year ending September 28, 2024, Apple reported total net sales of $394.3 billion, with the services segment contributing $87.1 billion, accounting for 22% of total revenue. The Americas region led with $160.3 billion in sales (41% of total revenue), followed by Greater China at $93.3 billion (24%). The iPhone remains Apple’s dominant product, generating $205 billion, or 52% of total revenue. Meanwhile, Mac and iPad sales contributed $40.5 billion and $30.1 billion, respectively. Apple’s direct distribution channels, including its retail and online stores, accounted for 38% of net sales, while indirect channels, such as resellers, represented 62%.
 
