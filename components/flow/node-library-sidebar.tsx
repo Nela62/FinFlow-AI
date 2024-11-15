@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useDnD } from "./dnd-context";
 import { Card, CardContent } from "../ui/card";
 import { Button } from "../ui/button";
@@ -19,8 +19,10 @@ const nodesList = [
 export default () => {
   const [_, setType] = useDnD();
   const { nodes, addRunResult } = useNodesStore((state) => state);
+  const [isRunning, setIsRunning] = useState(false);
 
   const run = async () => {
+    setIsRunning(true);
     const order = ["a", "b", "d", "e", "i", "f", "g"];
     for (const nodeId of order) {
       console.log("running ", nodeId);
@@ -29,6 +31,7 @@ export default () => {
       const result = await node?.data.runFn(node.data.params);
       addRunResult({ ...result, id: nodeId });
     }
+    setIsRunning(false);
   };
 
   const onDragStart = (
@@ -55,7 +58,9 @@ export default () => {
           </CardContent>
         </Card>
       ))}
-      <Button onClick={run}>Run</Button>
+      <Button onClick={run} disabled={isRunning}>
+        {isRunning ? "Running..." : "Run"}
+      </Button>
     </aside>
   );
 };
