@@ -18,20 +18,6 @@ export const InputHandle = ({
   index: number;
   totalHandles: number;
 }) => {
-  const dataTypes = useMemo(
-    () =>
-      Array.from(
-        new Set(
-          input.acceptedFormats.flatMap((type) =>
-            dataTypesList
-              .filter((item) => item.formats.includes(type))
-              .map((item) => item.name)
-          )
-        )
-      ),
-    [input.acceptedFormats]
-  );
-
   return (
     <div className="relative">
       <div
@@ -41,18 +27,20 @@ export const InputHandle = ({
         <Tooltip>
           <TooltipTrigger>
             <div className="flex gap-1 bg-background rounded-md px-2 py-0.5 items-center">
-              <File className="h-2 w-2 text-muted-foreground" />
-              <p className="text-xs text-muted-foreground">{input.label}</p>
+              {/* <File className="h-2 w-2 text-muted-foreground" /> */}
+              <p className="text-xs text-muted-foreground">
+                {input.acceptedFormat}
+              </p>
               <CircleHelp className="h-2 w-2 text-muted-foreground" />
             </div>
           </TooltipTrigger>
           <TooltipContent className="shadow-sm">
             <div className="flex">
               <p>Accepted formats: </p>
-              {dataTypes.map((type, i) => (
+              {input.acceptedTypes.map((type, i) => (
                 <Fragment key={type}>
                   <p className="font-semibold pl-1">{type}</p>
-                  {i !== dataTypes.length - 1 && <p>, </p>}
+                  {i !== input.acceptedTypes.length - 1 && <p>, </p>}
                 </Fragment>
               ))}
             </div>

@@ -24,6 +24,7 @@ import {
 import {
   ApiConnectorNode,
   type ApiConnectorNode as ApiConnectorNodeType,
+  defaultData as apiConnectorDefaultData,
 } from "@/components/flow/nodes/api-connector";
 import {
   SwitchNode,
@@ -115,7 +116,7 @@ const defaultNodes: AppNode[] = [
     id: "b",
     type: "api-connector",
     position: { x: 0, y: 0 },
-    data: { label: "API Connector" },
+    data: apiConnectorDefaultData,
   },
   {
     id: "c",
@@ -174,6 +175,7 @@ const defaultEdges: Edge[] = [
     id: "b->c",
     source: "b",
     target: "c",
+    sourceHandle: "handle-JSON",
     targetHandle: "handle-0",
     type: "button-edge",
     animated: true,

@@ -1,13 +1,7 @@
 import React, { useEffect } from "react";
-import Image from "next/image";
 
 import type { Node, NodeProps } from "@xyflow/react";
-import {
-  Handle,
-  Position,
-  useReactFlow,
-  useUpdateNodeInternals,
-} from "@xyflow/react";
+import { useReactFlow, useUpdateNodeInternals } from "@xyflow/react";
 import { SVGProps, useState } from "react";
 import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
@@ -21,7 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
-import { DataType, NodeData, NodeInput, NodeOutput } from "@/types/node";
+import { dataTypesList, NodeInput, NodeOutput } from "@/types/node";
 import { NodeWrapper } from "./utils/node-wrapper";
 import { useDebouncedCallback } from "use-debounce";
 import { Outputs } from "./utils/outputs";
@@ -46,7 +40,10 @@ function Fa6SolidArrowDownWideShort(props: SVGProps<SVGSVGElement>) {
 const inputs: NodeInput[] = [
   {
     label: "text",
-    acceptedFormats: ["Text"],
+    acceptedFormat: "Text",
+    acceptedTypes: dataTypesList
+      .filter((item) => item.formats.includes("Text"))
+      ?.map((item) => item.name),
   },
 ];
 
@@ -108,7 +105,6 @@ function SummarizerNodeComponent({ id, data }: NodeProps<SummarizerNode>) {
   );
 
   useEffect(() => {
-    console.log("selectedOutputs", selectedOutputs);
     updateNodeInternals(id);
   }, [selectedOutputs]);
 

@@ -1,9 +1,14 @@
-import React from "react";
+import React, { useEffect } from "react";
 import type { SVGProps } from "react";
 
 import Image from "next/image";
 import type { Node, NodeProps } from "@xyflow/react";
-import { Handle, Position } from "@xyflow/react";
+import {
+  Handle,
+  Position,
+  useReactFlow,
+  useUpdateNodeInternals,
+} from "@xyflow/react";
 import { StockPicker } from "@/components/widgets/utils/stock-picker";
 import { useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
@@ -28,10 +33,10 @@ import { Button } from "@/components/ui/button";
 import { ChevronDown } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Menu } from "./utils/menu";
-
-export type ApiConnectorNodeData = { label: string };
-
-export type ApiConnectorNode = Node<ApiConnectorNodeData>;
+import { NodeInput, NodeOutput } from "@/types/node";
+import { useDebouncedCallback } from "use-debounce";
+import { NodeWrapper } from "./utils/node-wrapper";
+import { Outputs } from "./utils/outputs";
 
 function MajesticonsDataLine(props: SVGProps<SVGSVGElement>) {
   return (
@@ -53,6 +58,56 @@ function MajesticonsDataLine(props: SVGProps<SVGSVGElement>) {
     </svg>
   );
 }
+
+const inputs: NodeInput[] = [
+  {
+    label: "stock",
+    acceptedFormat: "Text",
+    acceptedTypes: ["TXT"],
+  },
+];
+
+type Params = {
+  stock: string;
+  apiProvider: string;
+  endpoints: string[];
+};
+
+const defaultParams: Params = {
+  stock: "AAPL",
+  apiProvider: "yfinance",
+  endpoints: ["income", "balance", "cashflow"],
+};
+
+const outputs: NodeOutput[] = [
+  { label: "data", dataType: "JSON" },
+  { label: "data", dataType: "XML" },
+  { label: "tables", dataType: "CSV" },
+  { label: "tables", dataType: "XLSX" },
+];
+
+const runFn = async (params: Record<string, any>) => {
+  return {};
+};
+
+// TODO: This can be abstracted to a generic node type + params type
+export type ApiConnectorNodeData = {
+  label: string;
+  params: Params;
+  inputs: NodeInput[];
+  outputs: NodeOutput[];
+  runFn: (params: Record<string, any>) => Promise<Record<string, any>>;
+};
+
+export const defaultData: ApiConnectorNodeData = {
+  label: "API Connector",
+  params: defaultParams,
+  inputs,
+  outputs: [{ label: "data", dataType: "JSON" }],
+  runFn,
+};
+
+export type ApiConnectorNode = Node<ApiConnectorNodeData>;
 
 const apiProviders = [
   { id: "benzinga", name: "Benzinga" },
@@ -94,35 +149,45 @@ const sections = [
   },
 ];
 
-const outputFormats = [
-  { type: ".json", image: "/output/json_logo.png" },
-  // TODO: change the logo
-  { type: ".xml", image: "/output/txt_logo.png" },
-  { type: ".csv", image: "/output/csv_logo.png" },
-  { type: ".xlsx", image: "/output/excel_logo.png" },
-];
-
 function ApiConnectorNodeComponent({ id, data }: NodeProps<ApiConnectorNode>) {
-  const [selectedStockTicker, setSelectedStockTicker] =
-    useState<string>("AAPL");
-  const [selectedApiProvider, setSelectedApiProvider] =
-    useState<string>("yfinance");
-  const [selectedEndpoints, setSelectedEndpoints] = useState<string[]>([]);
-  const [selectedOutputFormat, setSelectedOutputFormat] =
-    useState<string>(".json");
+  // TODO: Check if there is an input and adjust the ticker param
+  const updateNodeInternals = useUpdateNodeInternals();
+  const [params, setParams] = useState<Record<string, any>>(data.params);
+  const setParamsDebounced = useDebouncedCallback(
+    (params: Record<string, any>) => {
+      setParams(params);
+    },
+    1000
+  );
+  const { updateNodeData } = useReactFlow();
+
+  const [selectedOutputs, setSelectedOutputs] = useState<NodeOutput[]>(
+    data.outputs
+  );
+
+  useEffect(() => {
+    updateNodeInternals(id);
+  }, [selectedOutputs]);
+
+  useEffect(() => {
+    updateNodeData(id, params);
+  }, [params]);
 
   const apiProvider = useMemo(() => {
     return (
       apiProviders.find(
-        (apiProvider) => apiProvider.id === selectedApiProvider
+        (apiProvider) => apiProvider.id === params.apiProvider
       ) ?? { id: "yfinance", name: "Yahoo Finance" }
     );
-  }, [selectedApiProvider]);
+  }, [params.apiProvider]);
 
   return (
-    // We add this class to use the same styles as React Flow's default nodes.
-    <div className="group relative rounded-md bg-background p-1 pb-2 border max-w-[370px] space-y-2 shadow-md">
-      <Menu nodeId={id} />
+    <NodeWrapper
+      nodeId={id}
+      width="w-[360px]"
+      inputs={inputs}
+      outputs={selectedOutputs}
+    >
       <NodeHeader
         title="API Connector"
         bgColor="bg-purple-200"
@@ -134,9 +199,9 @@ function ApiConnectorNodeComponent({ id, data }: NodeProps<ApiConnectorNode>) {
       <div className="space-y-2 px-2">
         <p className="text-sm font-semibold">Company</p>
         <StockPicker
-          currentStockTicker={selectedStockTicker}
+          currentStockTicker={params.stock}
           onStockClick={(stockId) => {
-            setSelectedStockTicker(stockId);
+            setParamsDebounced({ ...params, stock: stockId });
           }}
         />
         <Separator orientation="horizontal" />
@@ -156,7 +221,10 @@ function ApiConnectorNodeComponent({ id, data }: NodeProps<ApiConnectorNode>) {
                   <DropdownMenuItem
                     key={apiProvider.id}
                     onClick={() => {
-                      setSelectedApiProvider(apiProvider.id);
+                      setParamsDebounced({
+                        ...params,
+                        apiProvider: apiProvider.id,
+                      });
                     }}
                   >
                     {apiProvider.name}
@@ -194,20 +262,24 @@ function ApiConnectorNodeComponent({ id, data }: NodeProps<ApiConnectorNode>) {
                           className={cn(
                             "cursor-pointer",
                             // TODO: Get the right colors
-                            selectedEndpoints.includes(endpoint)
+                            params.endpoints.includes(endpoint)
                               ? "bg-steel-blue-200 hover:bg-steel-blue-200"
                               : "hover:bg-muted"
                           )}
+                          variant="secondary"
                           onClick={() => {
-                            if (selectedEndpoints.includes(endpoint)) {
-                              setSelectedEndpoints((prev) =>
-                                prev.filter((e) => e !== endpoint)
-                              );
+                            if (params.endpoints.includes(endpoint)) {
+                              setParamsDebounced({
+                                ...params,
+                                endpoints: params.endpoints.filter(
+                                  (e: string) => e !== endpoint
+                                ),
+                              });
                             } else {
-                              setSelectedEndpoints((prev) => [
-                                ...prev,
-                                endpoint,
-                              ]);
+                              setParamsDebounced({
+                                ...params,
+                                endpoints: [...params.endpoints, endpoint],
+                              });
                             }
                           }}
                         >
@@ -239,35 +311,12 @@ function ApiConnectorNodeComponent({ id, data }: NodeProps<ApiConnectorNode>) {
           </div>
         </div>
         <Separator orientation="horizontal" />
-        <div className="space-y-2">
-          <p className="text-sm font-semibold">Output</p>
-          <div className="flex gap-4">
-            {outputFormats.map((outputFormat) => (
-              <div
-                key={outputFormat.type}
-                className={cn(
-                  "rounded-md p-1 space-y-1 border-2 cursor-pointer ",
-                  selectedOutputFormat === outputFormat.type
-                    ? "bg-steel-blue-200 border-steel-blue-500"
-                    : "bg-muted border-transparent"
-                )}
-                onClick={() => {
-                  setSelectedOutputFormat(outputFormat.type);
-                }}
-              >
-                <div className="flex items-center justify-center bg-background rounded-md p-1">
-                  <Image
-                    src={outputFormat.image}
-                    alt={outputFormat.type}
-                    width={40}
-                    height={40}
-                  />
-                </div>
-                <p className="text-xs px-1">{outputFormat.type}</p>
-              </div>
-            ))}
-          </div>
-        </div>
+        <Outputs
+          nodeId={id}
+          outputs={outputs}
+          selectedOutputs={selectedOutputs}
+          setSelectedOutputs={setSelectedOutputs}
+        />
         <Separator orientation="horizontal" />
         <div className="flex justify-between">
           <p className="text-xs">Cache output</p>
@@ -289,7 +338,7 @@ function ApiConnectorNodeComponent({ id, data }: NodeProps<ApiConnectorNode>) {
         type="source"
         position={Position.Bottom}
       />
-    </div>
+    </NodeWrapper>
   );
 }
 

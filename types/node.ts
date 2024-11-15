@@ -2,7 +2,7 @@ export type DataTypeFormat = "Text" | "Tabular" | "PDF" | "JSON" | "DOCX";
 export type DataType =
   | "JSON"
   | "CSV"
-  | "Excel"
+  | "XLSX"
   | "TXT"
   | "MD"
   | "PDF"
@@ -31,7 +31,7 @@ export const dataTypesList: DataTypeListItem[] = [
     imageLink: "/output/csv-file.png",
   },
   {
-    name: "Excel",
+    name: "XLSX",
     extension: ".xlsx",
     formats: ["Tabular"],
     imageLink: "/output/excel-file.png",
@@ -76,7 +76,8 @@ export const dataTypesList: DataTypeListItem[] = [
 
 export type NodeInput = {
   label: string;
-  acceptedFormats: DataTypeFormat[];
+  acceptedFormat: DataTypeFormat;
+  acceptedTypes: DataType[];
 };
 
 export type NodeOutput = {

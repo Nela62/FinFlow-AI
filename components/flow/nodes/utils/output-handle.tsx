@@ -28,7 +28,7 @@ export const OutputHandle = ({
           </p>
         </div>
         <div className="flex gap-1 bg-background rounded-md px-2 py-0.5 items-center">
-          <File className="h-2 w-2 text-muted-foreground" />
+          {/* <File className="h-2 w-2 text-muted-foreground" /> */}
           <p className="text-xs text-muted-foreground">{output.dataType}</p>
         </div>
       </div>
