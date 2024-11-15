@@ -17,10 +17,10 @@ export const RunResultsSidebar = () => {
     [nodes, runNodeIds]
   );
 
-  // console.log("nodes ", nodes);
-  // console.log("edges ", edges);
-  // console.log("runNodeIds ", runNodeIds);
-  // console.log("runNodes ", runNodes);
+  console.log("nodes ", nodes);
+  console.log("edges ", edges);
+  console.log("runNodeIds ", runNodeIds);
+  console.log("runResults ", runResults);
 
   return (
     <div
@@ -45,8 +45,8 @@ export const RunResultsSidebar = () => {
             <TabsContent key={node.id} value={node.id}>
               <ResultContent
                 result={
-                  runResults.find((result) => result.id === node.id) ??
-                  runResults[0]
+                  runResults.find((result) => result.id === node.type) ??
+                  runResults[runNodes.length - 1]
                 }
               />
             </TabsContent>
