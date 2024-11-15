@@ -39,13 +39,13 @@ const inputs: NodeInput[] = [
 ];
 
 type Params = {
-  sender: string;
+  // sender: string;
   recipient: string;
   subject: string;
 };
 
 const defaultParams: Params = {
-  sender: "",
+  // sender: "",
   recipient: "",
   subject: "",
 };
@@ -112,10 +112,10 @@ function EmailSenderNodeComponent({
         <div className="space-y-4 nodrag">
           <p className="text-sm font-semibold">Settings</p>
 
-          <div className="space-y-1 w-full">
+          {/* <div className="space-y-1 w-full">
             <p className="text-xs">Email sender</p>
             <Input className="w-full" type="email" />
-          </div>
+          </div> */}
           <div className="space-y-1 w-full">
             <p className="text-xs">Email recipient</p>
             <Input className="w-full" type="email" />

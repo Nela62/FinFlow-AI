@@ -41,11 +41,7 @@ import {
   EmailSenderNodeType,
   defaultData as emailSenderDefaultData,
 } from "@/components/flow/nodes/email-sender";
-import {
-  FinancialAnalysisNode,
-  FinancialAnalysisNodeType,
-  defaultData as financialAnalysisDefaultData,
-} from "@/components/flow/nodes/financial-analysis";
+import { defaultData as financialAnalysisDefaultData } from "@/components/flow/nodes/financial-analysis";
 import { dataTypesList, NodeRunResult, RunResults } from "@/types/node";
 
 export const defaultDataMap = {

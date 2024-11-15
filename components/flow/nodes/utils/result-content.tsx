@@ -39,7 +39,7 @@ export const ResultContent = ({ result }: { result: NodeRunResult }) => {
             {typeof result.outputData === "object" ? (
               <pre>{JSON.stringify(result.outputData, null, 2)}</pre>
             ) : (
-              <Markdown remarkPlugins={[remarkGfm]}>
+              <Markdown remarkPlugins={[remarkGfm]} className="markdown">
                 {result.outputData}
               </Markdown>
             )}

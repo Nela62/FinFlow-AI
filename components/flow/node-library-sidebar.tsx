@@ -23,13 +23,26 @@ export default () => {
 
   const run = async () => {
     setIsRunning(true);
-    const order = ["a", "b", "d", "e", "i", "f", "g"];
-    for (const nodeId of order) {
-      console.log("running ", nodeId);
-      const node = nodes.find((node) => node.id === nodeId);
+    const order = [
+      "api-connector",
+      "sec-filing",
+      "summarizer",
+      "dcf-model",
+      "financial-analysis",
+      "appender",
+      "document-compiler",
+    ];
+    // const order = ["a", "b", "d", "e", "i", "f", "g"];
+    for (const nodeType of order) {
+      console.log("running ", nodeType);
+      const node = nodes.find((node) => node.type === nodeType);
+      if (!node) {
+        // console.error("Node not found: ", nodeType);
+        continue;
+      }
       // @ts-ignore
       const result = await node?.data.runFn(node.data.params);
-      addRunResult({ ...result, id: nodeId });
+      addRunResult({ ...result, id: nodeType });
     }
     setIsRunning(false);
   };

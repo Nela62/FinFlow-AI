@@ -5,7 +5,7 @@ import { ResultContent } from "./nodes/utils/result-content";
 import { useMemo } from "react";
 
 export const RunResultsSidebar = () => {
-  const { nodes, runResults } = useNodesStore((state) => state);
+  const { nodes, runResults, edges } = useNodesStore((state) => state);
 
   const runNodeIds = useMemo(
     () => runResults.map((result) => result.id),
@@ -13,9 +13,14 @@ export const RunResultsSidebar = () => {
   );
 
   const runNodes = useMemo(
-    () => runNodeIds.map((id) => nodes.find((node) => node.id === id)!),
+    () => runNodeIds.map((id) => nodes.find((node) => node.type === id)!),
     [nodes, runNodeIds]
   );
+
+  console.log("nodes ", nodes);
+  console.log("edges ", edges);
+  console.log("runNodeIds ", runNodeIds);
+  console.log("runNodes ", runNodes);
 
   return (
     <div
@@ -25,7 +30,7 @@ export const RunResultsSidebar = () => {
       )}
     >
       {runNodes.length > 0 && (
-        <Tabs defaultValue={runNodes[0].id}>
+        <Tabs defaultValue={runNodes[runNodes.length - 1].id}>
           <div className="relative rounded-sm overflow-x-scroll h-10 bg-muted">
             <TabsList className="absolute flex flex-row justify-stretch w-full">
               {runNodes.map((node) => (
