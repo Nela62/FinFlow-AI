@@ -1,4 +1,11 @@
-export type DataTypeFormat = "Text" | "Tabular" | "PDF" | "JSON" | "DOCX";
+export type DataTypeFormat =
+  | "Text"
+  | "Tabular"
+  | "PDF"
+  | "JSON"
+  | "DOCX"
+  | "File";
+
 export type DataType =
   | "JSON"
   | "CSV"

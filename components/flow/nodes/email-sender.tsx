@@ -1,22 +1,12 @@
-import Image from "next/image";
 import type { Node, NodeProps } from "@xyflow/react";
-import { Handle, Position } from "@xyflow/react";
-import { SVGProps, useState } from "react";
-import { cn } from "@/lib/utils";
-import { Separator } from "@/components/ui/separator";
-import { Badge } from "@/components/ui/badge";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
+import { Handle, Position, useReactFlow } from "@xyflow/react";
+import { SVGProps, useEffect, useState } from "react";
 import { NodeHeader } from "./utils/header";
-import { Slider as DoubleSlider } from "@/components/ui/double-slider";
-import { Slider } from "@/components/ui/slider";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { X } from "lucide-react";
-import { Textarea } from "@/components/ui/textarea";
 import React from "react";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Menu } from "./utils/menu";
+import { NodeInput, NodeOutput } from "@/types/node";
+import { useDebouncedCallback } from "use-debounce";
 
 function IconParkOutlineSendEmail(props: SVGProps<SVGSVGElement>) {
   return (
@@ -41,25 +31,65 @@ function IconParkOutlineSendEmail(props: SVGProps<SVGSVGElement>) {
   );
 }
 
-export type EmailSenderNodeData = { label: string };
+// TODO: Make files and text optional but one mandatory and allow several files
+const inputs: NodeInput[] = [
+  { label: "text", acceptedFormat: "Text", acceptedTypes: ["TXT"] },
+  { label: "file", acceptedFormat: "File", acceptedTypes: ["PDF", "DOCX"] },
+];
+
+type Params = {
+  sender: string;
+  recipient: string;
+  subject: string;
+};
+
+const defaultParams: Params = {
+  sender: "",
+  recipient: "",
+  subject: "",
+};
+
+const outputs: NodeOutput[] = [];
+
+const runFn = async (params: Record<string, any>) => {
+  return {};
+};
+
+export type EmailSenderNodeData = {
+  label: string;
+  params: Params;
+  inputs: NodeInput[];
+  outputs: NodeOutput[];
+  runFn: (params: Record<string, any>) => Promise<Record<string, any>>;
+};
+
+export const defaultData: EmailSenderNodeData = {
+  label: "Email Sender",
+  params: defaultParams,
+  inputs,
+  outputs,
+  runFn,
+};
 
 export type EmailSenderNodeType = Node<EmailSenderNodeData>;
-
-const outputFormats = [
-  // { type: ".json", image: "/output/json_logo.png" },
-  { type: ".csv", image: "/output/csv_logo.png" },
-  { type: ".xlsx", image: "/output/excel_logo.png" },
-  // { type: ".txt", image: "/output/txt_logo.png" },
-];
 
 function EmailSenderNodeComponent({
   id,
   data,
 }: NodeProps<EmailSenderNodeType>) {
-  // const [discountRate, setDiscountRate] = useState<number>(0.1);
-  // const [timeHorizon, setTimeHorizon] = useState<number>(10);
-  const [selectedOutputFormat, setSelectedOutputFormat] =
-    useState<string>(".csv");
+  const [params, setParams] = useState<Record<string, any>>(data.params);
+  const setParamsDebounced = useDebouncedCallback(
+    (params: Record<string, any>) => {
+      setParams(params);
+    },
+    1000
+  );
+  const { updateNodeData } = useReactFlow();
+
+  // TODO: Set params
+  useEffect(() => {
+    updateNodeData(id, { params });
+  }, [params]);
 
   return (
     // We add this class to use the same styles as React Flow's default nodes.

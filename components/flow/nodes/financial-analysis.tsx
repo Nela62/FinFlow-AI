@@ -1,21 +1,14 @@
-import Image from "next/image";
 import type { Node, NodeProps } from "@xyflow/react";
-import { Handle, Position } from "@xyflow/react";
-import { SVGProps, useState } from "react";
-import { cn } from "@/lib/utils";
+import { useReactFlow, useUpdateNodeInternals } from "@xyflow/react";
+import { SVGProps, useEffect, useState } from "react";
 import { Separator } from "@/components/ui/separator";
-import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { NodeHeader } from "./utils/header";
 import { Slider as DoubleSlider } from "@/components/ui/double-slider";
-import { Slider } from "@/components/ui/slider";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { ChevronDown, FolderOpen, Pencil, X } from "lucide-react";
-import { Textarea } from "@/components/ui/textarea";
+import { ChevronDown } from "lucide-react";
 import React from "react";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -23,7 +16,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Menu } from "./utils/menu";
+import { NodeInput, NodeOutput } from "@/types/node";
+import { useDebouncedCallback } from "use-debounce";
+import { NodeWrapper } from "./utils/node-wrapper";
+import { Outputs } from "./utils/outputs";
 
 function MdiChartFinance(props: SVGProps<SVGSVGElement>) {
   return (
@@ -42,7 +38,55 @@ function MdiChartFinance(props: SVGProps<SVGSVGElement>) {
   );
 }
 
-export type FinancialAnalysisNodeData = { label: string };
+// TODO: Add financial data and maybe other inputs -- Altan
+const inputs: NodeInput[] = [
+  {
+    label: "dcf-model",
+    acceptedFormat: "Tabular",
+    acceptedTypes: ["CSV", "XLSX"],
+  },
+];
+
+type Params = {
+  analysisType: string;
+  wordCount: [number, number];
+  includeCharts: boolean;
+  includeTables: boolean;
+};
+
+const defaultParams: Params = {
+  analysisType: "Growth Investing Perspective",
+  wordCount: [300, 600],
+  includeCharts: false,
+  includeTables: false,
+};
+
+const outputs: NodeOutput[] = [
+  { label: "analysis", dataType: "TXT" },
+  { label: "analysis", dataType: "MD" },
+  { label: "analysis", dataType: "PDF" },
+  { label: "analysis", dataType: "DOCX" },
+];
+
+const runFn = async (params: Record<string, any>) => {
+  return {};
+};
+
+export type FinancialAnalysisNodeData = {
+  label: string;
+  params: Params;
+  inputs: NodeInput[];
+  outputs: NodeOutput[];
+  runFn: (params: Record<string, any>) => Promise<Record<string, any>>;
+};
+
+export const defaultData: FinancialAnalysisNodeData = {
+  label: "Financial Analysis",
+  params: defaultParams,
+  inputs,
+  outputs: [{ label: "analysis", dataType: "MD" }],
+  runFn,
+};
 
 export type FinancialAnalysisNodeType = Node<FinancialAnalysisNodeData>;
 
@@ -53,40 +97,41 @@ const analysisTypes = [
   "Income Investing",
 ];
 
-const outputFormats = [
-  { type: ".html", image: "/output/json_logo.png" },
-  { type: ".pdf", image: "/output/csv_logo.png" },
-  { type: ".md", image: "/output/excel_logo.png" },
-  { type: ".docx", image: "/output/excel_logo.png" },
-];
-
 function FinancialAnalysisNodeComponent({
   id,
   data,
 }: NodeProps<FinancialAnalysisNodeType>) {
-  const [analysisType, setAnalysisType] = useState<string>(
-    "Growth Investing Perspective"
+  const updateNodeInternals = useUpdateNodeInternals();
+  const [params, setParams] = useState<Record<string, any>>(data.params);
+  const setParamsDebounced = useDebouncedCallback(
+    (params: Record<string, any>) => {
+      setParams(params);
+    },
+    1000
   );
-  const [wordCount, setWordCount] = useState<[number, number]>([100, 500]);
+  const { updateNodeData } = useReactFlow();
 
-  // const [timeHorizon, setTimeHorizon] = useState<number>(10);
-  const [selectedOutputFormat, setSelectedOutputFormat] =
-    useState<string>(".csv");
+  const [selectedOutputs, setSelectedOutputs] = useState<NodeOutput[]>(
+    data.outputs
+  );
+
+  useEffect(() => {
+    updateNodeData(id, { params });
+  }, [params]);
+
+  useEffect(() => {
+    updateNodeInternals(id);
+    updateNodeData(id, { outputs: selectedOutputs });
+  }, [selectedOutputs]);
 
   return (
     // We add this class to use the same styles as React Flow's default nodes.
-    <div className="group relative rounded-md bg-background p-1 pb-2 border w-fit space-y-2 shadow-md">
-      <Menu nodeId={id} />
-      <Handle
-        style={{
-          height: "12px",
-          width: "12px",
-          backgroundColor: "white",
-          border: "1px solid #6b7280",
-        }}
-        type="target"
-        position={Position.Top}
-      />
+    <NodeWrapper
+      nodeId={id}
+      width="w-[360px]"
+      inputs={inputs}
+      outputs={selectedOutputs}
+    >
       <NodeHeader
         title="Financial Analysis"
         bgColor="bg-sky-200"
@@ -131,7 +176,7 @@ function FinancialAnalysisNodeComponent({
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" className="w-full justify-between">
-                  {analysisType}
+                  {params.analysisType}
                   <ChevronDown />
                 </Button>
               </DropdownMenuTrigger>
@@ -139,7 +184,9 @@ function FinancialAnalysisNodeComponent({
                 {analysisTypes.map((type) => (
                   <DropdownMenuItem
                     key={type}
-                    onClick={() => setAnalysisType(type)}
+                    onClick={() =>
+                      setParamsDebounced({ ...params, analysisType: type })
+                    }
                   >
                     {type}
                   </DropdownMenuItem>
@@ -154,15 +201,18 @@ function FinancialAnalysisNodeComponent({
               min={100}
               max={1000}
               step={50}
-              defaultValue={wordCount}
+              defaultValue={params.wordCount}
               onValueChange={(vals) => {
-                setWordCount(vals as [number, number]);
+                setParamsDebounced({
+                  ...params,
+                  wordCount: vals as [number, number],
+                });
               }}
               className=""
             />
             <div className="flex justify-between mt-2 text-sm text-muted-foreground">
-              <span>{wordCount[0]} </span>
-              <span>{wordCount[1]} </span>
+              <span>{params.wordCount[0]} </span>
+              <span>{params.wordCount[1]} </span>
             </div>
             <div className="flex justify-around">
               <div className="flex items-center space-x-2">
@@ -180,35 +230,12 @@ function FinancialAnalysisNodeComponent({
             </div>
           </div>
           <Separator orientation="horizontal" />
-          <div className="space-y-2">
-            <p className="text-sm font-semibold">Output</p>
-            <div className="flex gap-4">
-              {outputFormats.map((outputFormat) => (
-                <div
-                  key={outputFormat.type}
-                  className={cn(
-                    "rounded-md p-1 space-y-1 border-2 cursor-pointer ",
-                    selectedOutputFormat === outputFormat.type
-                      ? "bg-steel-blue-200 border-steel-blue-500"
-                      : "bg-muted border-transparent"
-                  )}
-                  onClick={() => {
-                    setSelectedOutputFormat(outputFormat.type);
-                  }}
-                >
-                  <div className="flex items-center justify-center bg-background rounded-md p-1">
-                    <Image
-                      src={outputFormat.image}
-                      alt={outputFormat.type}
-                      width={40}
-                      height={40}
-                    />
-                  </div>
-                  <p className="text-xs px-1">{outputFormat.type}</p>
-                </div>
-              ))}
-            </div>
-          </div>
+          <Outputs
+            nodeId={id}
+            outputs={outputs}
+            selectedOutputs={selectedOutputs}
+            setSelectedOutputs={setSelectedOutputs}
+          />
           <Separator orientation="horizontal" />
           <div className="flex justify-between">
             <p className="text-xs">Cache output</p>
@@ -221,17 +248,7 @@ function FinancialAnalysisNodeComponent({
           </div>
         </div>
       </div>
-      <Handle
-        style={{
-          height: "12px",
-          width: "12px",
-          backgroundColor: "white",
-          border: "1px solid #6b7280",
-        }}
-        type="source"
-        position={Position.Bottom}
-      />
-    </div>
+    </NodeWrapper>
   );
 }
 

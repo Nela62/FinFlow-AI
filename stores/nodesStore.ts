@@ -56,10 +56,12 @@ import {
 import {
   EmailSenderNode,
   EmailSenderNodeType,
+  defaultData as emailSenderDefaultData,
 } from "@/components/flow/nodes/email-sender";
 import {
   FinancialAnalysisNode,
   FinancialAnalysisNodeType,
+  defaultData as financialAnalysisDefaultData,
 } from "@/components/flow/nodes/financial-analysis";
 import { dataTypesList } from "@/types/node";
 
@@ -185,13 +187,13 @@ const defaultNodes: AppNode[] = [
     id: "h",
     type: "email-sender",
     position: { x: 450, y: 2800 },
-    data: { label: "Email Sender" },
+    data: emailSenderDefaultData,
   },
   {
     id: "i",
     type: "financial-analysis",
     position: { x: 400, y: 1100 },
-    data: { label: "Financial Analysis" },
+    data: financialAnalysisDefaultData,
   },
 ];
 
