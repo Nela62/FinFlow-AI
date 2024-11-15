@@ -17,9 +17,6 @@ import {
   type OnEdgesChange,
   type OnConnect,
 } from "@xyflow/react";
-import PositionLoggerNode, {
-  type PositionLoggerNode as PositionLoggerNodeType,
-} from "@/components/flow/nodes/position-logger-node";
 import {
   SecFilingNode,
   type SecFilingNodeType,
@@ -36,6 +33,7 @@ import ButtonEdge, {
   type ButtonEdge as ButtonEdgeType,
 } from "@/components/flow/edges/button-edge";
 import {
+  defaultData as summarizerDefaultData,
   SummarizerNode,
   type SummarizerNode as SummarizerNodeType,
 } from "@/components/flow/nodes/summarizer";
@@ -129,7 +127,7 @@ const defaultNodes: AppNode[] = [
     id: "d",
     type: "summarizer",
     position: { x: 900, y: 700 },
-    data: { label: "Summarizer" },
+    data: summarizerDefaultData,
   },
   {
     id: "e",
@@ -162,6 +160,7 @@ const defaultNodes: AppNode[] = [
     data: { label: "Financial Analysis" },
   },
 ];
+
 const defaultEdges: Edge[] = [
   {
     id: "a->c",

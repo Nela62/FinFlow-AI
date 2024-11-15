@@ -1,6 +1,8 @@
+import React, { useEffect } from "react";
 import Image from "next/image";
+
 import type { Node, NodeProps } from "@xyflow/react";
-import { Handle, Position } from "@xyflow/react";
+import { Handle, Position, useReactFlow } from "@xyflow/react";
 import { SVGProps, useState } from "react";
 import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
@@ -14,8 +16,9 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
-import React from "react";
-import { Menu } from "./utils/menu";
+import { NodeData, NodeInput, NodeOutput } from "@/types/node";
+import { NodeWrapper } from "./utils/node-wrapper";
+import { useDebouncedCallback } from "use-debounce";
 
 function Fa6SolidArrowDownWideShort(props: SVGProps<SVGSVGElement>) {
   return (
@@ -34,7 +37,48 @@ function Fa6SolidArrowDownWideShort(props: SVGProps<SVGSVGElement>) {
   );
 }
 
-export type SummarizerNodeData = { label: string };
+const inputs: NodeInput[] = [
+  {
+    label: "text",
+    acceptedFormats: ["Text"],
+  },
+];
+
+type Params = {
+  wordCount: [number, number];
+  keywords: string[];
+  relevanceThreshold: number;
+};
+
+const defaultParams: Params = {
+  wordCount: [100, 500],
+  keywords: [],
+  relevanceThreshold: 0.3,
+};
+
+const outputs: NodeOutput[] = [
+  { label: "summary", dataTypes: ["TXT", "MD", "PDF", "DOCX"] },
+];
+
+const runFn = async (params: Record<string, any>) => {
+  return {};
+};
+
+export type SummarizerNodeData = {
+  label: string;
+  params: Params;
+  inputs: NodeInput[];
+  outputs: NodeOutput[];
+  runFn: (params: Record<string, any>) => Promise<Record<string, any>>;
+};
+
+export const defaultData: SummarizerNodeData = {
+  label: "Summarizer",
+  params: defaultParams,
+  inputs,
+  outputs,
+  runFn,
+};
 
 export type SummarizerNode = Node<SummarizerNodeData>;
 
@@ -46,65 +90,72 @@ const outputFormats = [
 ];
 
 function SummarizerNodeComponent({ id, data }: NodeProps<SummarizerNode>) {
-  const [wordCount, setWordCount] = useState<[number, number]>([100, 500]);
-  const [keywords, setKeywords] = useState<string[]>([]);
+  const [params, setParams] = useState<Record<string, any>>(data.params);
+  const setParamsDebounced = useDebouncedCallback(
+    (params: Record<string, any>) => {
+      setParams(params);
+    },
+    1000
+  );
+  const { updateNodeData } = useReactFlow();
+
   const [inputKeywords, setInputKeywords] = useState<string>("");
-  const [relevanceThreshold, setRelevanceThreshold] = useState<number>(0.3);
   const [selectedOutputFormat, setSelectedOutputFormat] =
     useState<string>(".json");
 
+  useEffect(() => {
+    updateNodeData(id, params);
+  }, [params]);
+
   return (
-    // We add this class to use the same styles as React Flow's default nodes.
-    <div className="group relative rounded-md bg-background p-1 pb-2 border w-[320px] space-y-2 shadow-md">
-      <Menu nodeId={id} />
-      <Handle
-        style={{
-          height: "12px",
-          width: "12px",
-          backgroundColor: "white",
-          border: "1px solid #6b7280",
-        }}
-        type="target"
-        position={Position.Top}
-      />
+    <NodeWrapper nodeId={id} width="w-[360px]" inputs={inputs}>
       <NodeHeader
-        title="Summarizer"
+        title={data.label}
         bgColor="bg-orange-200"
         textColor="text-orange-900"
         iconFn={Fa6SolidArrowDownWideShort}
         iconBgColor="bg-orange-500"
       />
 
-      <div className="space-y-2 px-2">
+      <div className="space-y-4 px-2 py-1">
+        {/* Word Count */}
         <div className="space-y-2 nodrag">
           <p className="text-sm font-semibold">Word Count</p>
           <DoubleSlider
             min={100}
             max={1000}
             step={50}
-            defaultValue={wordCount}
+            defaultValue={params.wordCount}
             onValueChange={(vals) => {
-              setWordCount(vals as [number, number]);
+              setParamsDebounced({
+                ...params,
+                wordCount: vals as [number, number],
+              });
             }}
-            className=""
           />
 
           <div className="flex justify-between mt-2 text-sm text-muted-foreground">
-            <span>{wordCount[0]} </span>
-            <span>{wordCount[1]} </span>
+            <span>{params.wordCount[0]} </span>
+            <span>{params.wordCount[1]} </span>
           </div>
         </div>
         <Separator orientation="horizontal" />
+        {/* Semantic Keyword Focus */}
         <div className="space-y-4">
           <p className="text-sm font-semibold">Semantic Keyword Focus</p>
-          {keywords.length > 0 && (
+          {params.keywords.length > 0 && (
             <div className="flex flex-wrap gap-2">
-              {keywords.map((keyword) => (
+              {params.keywords.map((keyword: string) => (
                 <Badge key={keyword} className="flex gap-1 w-fit">
                   {keyword}
                   <button
                     onClick={() => {
-                      setKeywords((prev) => prev.filter((k) => k !== keyword));
+                      setParamsDebounced({
+                        ...params,
+                        keywords: params.keywords.filter(
+                          (k: string) => k !== keyword
+                        ),
+                      });
                     }}
                   >
                     <X className="w-4 h-4" />
@@ -127,9 +178,12 @@ function SummarizerNodeComponent({ id, data }: NodeProps<SummarizerNode>) {
                     .split(",")
                     .map((k) => k.trim())
                     .filter((k) => k.length > 0);
-                  setKeywords((prev) =>
-                    Array.from(new Set([...prev, ...newKeywords]))
-                  );
+                  setParamsDebounced({
+                    ...params,
+                    keywords: Array.from(
+                      new Set([...params.keywords, ...newKeywords])
+                    ),
+                  });
                   e.currentTarget.value = "";
                 }
               }}
@@ -142,9 +196,12 @@ function SummarizerNodeComponent({ id, data }: NodeProps<SummarizerNode>) {
                   .split(",")
                   .map((k) => k.trim())
                   .filter((k) => k.length > 0);
-                setKeywords((prev) =>
-                  Array.from(new Set([...prev, ...newKeywords]))
-                );
+                setParamsDebounced({
+                  ...params,
+                  keywords: Array.from(
+                    new Set([...params.keywords, ...newKeywords])
+                  ),
+                });
                 setInputKeywords("");
               }}
             >
@@ -157,20 +214,24 @@ function SummarizerNodeComponent({ id, data }: NodeProps<SummarizerNode>) {
               className="pb-6"
               max={1}
               step={0.1}
-              value={[relevanceThreshold]}
+              value={[params.relevanceThreshold]}
               onValueChange={(vals) => {
-                setRelevanceThreshold(vals[0]);
+                setParamsDebounced({
+                  ...params,
+                  relevanceThreshold: vals[0],
+                });
               }}
             />
             <p
               className="absolute top-4 text-muted-foreground text-xs"
-              style={{ left: `${relevanceThreshold * 100}%` }}
+              style={{ left: `${params.relevanceThreshold * 100}%` }}
             >
-              {relevanceThreshold}
+              {params.relevanceThreshold}
             </p>
           </div>
         </div>
         <Separator orientation="horizontal" />
+        {/* Custom Instructions */}
         <div className="space-y-2">
           <p className="text-sm font-semibold">Custom Instructions</p>
           <Textarea placeholder="Enter custom instructions" />
@@ -236,7 +297,7 @@ function SummarizerNodeComponent({ id, data }: NodeProps<SummarizerNode>) {
         type="source"
         position={Position.Bottom}
       />
-    </div>
+    </NodeWrapper>
   );
 }
 

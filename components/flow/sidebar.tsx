@@ -1,8 +1,10 @@
 import React from "react";
 import { useDnD } from "./dnd-context";
 import { Card, CardContent } from "../ui/card";
+import { Button } from "../ui/button";
+import { useNodesStore } from "@/providers/nodesProvider";
 
-const nodes = [
+const nodesList = [
   { id: "sec-filing", name: "SEC Filing" },
   { id: "api-connector", name: "API Connector" },
   { id: "summarizer", name: "Summarizer" },
@@ -16,6 +18,7 @@ const nodes = [
 
 export default () => {
   const [_, setType] = useDnD();
+  const { nodes } = useNodesStore((state) => state);
 
   const onDragStart = (
     event: React.DragEvent<HTMLDivElement>,
@@ -29,7 +32,7 @@ export default () => {
   return (
     <aside className="flex flex-col gap-4 w-fit absolute top-4 left-4 border rounded-sm bg-background p-4 shadow-sm">
       <div className="text-lg font-semibold">Node Library</div>
-      {nodes.map((node) => (
+      {nodesList.map((node) => (
         <Card
           className="w-fit cursor-grab bg-muted"
           onDragStart={(event) => onDragStart(event, node.id)}
@@ -41,6 +44,7 @@ export default () => {
           </CardContent>
         </Card>
       ))}
+      <Button onClick={() => console.log(nodes)}>Run</Button>
     </aside>
   );
 };
