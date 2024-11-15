@@ -17,10 +17,10 @@ export const RunResultsSidebar = () => {
     [nodes, runNodeIds]
   );
 
-  console.log("nodes ", nodes);
-  console.log("edges ", edges);
-  console.log("runNodeIds ", runNodeIds);
-  console.log("runNodes ", runNodes);
+  // console.log("nodes ", nodes);
+  // console.log("edges ", edges);
+  // console.log("runNodeIds ", runNodeIds);
+  // console.log("runNodes ", runNodes);
 
   return (
     <div

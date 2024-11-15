@@ -327,7 +327,10 @@ export const createNodesStore = (initState: NodesState = defaultInitState) => {
       },
       deleteNode: (nodeId) => {
         set((state) => ({
-          nodes: state.nodes.filter((node) => node.id !== nodeId),
+          nodes: state.nodes?.filter((node) => node.id !== nodeId),
+          edges: state.edges?.filter(
+            (edge) => edge.source !== nodeId && edge.target !== nodeId
+          ),
         }));
       },
       addRunResult: (runResult) => {
