@@ -1,28 +1,28 @@
-import Image from "next/image";
 import type { Node, NodeProps } from "@xyflow/react";
-import { Handle, Position } from "@xyflow/react";
-import { SVGProps, useState } from "react";
-import { cn } from "@/lib/utils";
+import {
+  Handle,
+  Position,
+  useReactFlow,
+  useUpdateNodeInternals,
+} from "@xyflow/react";
+import { SVGProps, useEffect, useState } from "react";
 import { Separator } from "@/components/ui/separator";
-import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { NodeHeader } from "./utils/header";
-import { Slider as DoubleSlider } from "@/components/ui/double-slider";
-import { Slider } from "@/components/ui/slider";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, FolderOpen, Pencil, X } from "lucide-react";
-import { Textarea } from "@/components/ui/textarea";
 import React from "react";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Menu } from "./utils/menu";
+import { dataTypesList, NodeInput, NodeOutput } from "@/types/node";
+import { useDebouncedCallback } from "use-debounce";
+import { NodeWrapper } from "./utils/node-wrapper";
+import { Outputs } from "./utils/outputs";
 
 function BxFile(props: SVGProps<SVGSVGElement>) {
   return (
@@ -42,35 +42,92 @@ function BxFile(props: SVGProps<SVGSVGElement>) {
   );
 }
 
-export type DocumentCompilerNodeData = { label: string };
+const inputs: NodeInput[] = [
+  {
+    label: "text",
+    acceptedFormat: "Text",
+    acceptedTypes: dataTypesList
+      .filter((item) => item.formats.includes("Text"))
+      ?.map((item) => item.name),
+  },
+];
+
+type Params = {
+  templateStyle: string;
+  logo: string | null;
+  banner: string | null;
+};
+
+const defaultParams: Params = {
+  templateStyle: "Company Update Report",
+  logo: null,
+  banner: null,
+};
+
+const outputs: NodeOutput[] = [
+  { label: "output", dataType: "TXT" },
+  { label: "output", dataType: "MD" },
+  { label: "output", dataType: "PDF" },
+  { label: "output", dataType: "DOCX" },
+];
+
+const runFn = async (params: Record<string, any>) => {
+  return {};
+};
+
+export type DocumentCompilerNodeData = {
+  label: string;
+  params: Params;
+  inputs: NodeInput[];
+  outputs: NodeOutput[];
+  runFn: (params: Record<string, any>) => Promise<Record<string, any>>;
+};
 
 export type DocumentCompilerNodeType = Node<DocumentCompilerNodeData>;
 
-const outputFormats = [
-  { type: ".html", image: "/output/json_logo.png" },
-  { type: ".pdf", image: "/output/csv_logo.png" },
-  { type: ".md", image: "/output/excel_logo.png" },
-  { type: ".docx", image: "/output/excel_logo.png" },
-];
+export const defaultData: DocumentCompilerNodeData = {
+  label: "Document Compiler",
+  params: defaultParams,
+  inputs,
+  outputs: [{ label: "output", dataType: "MD" }],
+  runFn,
+};
 
 function DocumentCompilerNodeComponent({
   id,
   data,
 }: NodeProps<DocumentCompilerNodeType>) {
-  const [templateStyle, setTemplateStyle] = useState<string>(
-    "Company Update Report"
+  const updateNodeInternals = useUpdateNodeInternals();
+  const [params, setParams] = useState<Record<string, any>>(data.params);
+  const setParamsDebounced = useDebouncedCallback(
+    (params: Record<string, any>) => {
+      setParams(params);
+    },
+    1000
   );
-  const [logo, setLogo] = useState<string | null>(null);
-  const [banner, setBanner] = useState<string | null>(null);
+  const { updateNodeData } = useReactFlow();
 
-  // const [timeHorizon, setTimeHorizon] = useState<number>(10);
-  const [selectedOutputFormat, setSelectedOutputFormat] =
-    useState<string>(".csv");
+  const [selectedOutputs, setSelectedOutputs] = useState<NodeOutput[]>(
+    data.outputs
+  );
+
+  useEffect(() => {
+    updateNodeData(id, { params });
+  }, [params]);
+
+  useEffect(() => {
+    updateNodeInternals(id);
+    updateNodeData(id, { outputs: selectedOutputs });
+  }, [selectedOutputs]);
 
   return (
     // We add this class to use the same styles as React Flow's default nodes.
-    <div className="group relative rounded-md bg-background p-1 pb-2 border w-[320px] space-y-2 shadow-md">
-      <Menu nodeId={id} />
+    <NodeWrapper
+      nodeId={id}
+      width="w-[360px]"
+      inputs={inputs}
+      outputs={selectedOutputs}
+    >
       <Handle
         style={{
           height: "12px",
@@ -96,11 +153,13 @@ function DocumentCompilerNodeComponent({
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button className="w-full" variant="outline">
-                  {templateStyle}
+                  {params.templateStyle}
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent>
-                <DropdownMenuItem>{templateStyle}</DropdownMenuItem>
+                <DropdownMenuItem>
+                  {params.templateStyle ?? "Select an option"}
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
             <Button variant="outline" size="icon">
@@ -119,12 +178,14 @@ function DocumentCompilerNodeComponent({
                       variant="outline"
                       className="w-full justify-between"
                     >
-                      {logo ?? "Select an option"}
+                      {params.logo ?? "Select an option"}
                       <ChevronDown />
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent>
-                    <DropdownMenuItem>{templateStyle}</DropdownMenuItem>
+                    <DropdownMenuItem>
+                      {params.logo ?? "Select an option"}
+                    </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
                 <Button variant="outline" size="icon">
@@ -141,12 +202,14 @@ function DocumentCompilerNodeComponent({
                       variant="outline"
                       className="w-full justify-between"
                     >
-                      {logo ?? "Select an option"}
+                      {params.banner ?? "Select an option"}
                       <ChevronDown />
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent>
-                    <DropdownMenuItem>{templateStyle}</DropdownMenuItem>
+                    <DropdownMenuItem>
+                      {params.banner ?? "Select an option"}
+                    </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
                 <Button variant="outline" size="icon">
@@ -156,35 +219,12 @@ function DocumentCompilerNodeComponent({
             </div>
           </div>
           <Separator orientation="horizontal" />
-          <div className="space-y-2">
-            <p className="text-sm font-semibold">Output</p>
-            <div className="flex gap-4">
-              {outputFormats.map((outputFormat) => (
-                <div
-                  key={outputFormat.type}
-                  className={cn(
-                    "rounded-md p-1 space-y-1 border-2 cursor-pointer ",
-                    selectedOutputFormat === outputFormat.type
-                      ? "bg-steel-blue-200 border-steel-blue-500"
-                      : "bg-muted border-transparent"
-                  )}
-                  onClick={() => {
-                    setSelectedOutputFormat(outputFormat.type);
-                  }}
-                >
-                  <div className="flex items-center justify-center bg-background rounded-md p-1">
-                    <Image
-                      src={outputFormat.image}
-                      alt={outputFormat.type}
-                      width={40}
-                      height={40}
-                    />
-                  </div>
-                  <p className="text-xs px-1">{outputFormat.type}</p>
-                </div>
-              ))}
-            </div>
-          </div>
+          <Outputs
+            nodeId={id}
+            outputs={outputs}
+            selectedOutputs={selectedOutputs}
+            setSelectedOutputs={setSelectedOutputs}
+          />
           <Separator orientation="horizontal" />
 
           <div className="flex justify-between">
@@ -198,17 +238,7 @@ function DocumentCompilerNodeComponent({
           </div>
         </div>
       </div>
-      <Handle
-        style={{
-          height: "12px",
-          width: "12px",
-          backgroundColor: "white",
-          border: "1px solid #6b7280",
-        }}
-        type="source"
-        position={Position.Bottom}
-      />
-    </div>
+    </NodeWrapper>
   );
 }
 

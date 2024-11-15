@@ -41,14 +41,17 @@ import {
 import {
   DcfModelNode,
   DcfModelNodeType,
+  defaultData as dcfModelDefaultData,
 } from "@/components/flow/nodes/dcf-model";
 import {
   AppenderNode,
   AppenderNodeType,
+  defaultData as appenderDefaultData,
 } from "@/components/flow/nodes/appender";
 import {
   DocumentCompilerNode,
   DocumentCompilerNodeType,
+  defaultData as documentCompilerDefaultData,
 } from "@/components/flow/nodes/document-compiler";
 import {
   EmailSenderNode,
@@ -58,6 +61,7 @@ import {
   FinancialAnalysisNode,
   FinancialAnalysisNodeType,
 } from "@/components/flow/nodes/financial-analysis";
+import { dataTypesList } from "@/types/node";
 
 export const edgeTypes = {
   "button-edge": ButtonEdge,
@@ -76,6 +80,10 @@ export const nodeTypes = {
   "document-compiler": DocumentCompilerNode,
   "email-sender": EmailSenderNode,
 } satisfies NodeTypes;
+
+const textTypes = dataTypesList
+  .filter((item) => item.formats.includes("Text"))
+  ?.map((item) => item.name);
 
 export type AppNode =
   | BuiltInNode
@@ -134,19 +142,44 @@ const defaultNodes: AppNode[] = [
     id: "e",
     type: "dcf-model",
     position: { x: 0, y: 1000 },
-    data: { label: "DCF Model" },
+    data: {
+      ...dcfModelDefaultData,
+      outputs: [
+        { label: "DCF Model", dataType: "MD" },
+        { label: "DCF Model", dataType: "CSV" },
+      ],
+    },
   },
   {
     id: "f",
     type: "appender",
     position: { x: 468, y: 1800 },
-    data: { label: "Appender" },
+    data: {
+      ...appenderDefaultData,
+      inputs: [
+        {
+          label: "node-1",
+          acceptedFormat: "Text",
+          acceptedTypes: textTypes,
+        },
+        {
+          label: "node-2",
+          acceptedFormat: "Text",
+          acceptedTypes: textTypes,
+        },
+        {
+          label: "node-3",
+          acceptedFormat: "Text",
+          acceptedTypes: textTypes,
+        },
+      ],
+    },
   },
   {
     id: "g",
     type: "document-compiler",
     position: { x: 450, y: 2200 },
-    data: { label: "Document Compiler" },
+    data: documentCompilerDefaultData,
   },
   {
     id: "h",
@@ -194,7 +227,7 @@ const defaultEdges: Edge[] = [
     target: "f",
     type: "button-edge",
     sourceHandle: "handle-MD",
-    targetHandle: "handle-2",
+    targetHandle: "handle-node-3",
     animated: true,
   },
   {
@@ -202,6 +235,7 @@ const defaultEdges: Edge[] = [
     source: "c",
     target: "e",
     type: "button-edge",
+    targetHandle: "handle-financial-data",
     animated: true,
   },
   {
@@ -209,7 +243,8 @@ const defaultEdges: Edge[] = [
     source: "e",
     target: "f",
     type: "button-edge",
-    targetHandle: "handle-0",
+    sourceHandle: "handle-MD",
+    targetHandle: "handle-node-1",
     animated: true,
   },
   {
@@ -218,6 +253,7 @@ const defaultEdges: Edge[] = [
     target: "g",
     type: "button-edge",
     animated: true,
+    sourceHandle: "handle-MD",
   },
   {
     id: "g->h",
@@ -231,6 +267,7 @@ const defaultEdges: Edge[] = [
     source: "e",
     target: "i",
     type: "button-edge",
+    sourceHandle: "handle-CSV",
     animated: true,
   },
   {
@@ -238,7 +275,7 @@ const defaultEdges: Edge[] = [
     source: "i",
     target: "f",
     type: "button-edge",
-    targetHandle: "handle-1",
+    targetHandle: "handle-node-2",
     animated: true,
   },
 ];

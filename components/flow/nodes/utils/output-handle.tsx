@@ -13,7 +13,6 @@ export const OutputHandle = ({
   index: number;
   totalHandles: number;
 }) => {
-  console.log("output", output);
   return (
     <>
       <div

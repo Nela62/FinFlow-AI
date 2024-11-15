@@ -1,22 +1,17 @@
-import Image from "next/image";
+import React from "react";
+import { SVGProps, useEffect, useState } from "react";
 import type { Node, NodeProps } from "@xyflow/react";
-import { Handle, Position } from "@xyflow/react";
-import { SVGProps, useState } from "react";
-import { cn } from "@/lib/utils";
+import { useReactFlow, useUpdateNodeInternals } from "@xyflow/react";
 import { Separator } from "@/components/ui/separator";
-import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { NodeHeader } from "./utils/header";
-import { Slider as DoubleSlider } from "@/components/ui/double-slider";
-import { Slider } from "@/components/ui/slider";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { X } from "lucide-react";
-import { Textarea } from "@/components/ui/textarea";
-import React from "react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Menu } from "./utils/menu";
+import { dataTypesList, NodeInput, NodeOutput } from "@/types/node";
+import { useDebouncedCallback } from "use-debounce";
+import { NodeWrapper } from "./utils/node-wrapper";
+import { Outputs } from "./utils/outputs";
 
 function MaterialSymbolsTableOutline(props: SVGProps<SVGSVGElement>) {
   return (
@@ -34,37 +29,95 @@ function MaterialSymbolsTableOutline(props: SVGProps<SVGSVGElement>) {
     </svg>
   );
 }
-export type DCFModelNodeData = { label: string };
+
+// TODO: Improve this - json or tabular or both?
+const inputs: NodeInput[] = [
+  {
+    label: "financial-data",
+    acceptedFormat: "Tabular",
+    acceptedTypes: dataTypesList
+      .filter((item) => item.formats.includes("Tabular"))
+      ?.map((item) => item.name),
+  },
+];
+
+type Params = {
+  discountRate: number;
+  timeHorizon: number;
+  terminalValue: "exit-multiple" | "gordon-growth-model";
+  growthRate: number;
+  rate: number;
+};
+
+const defaultParams: Params = {
+  discountRate: 0.1,
+  timeHorizon: 10,
+  terminalValue: "exit-multiple",
+  growthRate: 0.05,
+  rate: 0.05,
+};
+
+const outputs: NodeOutput[] = [
+  { label: "DCF Model", dataType: "MD" },
+  { label: "DCF Model", dataType: "JSON" },
+  { label: "DCF Model", dataType: "CSV" },
+  { label: "DCF Model", dataType: "XLSX" },
+];
+
+const runFn = async (params: Record<string, any>) => {
+  return {};
+};
+
+export type DCFModelNodeData = {
+  label: string;
+  params: Params;
+  inputs: NodeInput[];
+  outputs: NodeOutput[];
+  runFn: (params: Record<string, any>) => Promise<Record<string, any>>;
+};
+
+export const defaultData: DCFModelNodeData = {
+  label: "DCF Model",
+  params: defaultParams,
+  inputs,
+  outputs: [{ label: "DCF Model", dataType: "MD" }],
+  runFn,
+};
 
 export type DcfModelNodeType = Node<DCFModelNodeData>;
 
-const outputFormats = [
-  // { type: ".json", image: "/output/json_logo.png" },
-  { type: ".csv", image: "/output/csv_logo.png" },
-  { type: ".xlsx", image: "/output/excel_logo.png" },
-  // { type: ".txt", image: "/output/txt_logo.png" },
-];
-
 function DcfModelNodeComponent({ id, data }: NodeProps<DcfModelNodeType>) {
-  // const [discountRate, setDiscountRate] = useState<number>(0.1);
-  // const [timeHorizon, setTimeHorizon] = useState<number>(10);
-  const [selectedOutputFormat, setSelectedOutputFormat] =
-    useState<string>(".csv");
+  const updateNodeInternals = useUpdateNodeInternals();
+  const [params, setParams] = useState<Record<string, any>>(data.params);
+  const setParamsDebounced = useDebouncedCallback(
+    (params: Record<string, any>) => {
+      setParams(params);
+    },
+    1000
+  );
+  const { updateNodeData } = useReactFlow();
+
+  const [selectedOutputs, setSelectedOutputs] = useState<NodeOutput[]>(
+    data.outputs
+  );
+
+  useEffect(() => {
+    updateNodeData(id, { params });
+  }, [params]);
+
+  useEffect(() => {
+    updateNodeInternals(id);
+    updateNodeData(id, { outputs: selectedOutputs });
+  }, [selectedOutputs]);
 
   return (
     // We add this class to use the same styles as React Flow's default nodes.
-    <div className="group relative rounded-md bg-background p-1 pb-2 border w-[320px] space-y-2 shadow-md">
-      <Menu nodeId={id} />
-      <Handle
-        style={{
-          height: "12px",
-          width: "12px",
-          backgroundColor: "white",
-          border: "1px solid #6b7280",
-        }}
-        type="target"
-        position={Position.Top}
-      />
+    <NodeWrapper
+      nodeId={id}
+      width="w-[360px]"
+      inputs={inputs}
+      outputs={selectedOutputs}
+    >
       <NodeHeader
         title="DCF Model"
         bgColor="bg-green-200"
@@ -73,6 +126,7 @@ function DcfModelNodeComponent({ id, data }: NodeProps<DcfModelNodeType>) {
         iconBgColor="bg-green-500"
       />
 
+      {/* TODO: Update params */}
       <div className="space-y-2 px-2">
         <div className="space-y-4 nodrag">
           <p className="text-sm font-semibold">Parameters & Assumptions</p>
@@ -106,41 +160,18 @@ function DcfModelNodeComponent({ id, data }: NodeProps<DcfModelNodeType>) {
               <Input type="number" />
             </div>
             <div className="space-y-1">
-              <p className="text-xs">Discount Rate (%)</p>
+              <p className="text-xs">Rate (%)</p>
               <Input type="number" />
             </div>
           </div>
         </div>
         <Separator orientation="horizontal" />
-        <div className="space-y-2">
-          <p className="text-sm font-semibold">Output</p>
-          <div className="flex gap-4">
-            {outputFormats.map((outputFormat) => (
-              <div
-                key={outputFormat.type}
-                className={cn(
-                  "rounded-md p-1 space-y-1 border-2 cursor-pointer ",
-                  selectedOutputFormat === outputFormat.type
-                    ? "bg-steel-blue-200 border-steel-blue-500"
-                    : "bg-muted border-transparent"
-                )}
-                onClick={() => {
-                  setSelectedOutputFormat(outputFormat.type);
-                }}
-              >
-                <div className="flex items-center justify-center bg-background rounded-md p-1">
-                  <Image
-                    src={outputFormat.image}
-                    alt={outputFormat.type}
-                    width={40}
-                    height={40}
-                  />
-                </div>
-                <p className="text-xs px-1">{outputFormat.type}</p>
-              </div>
-            ))}
-          </div>
-        </div>
+        <Outputs
+          nodeId={id}
+          outputs={outputs}
+          selectedOutputs={selectedOutputs}
+          setSelectedOutputs={setSelectedOutputs}
+        />
         <Separator orientation="horizontal" />
         <div className="flex justify-between">
           <p className="text-xs">Cache output</p>
@@ -152,17 +183,7 @@ function DcfModelNodeComponent({ id, data }: NodeProps<DcfModelNodeType>) {
           </div>
         </div>
       </div>
-      <Handle
-        style={{
-          height: "12px",
-          width: "12px",
-          backgroundColor: "white",
-          border: "1px solid #6b7280",
-        }}
-        type="source"
-        position={Position.Bottom}
-      />
-    </div>
+    </NodeWrapper>
   );
 }
 

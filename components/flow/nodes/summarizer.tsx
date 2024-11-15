@@ -105,12 +105,13 @@ function SummarizerNodeComponent({ id, data }: NodeProps<SummarizerNode>) {
   );
 
   useEffect(() => {
-    updateNodeInternals(id);
-  }, [selectedOutputs]);
+    updateNodeData(id, { params });
+  }, [params]);
 
   useEffect(() => {
-    updateNodeData(id, params);
-  }, [params]);
+    updateNodeInternals(id);
+    updateNodeData(id, { outputs: selectedOutputs });
+  }, [selectedOutputs]);
 
   return (
     <NodeWrapper

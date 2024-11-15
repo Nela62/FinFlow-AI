@@ -1,18 +1,63 @@
-import React from "react";
+import React, { useEffect } from "react";
 import type { SVGProps } from "react";
 
 import type { Node, NodeProps } from "@xyflow/react";
-import { Handle, Position, useUpdateNodeInternals } from "@xyflow/react";
+import { useReactFlow, useUpdateNodeInternals } from "@xyflow/react";
 import { useMemo, useState } from "react";
-import { Label } from "@/components/ui/label";
 import { NodeHeader } from "./utils/header";
 import { Button } from "@/components/ui/button";
 import { useNodesStore } from "@/providers/nodesProvider";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import SortableList from "./utils/sortableList";
-import { Menu } from "./utils/menu";
+import { dataTypesList, NodeInput, NodeOutput } from "@/types/node";
+import { NodeWrapper } from "./utils/node-wrapper";
+import { Outputs } from "./utils/outputs";
+import { Separator } from "@/components/ui/separator";
 
-export type AppenderNodeData = { label: string };
+const textTypes = dataTypesList
+  .filter((item) => item.formats.includes("Text"))
+  ?.map((item) => item.name);
+
+const inputs: NodeInput[] = [
+  {
+    label: "node-1",
+    acceptedFormat: "Text",
+    acceptedTypes: textTypes,
+  },
+  {
+    label: "node-2",
+    acceptedFormat: "Text",
+    acceptedTypes: textTypes,
+  },
+];
+
+type Params = {};
+
+const defaultParams: Params = {};
+
+const outputs: NodeOutput[] = [
+  { label: "text", dataType: "TXT" },
+  { label: "text", dataType: "MD" },
+];
+
+const runFn = async (params: Record<string, any>) => {
+  return {};
+};
+
+export type AppenderNodeData = {
+  label: string;
+  params: Params;
+  inputs: NodeInput[];
+  outputs: NodeOutput[];
+  runFn: (params: Record<string, any>) => Promise<Record<string, any>>;
+};
+
+export const defaultData: AppenderNodeData = {
+  label: "Appender",
+  params: defaultParams,
+  inputs,
+  outputs: [{ label: "text", dataType: "MD" }],
+  runFn,
+};
 
 export type AppenderNodeType = Node<AppenderNodeData>;
 
@@ -35,6 +80,7 @@ function FluentMerge16Filled(props: SVGProps<SVGSVGElement>) {
 
 function AppenderNodeComponent({ id, data }: NodeProps<AppenderNodeType>) {
   const updateNodeInternals = useUpdateNodeInternals();
+  const { updateNodeData } = useReactFlow();
 
   const { nodes, edges } = useNodesStore((state) => state);
 
@@ -52,67 +98,72 @@ function AppenderNodeComponent({ id, data }: NodeProps<AppenderNodeType>) {
       : [];
   }, [nodes, sourceNodes]);
 
-  const [handleCount, setHandleCount] = useState(appenderNodes.length ?? 1);
+  const [inputs, setInputs] = useState(data.inputs);
 
+  const [selectedOutputs, setSelectedOutputs] = useState<NodeOutput[]>(
+    data.outputs
+  );
+
+  useEffect(() => {
+    updateNodeData(id, { inputs });
+    updateNodeInternals(id);
+  }, [inputs]);
+
+  useEffect(() => {
+    updateNodeData(id, { outputs: selectedOutputs });
+    updateNodeInternals(id);
+  }, [selectedOutputs]);
+
+  // FIX: Where does the extra handle coming from????
   return (
-    <div className="group relativerounded-md bg-background p-1 pb-2 border max-w-[370px] min-w-[250px] space-y-2 shadow-md">
-      <Menu nodeId={id} />
-      {Array.from({ length: handleCount }).map((_, index) => (
-        <Handle
-          key={index}
-          type="target"
-          style={{
-            left: `${(index + 1) * (100 / (handleCount + 1))}%`,
-            transform: "translateX(-50%)",
-            marginTop: "-5px",
-            height: "12px",
-            width: "12px",
-            backgroundColor: "white",
-            border: "1px solid #6b7280",
-          }}
-          position={Position.Top}
-          id={`handle-${index}`}
-        />
-      ))}
-
+    <NodeWrapper
+      nodeId={id}
+      width="w-[360px]"
+      inputs={inputs}
+      outputs={outputs}
+    >
       <NodeHeader
         title="Appender"
-        bgColor="bg-neutral-200"
-        iconBgColor="bg-neutral-400"
-        textColor="text-neutral-900"
+        bgColor="bg-gray-200"
+        iconBgColor="bg-gray-400"
+        textColor="text-gray-900"
         iconFn={FluentMerge16Filled}
       />
       <div className="space-y-4 px-2 pt-2">
         <p className="text-sm font-semibold">Order</p>
+        {/* TODO: Improve the ui of list items */}
         <SortableList
           items={appenderNodes.map((node) => ({
             id: node.id,
             title: node.data.label ?? node.type,
           }))}
         />
-
+        {/* TODO: add ability to remove inputs */}
         <Button
           variant="outline"
           onClick={() => {
-            setHandleCount(handleCount + 1);
+            setInputs([
+              ...inputs,
+              {
+                label: `input-${inputs.length + 1}`,
+                acceptedFormat: "Text",
+                acceptedTypes: textTypes,
+              },
+            ]);
             updateNodeInternals(id);
           }}
         >
           Add Input
         </Button>
       </div>
-
-      <Handle
-        style={{
-          height: "12px",
-          width: "12px",
-          backgroundColor: "white",
-          border: "1px solid #6b7280",
-        }}
-        type="source"
-        position={Position.Bottom}
+      <Separator orientation="horizontal" />
+      <Outputs
+        nodeId={id}
+        outputs={outputs}
+        selectedOutputs={selectedOutputs}
+        setSelectedOutputs={setSelectedOutputs}
       />
-    </div>
+    </NodeWrapper>
   );
 }
 

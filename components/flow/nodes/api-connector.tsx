@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import type { SVGProps } from "react";
 
-import Image from "next/image";
 import type { Node, NodeProps } from "@xyflow/react";
 import {
   Handle,
@@ -32,7 +31,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { ChevronDown } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Menu } from "./utils/menu";
 import { NodeInput, NodeOutput } from "@/types/node";
 import { useDebouncedCallback } from "use-debounce";
 import { NodeWrapper } from "./utils/node-wrapper";
@@ -167,10 +165,11 @@ function ApiConnectorNodeComponent({ id, data }: NodeProps<ApiConnectorNode>) {
 
   useEffect(() => {
     updateNodeInternals(id);
+    updateNodeData(id, { outputs: selectedOutputs });
   }, [selectedOutputs]);
 
   useEffect(() => {
-    updateNodeData(id, params);
+    updateNodeData(id, { params });
   }, [params]);
 
   const apiProvider = useMemo(() => {
