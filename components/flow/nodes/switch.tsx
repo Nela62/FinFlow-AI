@@ -2,19 +2,13 @@ import React, { useEffect } from "react";
 import type { SVGProps } from "react";
 
 import type { Node, NodeProps } from "@xyflow/react";
-import {
-  Handle,
-  Position,
-  useReactFlow,
-  useUpdateNodeInternals,
-} from "@xyflow/react";
+import { useReactFlow, useUpdateNodeInternals } from "@xyflow/react";
 import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useNodesStore } from "@/providers/nodesProvider";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { NodeHeader } from "./utils/header";
 import { Label } from "@/components/ui/label";
-import { Menu } from "./utils/menu";
 import { dataTypesList, NodeInput, NodeOutput } from "@/types/node";
 import { NodeWrapper } from "./utils/node-wrapper";
 
@@ -98,6 +92,7 @@ function SwitchNodeComponent({ id, data }: NodeProps<SwitchNode>) {
 
   const [inputs, setInputs] = useState(data.inputs);
 
+  // TODO: the output is different and should change according to the original node selected
   const [selectedOutputs, setSelectedOutputs] = useState<NodeOutput[]>(
     data.outputs
   );

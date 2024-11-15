@@ -78,6 +78,7 @@ function FluentMerge16Filled(props: SVGProps<SVGSVGElement>) {
   );
 }
 
+// FIX: Outputs are broken and not updating
 function AppenderNodeComponent({ id, data }: NodeProps<AppenderNodeType>) {
   const updateNodeInternals = useUpdateNodeInternals();
   const { updateNodeData } = useReactFlow();
@@ -155,14 +156,14 @@ function AppenderNodeComponent({ id, data }: NodeProps<AppenderNodeType>) {
         >
           Add Input
         </Button>
+        <Separator orientation="horizontal" />
+        <Outputs
+          nodeId={id}
+          outputs={outputs}
+          selectedOutputs={selectedOutputs}
+          setSelectedOutputs={setSelectedOutputs}
+        />
       </div>
-      <Separator orientation="horizontal" />
-      <Outputs
-        nodeId={id}
-        outputs={outputs}
-        selectedOutputs={selectedOutputs}
-        setSelectedOutputs={setSelectedOutputs}
-      />
     </NodeWrapper>
   );
 }

@@ -177,6 +177,7 @@ const defaultNodes: AppNode[] = [
           acceptedTypes: textTypes,
         },
       ],
+      outputs: [{ label: "text", dataType: "MD" }],
     },
   },
   {
