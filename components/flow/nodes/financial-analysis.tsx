@@ -20,6 +20,8 @@ import { NodeInput, NodeOutput } from "@/types/node";
 import { useDebouncedCallback } from "use-debounce";
 import { NodeWrapper } from "./utils/node-wrapper";
 import { Outputs } from "./utils/outputs";
+import { csv } from "./temp/dcf";
+import { res } from "./temp/fin-analysis";
 
 function MdiChartFinance(props: SVGProps<SVGSVGElement>) {
   return (
@@ -69,7 +71,12 @@ const outputs: NodeOutput[] = [
 ];
 
 const runFn = async (params: Record<string, any>) => {
-  return {};
+  await new Promise((resolve) => setTimeout(resolve, 5000));
+  return {
+    inputData: csv,
+    params,
+    outputData: res,
+  };
 };
 
 export type FinancialAnalysisNodeData = {

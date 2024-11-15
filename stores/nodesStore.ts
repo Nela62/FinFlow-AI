@@ -12,7 +12,6 @@ import {
 } from "@xyflow/react";
 import {
   type Edge,
-  type Node,
   type OnNodesChange,
   type OnEdgesChange,
   type OnConnect,
@@ -65,7 +64,7 @@ import {
   FinancialAnalysisNodeType,
   defaultData as financialAnalysisDefaultData,
 } from "@/components/flow/nodes/financial-analysis";
-import { dataTypesList } from "@/types/node";
+import { dataTypesList, NodeRunResult, RunResults } from "@/types/node";
 
 export const edgeTypes = {
   "button-edge": ButtonEdge,
@@ -104,6 +103,7 @@ export type AppNode =
 export type NodesState = {
   nodes: AppNode[];
   edges: Edge[];
+  runResults: RunResults;
 };
 
 export type NodesActions = {
@@ -113,6 +113,8 @@ export type NodesActions = {
   setNodes: (nodes: AppNode[]) => void;
   setEdges: (edges: Edge[]) => void;
   deleteNode: (nodeId: string) => void;
+  addRunResult: (runResult: NodeRunResult) => void;
+  clearRunResults: () => void;
 };
 
 export type NodesStore = NodesState & NodesActions;
@@ -120,15 +122,15 @@ export type NodesStore = NodesState & NodesActions;
 const defaultNodes: AppNode[] = [
   {
     id: "a",
-    type: "sec-filing",
-    position: { x: 500, y: 0 },
-    data: secFilingDefaultData,
-  },
-  {
-    id: "b",
     type: "api-connector",
     position: { x: 0, y: 0 },
     data: apiConnectorDefaultData,
+  },
+  {
+    id: "b",
+    type: "sec-filing",
+    position: { x: 500, y: 0 },
+    data: secFilingDefaultData,
   },
   {
     id: "c",
@@ -205,7 +207,8 @@ const defaultEdges: Edge[] = [
     id: "a->c",
     source: "a",
     target: "c",
-    targetHandle: "handle-node-2",
+    targetHandle: "handle-node-1",
+    sourceHandle: "handle-JSON",
     type: "button-edge",
     animated: true,
   },
@@ -213,14 +216,13 @@ const defaultEdges: Edge[] = [
     id: "b->c",
     source: "b",
     target: "c",
-    sourceHandle: "handle-JSON",
-    targetHandle: "handle-node-1",
+    targetHandle: "handle-node-2",
     type: "button-edge",
     animated: true,
   },
   {
-    id: "a->d",
-    source: "a",
+    id: "b->d",
+    source: "b",
     target: "d",
     type: "button-edge",
     animated: true,
@@ -288,6 +290,7 @@ const defaultEdges: Edge[] = [
 const defaultInitState: NodesState = {
   nodes: defaultNodes,
   edges: defaultEdges,
+  runResults: [],
 };
 
 export const createNodesStore = (initState: NodesState = defaultInitState) => {
@@ -326,6 +329,14 @@ export const createNodesStore = (initState: NodesState = defaultInitState) => {
         set((state) => ({
           nodes: state.nodes.filter((node) => node.id !== nodeId),
         }));
+      },
+      addRunResult: (runResult) => {
+        set((state) => ({
+          runResults: [...state.runResults, runResult],
+        }));
+      },
+      clearRunResults: () => {
+        set({ runResults: [] });
       },
     }))
   );

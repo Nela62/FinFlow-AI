@@ -23,6 +23,7 @@ import { dataTypesList, NodeInput, NodeOutput } from "@/types/node";
 import { useDebouncedCallback } from "use-debounce";
 import { NodeWrapper } from "./utils/node-wrapper";
 import { Outputs } from "./utils/outputs";
+import { res } from "./temp/report";
 
 function BxFile(props: SVGProps<SVGSVGElement>) {
   return (
@@ -72,7 +73,7 @@ const outputs: NodeOutput[] = [
 ];
 
 const runFn = async (params: Record<string, any>) => {
-  return {};
+  return { inputData: res, params, outputData: res };
 };
 
 export type DocumentCompilerNodeData = {

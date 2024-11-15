@@ -12,6 +12,10 @@ import { dataTypesList, NodeInput, NodeOutput } from "@/types/node";
 import { NodeWrapper } from "./utils/node-wrapper";
 import { Outputs } from "./utils/outputs";
 import { Separator } from "@/components/ui/separator";
+import { res as summaryRes } from "./temp/summary";
+import { md } from "./temp/dcf";
+import { res as finAnalysisRes } from "./temp/fin-analysis";
+import { res as reportRes } from "./temp/report";
 
 const textTypes = dataTypesList
   .filter((item) => item.formats.includes("Text"))
@@ -40,7 +44,11 @@ const outputs: NodeOutput[] = [
 ];
 
 const runFn = async (params: Record<string, any>) => {
-  return {};
+  return {
+    inputData: { "node-1": summaryRes, "node-2": md, "node-3": finAnalysisRes },
+    params,
+    outputData: reportRes,
+  };
 };
 
 export type AppenderNodeData = {

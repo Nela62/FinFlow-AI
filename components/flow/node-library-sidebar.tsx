@@ -18,7 +18,18 @@ const nodesList = [
 
 export default () => {
   const [_, setType] = useDnD();
-  const { nodes } = useNodesStore((state) => state);
+  const { nodes, addRunResult } = useNodesStore((state) => state);
+
+  const run = async () => {
+    const order = ["a", "b", "d", "e", "i", "f", "g"];
+    for (const nodeId of order) {
+      console.log("running ", nodeId);
+      const node = nodes.find((node) => node.id === nodeId);
+      // @ts-ignore
+      const result = await node?.data.runFn(node.data.params);
+      addRunResult({ ...result, id: nodeId });
+    }
+  };
 
   const onDragStart = (
     event: React.DragEvent<HTMLDivElement>,
@@ -44,7 +55,7 @@ export default () => {
           </CardContent>
         </Card>
       ))}
-      <Button onClick={() => console.log(nodes)}>Run</Button>
+      <Button onClick={run}>Run</Button>
     </aside>
   );
 };

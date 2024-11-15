@@ -12,9 +12,10 @@ import {
 import "@xyflow/react/dist/style.css";
 
 import { DnDProvider, useDnD } from "./dnd-context";
-import Sidebar from "./sidebar";
+import Sidebar from "./node-library-sidebar";
 import { useNodesStore } from "@/providers/nodesProvider";
 import { edgeTypes, nodeTypes } from "@/stores/nodesStore";
+import { RunResultsSidebar } from "./run-results-sidebar";
 
 let id = 0;
 const getId = () => `dndnode_${id++}`;
@@ -86,6 +87,7 @@ const DnDFlow = () => {
         </ReactFlow>
       </div>
       <Sidebar />
+      <RunResultsSidebar />
     </div>
   );
 };

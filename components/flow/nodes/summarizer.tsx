@@ -3,7 +3,6 @@ import React, { useEffect } from "react";
 import type { Node, NodeProps } from "@xyflow/react";
 import { useReactFlow, useUpdateNodeInternals } from "@xyflow/react";
 import { SVGProps, useState } from "react";
-import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
@@ -19,6 +18,8 @@ import { dataTypesList, NodeInput, NodeOutput } from "@/types/node";
 import { NodeWrapper } from "./utils/node-wrapper";
 import { useDebouncedCallback } from "use-debounce";
 import { Outputs } from "./utils/outputs";
+import { res as secRes } from "./temp/sec";
+import { res as summaryRes } from "./temp/summary";
 
 function Fa6SolidArrowDownWideShort(props: SVGProps<SVGSVGElement>) {
   return (
@@ -67,7 +68,12 @@ const outputs: NodeOutput[] = [
 ];
 
 const runFn = async (params: Record<string, any>) => {
-  return {};
+  await new Promise((resolve) => setTimeout(resolve, 3000));
+  return {
+    inputData: secRes,
+    params: params,
+    outputData: summaryRes,
+  };
 };
 
 export type SummarizerNodeData = {

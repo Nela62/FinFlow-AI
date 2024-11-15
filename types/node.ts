@@ -101,3 +101,12 @@ export type NodeData = {
   outputs: NodeOutput[];
   runFn: (params: Record<string, any>) => Promise<Record<string, any>>;
 };
+
+export type NodeRunResult = {
+  id: string;
+  inputData: Record<string, any>;
+  params: Record<string, any>;
+  outputData: Record<string, any>;
+};
+
+export type RunResults = NodeRunResult[];

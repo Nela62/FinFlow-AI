@@ -26,6 +26,7 @@ import { NodeInput, NodeOutput } from "@/types/node";
 import { useDebouncedCallback } from "use-debounce";
 import { Outputs } from "./utils/outputs";
 import { NodeWrapper } from "./utils/node-wrapper";
+import { res } from "./temp/sec";
 
 type NodeSectionDetail = {
   name: string;
@@ -512,7 +513,10 @@ type Params = {
 const defaultParams: Params = {
   ticker: "AAPL",
   filingType: "10-K",
-  sections: [],
+  sections:
+    filingTypes
+      .find((f) => f.type === "10-K")
+      ?.sections.flatMap((s) => s.subSections.map((ss) => ss.name)) || [],
 };
 
 const outputs: NodeOutput[] = [
@@ -523,7 +527,12 @@ const outputs: NodeOutput[] = [
 ];
 
 const runFn = async (params: Record<string, any>) => {
-  return {};
+  await new Promise((resolve) => setTimeout(resolve, 5000));
+  return {
+    inputData: params.ticker,
+    params: params,
+    outputData: res,
+  };
 };
 
 export type SecFilingNodeData = {

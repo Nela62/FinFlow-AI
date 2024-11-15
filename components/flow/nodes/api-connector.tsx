@@ -35,6 +35,7 @@ import { NodeInput, NodeOutput } from "@/types/node";
 import { useDebouncedCallback } from "use-debounce";
 import { NodeWrapper } from "./utils/node-wrapper";
 import { Outputs } from "./utils/outputs";
+import { res } from "./temp/api";
 
 function MajesticonsDataLine(props: SVGProps<SVGSVGElement>) {
   return (
@@ -85,7 +86,12 @@ const outputs: NodeOutput[] = [
 ];
 
 const runFn = async (params: Record<string, any>) => {
-  return {};
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+  return {
+    inputData: params.ticker,
+    params: params,
+    outputData: res,
+  };
 };
 
 // TODO: This can be abstracted to a generic node type + params type
