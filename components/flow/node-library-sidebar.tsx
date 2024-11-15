@@ -5,7 +5,7 @@ import { Button } from "../ui/button";
 import { useNodesStore } from "@/providers/nodesProvider";
 
 const nodesList = [
-  { id: "sec-filing", name: "SEC Filing" },
+  { id: "sec-filing", name: "SEC Filing Parser" },
   { id: "api-connector", name: "API Connector" },
   { id: "summarizer", name: "Summarizer" },
   { id: "switch", name: "Switch" },
@@ -46,18 +46,20 @@ export default () => {
   return (
     <aside className="flex flex-col gap-4 w-fit absolute top-4 left-4 border rounded-sm bg-background p-4 shadow-sm">
       <div className="text-lg font-semibold">Node Library</div>
-      {nodesList.map((node) => (
-        <Card
-          className="w-fit cursor-grab bg-muted"
-          onDragStart={(event) => onDragStart(event, node.id)}
-          draggable
-          key={node.id}
-        >
-          <CardContent className="select-none px-3 py-1 text-sm">
-            {node.name}
-          </CardContent>
-        </Card>
-      ))}
+      {nodesList
+        .sort((a, b) => a.name.localeCompare(b.name))
+        .map((node) => (
+          <Card
+            className="w-fit cursor-grab bg-muted"
+            onDragStart={(event) => onDragStart(event, node.id)}
+            draggable
+            key={node.id}
+          >
+            <CardContent className="select-none px-3 py-1 text-sm">
+              {node.name}
+            </CardContent>
+          </Card>
+        ))}
       <Button onClick={run} disabled={isRunning}>
         {isRunning ? "Running..." : "Run"}
       </Button>

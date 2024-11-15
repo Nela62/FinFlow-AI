@@ -48,15 +48,15 @@ type Params = {
   timeHorizon: number;
   terminalValue: "exit-multiple" | "gordon-growth-model";
   growthRate: number;
-  rate: number;
+  intrinsicValue: number;
 };
 
 const defaultParams: Params = {
-  discountRate: 0.1,
-  timeHorizon: 10,
+  discountRate: 8.4,
+  timeHorizon: 5,
   terminalValue: "exit-multiple",
-  growthRate: 0.05,
-  rate: 0.05,
+  growthRate: 0,
+  intrinsicValue: 144.5,
 };
 
 const outputs: NodeOutput[] = [
@@ -135,15 +135,36 @@ function DcfModelNodeComponent({ id, data }: NodeProps<DcfModelNodeType>) {
           <div className="flex gap-4">
             <div className="space-y-1">
               <p className="text-xs">Discount Rate (%)</p>
-              <Input type="number" />
+              <Input
+                type="number"
+                value={params.discountRate}
+                onChange={(e) =>
+                  setParamsDebounced({
+                    ...params,
+                    discountRate: e.target.value,
+                  })
+                }
+              />
             </div>
             <div className="space-y-1">
               <p className="text-xs">Time Horizon (Years)</p>
-              <Input type="number" />
+              <Input
+                type="number"
+                value={params.timeHorizon}
+                onChange={(e) =>
+                  setParamsDebounced({ ...params, timeHorizon: e.target.value })
+                }
+              />
             </div>
           </div>
           <p className="text-sm font-semibold">Terminal Value</p>
-          <Tabs defaultValue="exit-multiple" className="w-full">
+          <Tabs
+            className="w-full"
+            value={params.terminalValue}
+            onValueChange={(value) =>
+              setParamsDebounced({ ...params, terminalValue: value })
+            }
+          >
             <TabsList className="w-full">
               <TabsTrigger value="exit-multiple" className="w-1/2 text-xs">
                 Exit Multiple
@@ -159,11 +180,26 @@ function DcfModelNodeComponent({ id, data }: NodeProps<DcfModelNodeType>) {
           <div className="flex gap-4">
             <div className="space-y-1">
               <p className="text-xs">Growth Rate (%)</p>
-              <Input type="number" />
+              <Input
+                type="number"
+                value={params.growthRate}
+                onChange={(e) =>
+                  setParamsDebounced({ ...params, growthRate: e.target.value })
+                }
+              />
             </div>
             <div className="space-y-1">
-              <p className="text-xs">Rate (%)</p>
-              <Input type="number" />
+              <p className="text-xs">Intrinsic Value ($)</p>
+              <Input
+                type="number"
+                value={params.intrinsicValue}
+                onChange={(e) =>
+                  setParamsDebounced({
+                    ...params,
+                    intrinsicValue: e.target.value,
+                  })
+                }
+              />
             </div>
           </div>
         </div>

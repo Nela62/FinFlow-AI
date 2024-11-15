@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useRef } from "react";
+import { v4 as uuidv4 } from "uuid";
 import {
   Background,
   Controls,
@@ -16,9 +17,7 @@ import Sidebar from "./node-library-sidebar";
 import { useNodesStore } from "@/providers/nodesProvider";
 import { edgeTypes, nodeTypes } from "@/stores/nodesStore";
 import { RunResultsSidebar } from "./run-results-sidebar";
-
-let id = 0;
-const getId = () => `dndnode_${id++}`;
+import { defaultDataMap } from "./nodes";
 
 const DnDFlow = () => {
   const reactFlowWrapper = useRef(null);
@@ -50,13 +49,12 @@ const DnDFlow = () => {
         y: event.clientY,
       });
       const newNode = {
-        id: getId(),
+        id: uuidv4(),
         type,
         position,
-        data: { label: `${type} node` },
+        // @ts-ignore
+        data: defaultDataMap[type],
       };
-
-      console.log("newNode", newNode);
 
       // @ts-ignore
       setNodes([...nodes, newNode]);

@@ -3,8 +3,6 @@ import { useNodesStore } from "@/providers/nodesProvider";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { ResultContent } from "./nodes/utils/result-content";
 import { useMemo } from "react";
-import { res } from "./nodes/temp/api";
-import { ScrollArea, ScrollBar } from "../ui/scroll-area";
 
 export const RunResultsSidebar = () => {
   const { nodes, runResults } = useNodesStore((state) => state);
