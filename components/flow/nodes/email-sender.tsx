@@ -7,6 +7,7 @@ import React from "react";
 import { Menu } from "./utils/menu";
 import { NodeInput, NodeOutput } from "@/types/node";
 import { useDebouncedCallback } from "use-debounce";
+import { NodeWrapper } from "./utils/node-wrapper";
 
 function IconParkOutlineSendEmail(props: SVGProps<SVGSVGElement>) {
   return (
@@ -93,18 +94,12 @@ function EmailSenderNodeComponent({
 
   return (
     // We add this class to use the same styles as React Flow's default nodes.
-    <div className="group relative rounded-md bg-background p-1 pb-2 border w-[320px] space-y-2 shadow-md">
-      <Menu nodeId={id} />
-      <Handle
-        style={{
-          height: "12px",
-          width: "12px",
-          backgroundColor: "white",
-          border: "1px solid #6b7280",
-        }}
-        type="target"
-        position={Position.Top}
-      />
+    <NodeWrapper
+      nodeId={id}
+      width="w-[360px]"
+      inputs={inputs}
+      outputs={outputs}
+    >
       <NodeHeader
         title="Email Sender"
         bgColor="bg-lime-200"
@@ -131,7 +126,7 @@ function EmailSenderNodeComponent({
           </div>
         </div>
       </div>
-    </div>
+    </NodeWrapper>
   );
 }
 

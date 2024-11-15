@@ -4,7 +4,8 @@ export type DataTypeFormat =
   | "PDF"
   | "JSON"
   | "DOCX"
-  | "File";
+  | "File"
+  | "Any";
 
 export type DataType =
   | "JSON"
@@ -15,7 +16,8 @@ export type DataType =
   | "PDF"
   | "HTML"
   | "XML"
-  | "DOCX";
+  | "DOCX"
+  | "ANY";
 
 export type DataTypeListItem = {
   name: DataType;

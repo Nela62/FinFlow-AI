@@ -59,20 +59,20 @@ function MajesticonsDataLine(props: SVGProps<SVGSVGElement>) {
 
 const inputs: NodeInput[] = [
   {
-    label: "stock",
+    label: "ticker",
     acceptedFormat: "Text",
     acceptedTypes: ["TXT"],
   },
 ];
 
 type Params = {
-  stock: string;
+  ticker: string;
   apiProvider: string;
   endpoints: string[];
 };
 
 const defaultParams: Params = {
-  stock: "AAPL",
+  ticker: "AAPL",
   apiProvider: "yfinance",
   endpoints: ["income", "balance", "cashflow"],
 };
@@ -198,9 +198,9 @@ function ApiConnectorNodeComponent({ id, data }: NodeProps<ApiConnectorNode>) {
       <div className="space-y-2 px-2">
         <p className="text-sm font-semibold">Company</p>
         <StockPicker
-          currentStockTicker={params.stock}
+          currentStockTicker={params.ticker}
           onStockClick={(stockId) => {
-            setParamsDebounced({ ...params, stock: stockId });
+            setParamsDebounced({ ...params, ticker: stockId });
           }}
         />
         <Separator orientation="horizontal" />

@@ -1,8 +1,13 @@
-import React from "react";
+import React, { useEffect } from "react";
 import type { SVGProps } from "react";
 
 import type { Node, NodeProps } from "@xyflow/react";
-import { Handle, Position, useUpdateNodeInternals } from "@xyflow/react";
+import {
+  Handle,
+  Position,
+  useReactFlow,
+  useUpdateNodeInternals,
+} from "@xyflow/react";
 import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useNodesStore } from "@/providers/nodesProvider";
@@ -10,8 +15,47 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { NodeHeader } from "./utils/header";
 import { Label } from "@/components/ui/label";
 import { Menu } from "./utils/menu";
+import { dataTypesList, NodeInput, NodeOutput } from "@/types/node";
+import { NodeWrapper } from "./utils/node-wrapper";
 
-export type SwitchNodeData = { label: string };
+const inputs: NodeInput[] = [
+  {
+    label: "node-1",
+    acceptedFormat: "Any",
+    acceptedTypes: dataTypesList.map((item) => item.name),
+  },
+  {
+    label: "node-2",
+    acceptedFormat: "Any",
+    acceptedTypes: dataTypesList.map((item) => item.name),
+  },
+];
+
+type Params = {};
+
+const defaultParams: Params = {};
+
+const outputs: NodeOutput[] = [{ label: "node-1", dataType: "ANY" }];
+
+const runFn = async (params: Record<string, any>) => {
+  return {};
+};
+
+export type SwitchNodeData = {
+  label: string;
+  params: Params;
+  inputs: NodeInput[];
+  outputs: NodeOutput[];
+  runFn: (params: Record<string, any>) => Promise<Record<string, any>>;
+};
+
+export const defaultData: SwitchNodeData = {
+  label: "Switch",
+  params: defaultParams,
+  inputs,
+  outputs: [{ label: "node-1", dataType: "ANY" }],
+  runFn,
+};
 
 export type SwitchNode = Node<SwitchNodeData>;
 
@@ -34,16 +78,16 @@ function MdiSwitch(props: SVGProps<SVGSVGElement>) {
 
 function SwitchNodeComponent({ id, data }: NodeProps<SwitchNode>) {
   const updateNodeInternals = useUpdateNodeInternals();
-  const [handleCount, setHandleCount] = useState(2);
+  const { updateNodeData } = useReactFlow();
 
   const { nodes, edges } = useNodesStore((state) => state);
 
   const switchEdges = useMemo(() => {
-    return edges?.filter((edge) => edge.target === id) ?? [];
+    return edges.filter((edge) => edge.target === id);
   }, [edges]);
 
   const sourceNodes = useMemo(() => {
-    return switchEdges.map((edge) => edge.source) ?? [];
+    return switchEdges.map((edge) => edge.source);
   }, [switchEdges]);
 
   const switchNodes = useMemo(() => {
@@ -52,27 +96,29 @@ function SwitchNodeComponent({ id, data }: NodeProps<SwitchNode>) {
       : [];
   }, [nodes, sourceNodes]);
 
-  return (
-    <div className="group relative rounded-md bg-background p-1 pb-2 border max-w-[370px] min-w-[250px] space-y-2 shadow-md">
-      <Menu nodeId={id} />
-      {Array.from({ length: handleCount }).map((_, index) => (
-        <Handle
-          key={index}
-          type="target"
-          style={{
-            left: `${(index + 1) * (100 / (handleCount + 1))}%`,
-            transform: "translateX(-50%)",
-            marginTop: "-5px",
-            height: "12px",
-            width: "12px",
-            backgroundColor: "white",
-            border: "1px solid #6b7280",
-          }}
-          position={Position.Top}
-          id={`handle-${index}`}
-        />
-      ))}
+  const [inputs, setInputs] = useState(data.inputs);
 
+  const [selectedOutputs, setSelectedOutputs] = useState<NodeOutput[]>(
+    data.outputs
+  );
+
+  useEffect(() => {
+    updateNodeData(id, { inputs });
+    updateNodeInternals(id);
+  }, [inputs]);
+
+  useEffect(() => {
+    updateNodeData(id, { outputs: selectedOutputs });
+    updateNodeInternals(id);
+  }, [selectedOutputs]);
+
+  return (
+    <NodeWrapper
+      nodeId={id}
+      width="w-[370px]"
+      inputs={inputs}
+      outputs={outputs}
+    >
       <NodeHeader
         title="Switch"
         bgColor="bg-gray-200"
@@ -98,23 +144,20 @@ function SwitchNodeComponent({ id, data }: NodeProps<SwitchNode>) {
       <Button
         variant="outline"
         onClick={() => {
-          setHandleCount(handleCount + 1);
+          setInputs([
+            ...inputs,
+            {
+              label: `input-${inputs.length + 1}`,
+              acceptedFormat: "Any",
+              acceptedTypes: dataTypesList.map((item) => item.name),
+            },
+          ]);
           updateNodeInternals(id);
         }}
       >
         Add Input
       </Button>
-      <Handle
-        style={{
-          height: "12px",
-          width: "12px",
-          backgroundColor: "white",
-          border: "1px solid #6b7280",
-        }}
-        type="source"
-        position={Position.Bottom}
-      />
-    </div>
+    </NodeWrapper>
   );
 }
 

@@ -20,6 +20,7 @@ import {
 import {
   SecFilingNode,
   type SecFilingNodeType,
+  defaultData as secFilingDefaultData,
 } from "@/components/flow/nodes/sec-filing";
 import {
   ApiConnectorNode,
@@ -29,6 +30,7 @@ import {
 import {
   SwitchNode,
   type SwitchNode as SwitchNodeType,
+  defaultData as switchDefaultData,
 } from "@/components/flow/nodes/switch";
 import ButtonEdge, {
   type ButtonEdge as ButtonEdgeType,
@@ -120,7 +122,7 @@ const defaultNodes: AppNode[] = [
     id: "a",
     type: "sec-filing",
     position: { x: 500, y: 0 },
-    data: { label: "SEC Filing" },
+    data: secFilingDefaultData,
   },
   {
     id: "b",
@@ -132,7 +134,7 @@ const defaultNodes: AppNode[] = [
     id: "c",
     type: "switch",
     position: { x: 200, y: 750 },
-    data: { label: "Switch" },
+    data: switchDefaultData,
   },
   {
     id: "d",
@@ -143,7 +145,7 @@ const defaultNodes: AppNode[] = [
   {
     id: "e",
     type: "dcf-model",
-    position: { x: 0, y: 1000 },
+    position: { x: 0, y: 1050 },
     data: {
       ...dcfModelDefaultData,
       outputs: [
@@ -155,7 +157,7 @@ const defaultNodes: AppNode[] = [
   {
     id: "f",
     type: "appender",
-    position: { x: 468, y: 1800 },
+    position: { x: 350, y: 1900 },
     data: {
       ...appenderDefaultData,
       inputs: [
@@ -180,13 +182,13 @@ const defaultNodes: AppNode[] = [
   {
     id: "g",
     type: "document-compiler",
-    position: { x: 450, y: 2200 },
+    position: { x: 350, y: 2500 },
     data: documentCompilerDefaultData,
   },
   {
     id: "h",
     type: "email-sender",
-    position: { x: 450, y: 2800 },
+    position: { x: 350, y: 3100 },
     data: emailSenderDefaultData,
   },
   {
@@ -202,7 +204,7 @@ const defaultEdges: Edge[] = [
     id: "a->c",
     source: "a",
     target: "c",
-    targetHandle: "handle-1",
+    targetHandle: "handle-node-2",
     type: "button-edge",
     animated: true,
   },
@@ -211,7 +213,7 @@ const defaultEdges: Edge[] = [
     source: "b",
     target: "c",
     sourceHandle: "handle-JSON",
-    targetHandle: "handle-0",
+    targetHandle: "handle-node-1",
     type: "button-edge",
     animated: true,
   },

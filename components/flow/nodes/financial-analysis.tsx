@@ -128,7 +128,7 @@ function FinancialAnalysisNodeComponent({
     // We add this class to use the same styles as React Flow's default nodes.
     <NodeWrapper
       nodeId={id}
-      width="w-[360px]"
+      width="w-[370px]"
       inputs={inputs}
       outputs={selectedOutputs}
     >
