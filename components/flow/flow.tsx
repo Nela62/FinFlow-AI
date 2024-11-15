@@ -78,6 +78,7 @@ const DnDFlow = () => {
           onConnect={onConnect}
           onDrop={onDrop}
           onDragOver={onDragOver}
+          proOptions={{ hideAttribution: true }}
           fitView
         >
           <Background />
