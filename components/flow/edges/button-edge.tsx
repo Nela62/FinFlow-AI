@@ -1,3 +1,4 @@
+import { cn } from "@/lib/utils";
 import {
   BaseEdge,
   EdgeLabelRenderer,
@@ -9,19 +10,10 @@ import {
   type Edge,
   useUpdateNodeInternals,
 } from "@xyflow/react";
+import { X } from "lucide-react";
+import { useState } from "react";
 
-const buttonStyle = {
-  width: 20,
-  height: 20,
-  background: "#eee",
-  border: "1px solid #fff",
-  cursor: "pointer",
-  borderRadius: "50%",
-  fontSize: "12px",
-  lineHeight: 1,
-};
-
-type ButtonEdgeData = {};
+type ButtonEdgeData = { isHovered: boolean };
 
 export type ButtonEdge = Edge<ButtonEdgeData>;
 
@@ -35,9 +27,11 @@ export default function ButtonEdge({
   targetPosition,
   style = { stroke: "#3b82f6", strokeWidth: 3, strokeDasharray: "5,5" },
   markerEnd,
+  data,
 }: EdgeProps<ButtonEdge>) {
   const updateNodeInternals = useUpdateNodeInternals();
   const { setEdges } = useReactFlow();
+  const [isVisible, setIsVisible] = useState(false);
   const [edgePath, labelX, labelY] = getSmoothStepPath({
     sourceX,
     sourceY,
@@ -67,8 +61,14 @@ export default function ButtonEdge({
           }}
           className="nodrag nopan"
         >
-          <button style={buttonStyle} onClick={onEdgeClick}>
-            ×
+          <button
+            className={cn(
+              "bg-red-400 rounded-full p-2 transition-opacity duration-200 ease-in-out",
+              data?.isHovered ? "opacity-100" : "opacity-0"
+            )}
+            onClick={onEdgeClick}
+          >
+            <X className="w-5 h-5 text-white" />
           </button>
         </div>
       </EdgeLabelRenderer>

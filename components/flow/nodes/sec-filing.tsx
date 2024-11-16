@@ -604,7 +604,7 @@ function SecFilingNodeComponent({ id, data }: NodeProps<SecFilingNodeType>) {
     // We add this class to use the same styles as React Flow's default nodes.
     <NodeWrapper
       nodeId={id}
-      width="w-[370px]"
+      width="w-[450px]"
       inputs={inputs}
       outputs={selectedOutputs}
     >
@@ -689,7 +689,7 @@ function SecFilingNodeComponent({ id, data }: NodeProps<SecFilingNodeType>) {
                       }
                     }}
                   >
-                    {subSection.name}
+                    {subSection.name} {subSection.description}
                   </Badge>
                 ))}
               </NodeTabsContent>

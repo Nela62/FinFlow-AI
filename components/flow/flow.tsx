@@ -26,6 +26,7 @@ const DnDFlow = () => {
 
   const { nodes, setNodes, onNodesChange, edges, onEdgesChange, onConnect } =
     useNodesStore((state) => state);
+  const { updateEdge } = useReactFlow();
 
   const onDragOver = useCallback((event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
@@ -79,6 +80,16 @@ const DnDFlow = () => {
           onDrop={onDrop}
           onDragOver={onDragOver}
           proOptions={{ hideAttribution: true }}
+          onEdgeMouseEnter={(_, edge) => {
+            updateEdge(edge.id, (oldEdge) => ({
+              data: { ...oldEdge.data, isHovered: true },
+            }));
+          }}
+          onEdgeMouseLeave={(_, edge) => {
+            updateEdge(edge.id, (oldEdge) => ({
+              data: { ...oldEdge.data, isHovered: false },
+            }));
+          }}
           fitView
         >
           <Background size={2.5} gap={34} />
