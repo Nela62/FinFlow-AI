@@ -21,35 +21,37 @@ export const NodeHeader = ({
   image,
 }: NodeHeaderProps) => {
   return (
-    <div
-      className={cn(
-        "flex items-center gap-4 rounded-md p-2 mb-4",
-        bgColor,
-        textColor
-      )}
-    >
-      {image ? (
-        <Image
-          src="/nodes/sec-filing.png"
-          alt="Node Image"
-          className="rounded-md"
-          width={60}
-          height={60}
-        />
-      ) : (
-        iconFn &&
-        iconBgColor && (
-          <div
-            className={cn(
-              "rounded-md p-3 w-[60px] h-[60px] shadow-sm",
-              iconBgColor
-            )}
-          >
-            {iconFn({ className: "w-full h-full text-white" })}
-          </div>
-        )
-      )}
-      <p className="font-semibold text-lg">{title}</p>
+    <div className="relative">
+      <div
+        className={cn(
+          "flex items-center gap-4 rounded-md p-2 mb-4",
+          bgColor,
+          textColor
+        )}
+      >
+        {image ? (
+          <Image
+            src="/nodes/sec-filing.png"
+            alt="Node Image"
+            className="rounded-md"
+            width={60}
+            height={60}
+          />
+        ) : (
+          iconFn &&
+          iconBgColor && (
+            <div
+              className={cn(
+                "rounded-md p-3 w-[60px] h-[60px] shadow-sm",
+                iconBgColor
+              )}
+            >
+              {iconFn({ className: "w-full h-full text-white" })}
+            </div>
+          )
+        )}
+        <p className="font-semibold text-lg">{title}</p>
+      </div>
     </div>
   );
 };

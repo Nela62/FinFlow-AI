@@ -129,16 +129,6 @@ function DocumentCompilerNodeComponent({
       inputs={inputs}
       outputs={selectedOutputs}
     >
-      <Handle
-        style={{
-          height: "12px",
-          width: "12px",
-          backgroundColor: "white",
-          border: "1px solid #6b7280",
-        }}
-        type="target"
-        position={Position.Top}
-      />
       <NodeHeader
         title="Document Compiler"
         bgColor="bg-amber-200"
@@ -153,7 +143,7 @@ function DocumentCompilerNodeComponent({
           <div className="flex gap-2">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button className="w-full" variant="outline">
+                <Button className="w-full justify-start" variant="outline">
                   {params.templateStyle}
                 </Button>
               </DropdownMenuTrigger>

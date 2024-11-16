@@ -43,6 +43,7 @@ const outputs: NodeOutput[] = [
   { label: "text", dataType: "MD" },
 ];
 
+// FIXME: on edge delete, does not readjust the inputs
 const runFn = async (params: Record<string, any>) => {
   return {
     inputData: { "node-1": summaryRes, "node-2": md, "node-3": finAnalysisRes },
@@ -86,26 +87,30 @@ function FluentMerge16Filled(props: SVGProps<SVGSVGElement>) {
   );
 }
 
-// FIX: Outputs are broken and not updating
+// FIXME: Outputs are broken and not updating
 function AppenderNodeComponent({ id, data }: NodeProps<AppenderNodeType>) {
   const updateNodeInternals = useUpdateNodeInternals();
   const { updateNodeData } = useReactFlow();
 
   const { nodes, edges } = useNodesStore((state) => state);
 
-  const appenderEdges = useMemo(() => {
-    return edges.filter((edge) => edge.target === id);
+  const inputConnections = useMemo(() => {
+    return edges
+      .filter((edge) => edge.target === id)
+      .sort(
+        (a, b) =>
+          Number(a.targetHandle?.replace("handle-node-", "")) -
+          Number(b.targetHandle?.replace("handle-node-", ""))
+      );
   }, [edges]);
 
   const sourceNodes = useMemo(() => {
-    return appenderEdges.map((edge) => edge.source);
-  }, [appenderEdges]);
-
-  const appenderNodes = useMemo(() => {
-    return Array.isArray(nodes)
-      ? nodes?.filter((node) => sourceNodes.includes(node.id))
-      : [];
-  }, [nodes, sourceNodes]);
+    return inputConnections.map((edge) => ({
+      id: edge.source,
+      target: edge.targetHandle?.replace("handle-", "") ?? "",
+      data: nodes.find((node) => node.id === edge.source)?.data,
+    }));
+  }, [inputConnections]);
 
   const [inputs, setInputs] = useState(data.inputs);
 
@@ -123,13 +128,12 @@ function AppenderNodeComponent({ id, data }: NodeProps<AppenderNodeType>) {
     updateNodeInternals(id);
   }, [selectedOutputs]);
 
-  // FIX: Where does the extra handle coming from????
   return (
     <NodeWrapper
       nodeId={id}
       width="w-[360px]"
       inputs={inputs}
-      outputs={outputs}
+      outputs={selectedOutputs}
     >
       <NodeHeader
         title="Appender"
@@ -142,9 +146,9 @@ function AppenderNodeComponent({ id, data }: NodeProps<AppenderNodeType>) {
         <p className="text-sm font-semibold">Order</p>
         {/* TODO: Improve the ui of list items */}
         <SortableList
-          items={appenderNodes.map((node) => ({
+          items={sourceNodes.map((node) => ({
             id: node.id,
-            title: node.data.label ?? node.type,
+            title: node?.data?.label ?? node.id,
           }))}
         />
         {/* TODO: add ability to remove inputs */}

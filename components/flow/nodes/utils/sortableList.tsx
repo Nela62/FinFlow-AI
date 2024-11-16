@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   DndContext,
   closestCenter,
@@ -65,6 +65,11 @@ export type Item = { id: string; title: string };
 
 const SortableList = ({ items: defaultItems }: { items: Item[] }) => {
   const [items, setItems] = useState(defaultItems);
+  console.log("items", items);
+
+  useEffect(() => {
+    setItems(defaultItems);
+  }, [defaultItems]);
 
   const sensors = useSensors(
     useSensor(PointerSensor),

@@ -57,12 +57,12 @@ export const InputHandle = ({
       <Handle
         id={`handle-${input.label}`}
         style={{
-          height: "12px",
-          width: "12px",
+          height: "16px",
+          width: "16px",
           left: `${(index + 1) * (100 / (totalHandles + 1))}%`,
-          transform: "translateX(-50%)",
+          transform: "translateX(-50%) translateY(-50%)",
           backgroundColor: "white",
-          border: "1px solid #6b7280",
+          border: "2px solid #6b7280",
           zIndex: 10,
         }}
         type="target"

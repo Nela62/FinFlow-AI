@@ -42,7 +42,7 @@ export function fetchPanelByUrl(client: TypedSupabaseClient, url: string) {
     .throwOnError();
 }
 
-// FIX: for some reason join on panels returns null
+// FIXME: for some reason join on panels returns null
 // WIDGET GROUPS
 export function fetchAllWidgetGroups(
   client: TypedSupabaseClient,

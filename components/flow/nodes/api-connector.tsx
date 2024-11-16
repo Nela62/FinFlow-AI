@@ -333,16 +333,6 @@ function ApiConnectorNodeComponent({ id, data }: NodeProps<ApiConnectorNode>) {
           </div>
         </div>
       </div>
-      <Handle
-        style={{
-          height: "12px",
-          width: "12px",
-          backgroundColor: "white",
-          border: "1px solid #6b7280",
-        }}
-        type="source"
-        position={Position.Bottom}
-      />
     </NodeWrapper>
   );
 }

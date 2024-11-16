@@ -7,6 +7,7 @@ import {
   useReactFlow,
   type EdgeProps,
   type Edge,
+  useUpdateNodeInternals,
 } from "@xyflow/react";
 
 const buttonStyle = {
@@ -35,6 +36,7 @@ export default function ButtonEdge({
   style = { stroke: "#3b82f6", strokeWidth: 3, strokeDasharray: "5,5" },
   markerEnd,
 }: EdgeProps<ButtonEdge>) {
+  const updateNodeInternals = useUpdateNodeInternals();
   const { setEdges } = useReactFlow();
   const [edgePath, labelX, labelY] = getSmoothStepPath({
     sourceX,
@@ -47,6 +49,7 @@ export default function ButtonEdge({
 
   const onEdgeClick = () => {
     setEdges((edges) => edges.filter((edge) => edge.id !== id));
+    updateNodeInternals(id);
   };
 
   return (

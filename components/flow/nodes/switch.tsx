@@ -1,7 +1,7 @@
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect } from "react";
 import type { SVGProps } from "react";
 
-import type { Node, NodeProps } from "@xyflow/react";
+import type { Connection, Edge, Node, NodeProps } from "@xyflow/react";
 import { useReactFlow, useUpdateNodeInternals } from "@xyflow/react";
 import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,8 @@ import { NodeHeader } from "./utils/header";
 import { Label } from "@/components/ui/label";
 import { dataTypesList, NodeInput, NodeOutput } from "@/types/node";
 import { NodeWrapper } from "./utils/node-wrapper";
+import { Badge } from "@/components/ui/badge";
+import { XIcon } from "lucide-react";
 
 const inputs: NodeInput[] = [
   {
@@ -25,9 +27,13 @@ const inputs: NodeInput[] = [
   },
 ];
 
-type Params = {};
+type Params = {
+  selectedInput: string;
+};
 
-const defaultParams: Params = {};
+const defaultParams: Params = {
+  selectedInput: "handle-node-1",
+};
 
 const outputs: NodeOutput[] = [{ label: "node-1", dataType: "ANY" }];
 
@@ -47,7 +53,7 @@ export const defaultData: SwitchNodeData = {
   label: "Switch",
   params: defaultParams,
   inputs,
-  outputs: [{ label: "node-1", dataType: "ANY" }],
+  outputs: [{ label: "node-1", dataType: "JSON" }],
   runFn,
 };
 
@@ -70,32 +76,38 @@ function MdiSwitch(props: SVGProps<SVGSVGElement>) {
   );
 }
 
+// FIXME: on delete, readjust the node ids
 function SwitchNodeComponent({ id, data }: NodeProps<SwitchNode>) {
   const updateNodeInternals = useUpdateNodeInternals();
   const { updateNodeData } = useReactFlow();
 
-  const { nodes, edges } = useNodesStore((state) => state);
+  const { nodes, edges, deleteEdge } = useNodesStore((state) => state);
 
-  const switchEdges = useMemo(() => {
-    return edges.filter((edge) => edge.target === id);
+  const inputConnections = useMemo(() => {
+    return edges
+      .filter((edge) => edge.target === id)
+      .sort(
+        (a, b) =>
+          Number(a.targetHandle?.replace("handle-node-", "")) -
+          Number(b.targetHandle?.replace("handle-node-", ""))
+      );
   }, [edges]);
 
   const sourceNodes = useMemo(() => {
-    return switchEdges.map((edge) => edge.source);
-  }, [switchEdges]);
-
-  const switchNodes = useMemo(() => {
-    return Array.isArray(nodes)
-      ? nodes?.filter((node) => sourceNodes.includes(node.id))
-      : [];
-  }, [nodes, sourceNodes]);
+    return inputConnections.map((edge) => ({
+      id: edge.source,
+      target: edge.targetHandle?.replace("handle-", "") ?? "",
+      data: nodes.find((node) => node.id === edge.source)?.data,
+    }));
+  }, [inputConnections]);
 
   const [inputs, setInputs] = useState(data.inputs);
 
-  // TODO: the output is different and should change according to the original node selected
-  const [selectedOutputs, setSelectedOutputs] = useState<NodeOutput[]>(
-    data.outputs
-  );
+  // FIXME: the output is different and should change according to the original node selected
+  const [selectedOutput, setSelectedOutput] = useState<NodeOutput>({
+    label: sourceNodes?.[0]?.target ?? "node-1",
+    dataType: sourceNodes?.[0]?.data?.outputs?.[0]?.dataType ?? "JSON",
+  });
 
   useEffect(() => {
     updateNodeData(id, { inputs });
@@ -103,9 +115,19 @@ function SwitchNodeComponent({ id, data }: NodeProps<SwitchNode>) {
   }, [inputs]);
 
   useEffect(() => {
-    updateNodeData(id, { outputs: selectedOutputs });
+    updateNodeData(id, { outputs: [selectedOutput] });
     updateNodeInternals(id);
-  }, [selectedOutputs]);
+  }, [selectedOutput]);
+
+  const deleteInput = useCallback((conn: Edge) => {
+    setInputs(
+      inputs.filter(
+        (input) => input.label !== conn.targetHandle?.replace("handle-", "")
+      )
+    );
+    deleteEdge(conn.id);
+    updateNodeInternals(id);
+  }, []);
 
   return (
     <NodeWrapper
@@ -121,37 +143,66 @@ function SwitchNodeComponent({ id, data }: NodeProps<SwitchNode>) {
         textColor="text-gray-900"
         iconFn={MdiSwitch}
       />
-      <RadioGroup
-        defaultValue={switchNodes?.[0]?.id ?? ""}
-        className="px-2 py-2 space-y-2"
-      >
-        {switchNodes?.map((node, i) => (
-          <div className="flex items-center space-x-2" key={node.id}>
-            <RadioGroupItem value={node.id} id={node.id} />
-            <Label htmlFor={node.id}>
-              {/* @ts-ignore */}
-              Input {i + 1}: {node.data.label ?? node.type}
-            </Label>
-          </div>
-        ))}
-      </RadioGroup>
-      {/* FIX: Edges don't rerender on new edge */}
-      <Button
-        variant="outline"
-        onClick={() => {
-          setInputs([
-            ...inputs,
-            {
-              label: `input-${inputs.length + 1}`,
-              acceptedFormat: "Any",
-              acceptedTypes: dataTypesList.map((item) => item.name),
-            },
-          ]);
-          updateNodeInternals(id);
-        }}
-      >
-        Add Input
-      </Button>
+      <div className="space-y-4 px-2">
+        <RadioGroup
+          value={selectedOutput.label}
+          onValueChange={(value) => {
+            // FIXME: the output doesn't change
+            setSelectedOutput({
+              label: value,
+              dataType:
+                sourceNodes?.find((node) => node.target === value)?.data
+                  ?.outputs?.[0]?.dataType ?? "JSON",
+            });
+            updateNodeInternals(id);
+          }}
+          className="px-2 py-2 space-y-2"
+        >
+          {sourceNodes?.map((node, i) => (
+            <div className="flex items-center space-x-2" key={node.id}>
+              <RadioGroupItem value={node.target} id={node.id} />
+              <div className="flex gap-1 items-center">
+                <Badge variant="outline">{node.target}</Badge>
+                <Label htmlFor={node.id}>{node.data?.label}</Label>
+              </div>
+            </div>
+          ))}
+        </RadioGroup>
+        <div className="flex gap-2">
+          {inputConnections.map((conn) => (
+            <Button
+              variant="outline"
+              size="sm"
+              key={conn.id}
+              className="flex items-center gap-1"
+              onClick={() => {
+                deleteInput(conn);
+              }}
+            >
+              {conn.targetHandle?.replace("handle-", "")}
+              <XIcon className="w-4 h-4" />
+            </Button>
+          ))}
+        </div>
+        <Button
+          variant="outline"
+          size="sm"
+          className=""
+          onClick={() => {
+            setInputs([
+              ...inputs,
+              {
+                label: `node-${inputs.length + 1}`,
+                acceptedFormat: "Any",
+                acceptedTypes: dataTypesList.map((item) => item.name),
+              },
+            ]);
+            updateNodeInternals(id);
+          }}
+        >
+          Add Input
+        </Button>
+      </div>
     </NodeWrapper>
   );
 }

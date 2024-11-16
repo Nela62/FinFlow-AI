@@ -88,7 +88,7 @@ export const Panel = ({
     ["id"],
     "id"
   );
-  // FIX: make sure that it doesn't keep updating when the element is being dragged
+  // FIXME: make sure that it doesn't keep updating when the element is being dragged
   const handleLayoutChange = useCallback(
     async (layout: Layout[]) => {
       try {

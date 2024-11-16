@@ -37,10 +37,10 @@ export const OutputHandle = ({
         style={{
           left: `${(index + 1) * (100 / (totalHandles + 1))}%`,
           transform: "translateX(-50%) translateY(50%)",
-          height: "12px",
-          width: "12px",
+          height: "16px",
+          width: "16px",
           backgroundColor: "white",
-          border: "1px solid #6b7280",
+          border: "2px solid #6b7280",
           zIndex: 10,
         }}
         type="source"

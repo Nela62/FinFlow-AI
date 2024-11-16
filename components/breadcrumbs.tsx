@@ -75,7 +75,7 @@ export const Breadcrumbs = () => {
     return null;
   }, [panels, paths]);
 
-  // FIX: Default values are not updating
+  // FIXME: Default values are not updating
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: async () => ({

@@ -89,7 +89,7 @@ const textTypes = dataTypesList
   ?.map((item) => item.name);
 
 export type AppNode =
-  | BuiltInNode
+  // | BuiltInNode
   | SecFilingNodeType
   | ApiConnectorNodeType
   | SwitchNodeType
@@ -113,6 +113,7 @@ export type NodesActions = {
   setNodes: (nodes: AppNode[]) => void;
   setEdges: (edges: Edge[]) => void;
   deleteNode: (nodeId: string) => void;
+  deleteEdge: (edgeId: string) => void;
   addRunResult: (runResult: NodeRunResult) => void;
   clearRunResults: () => void;
 };
@@ -331,6 +332,11 @@ export const createNodesStore = (initState: NodesState = defaultInitState) => {
           edges: state.edges?.filter(
             (edge) => edge.source !== nodeId && edge.target !== nodeId
           ),
+        }));
+      },
+      deleteEdge: (edgeId) => {
+        set((state) => ({
+          edges: state.edges?.filter((edge) => edge.id !== edgeId),
         }));
       },
       addRunResult: (runResult) => {

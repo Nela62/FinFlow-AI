@@ -40,10 +40,15 @@ export default () => {
         // console.error("Node not found: ", nodeType);
         continue;
       }
-      console.log("node ", node);
-      // @ts-ignore
+      // console.log("node ", node);
       const result = await node?.data.runFn(node.data.params);
-      addRunResult({ ...result, id: nodeType });
+
+      addRunResult({
+        id: nodeType,
+        inputData: result.inputData,
+        outputData: result.outputData,
+        params: node.data.params,
+      });
     }
     setIsRunning(false);
   };

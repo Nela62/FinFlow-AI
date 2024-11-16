@@ -86,7 +86,7 @@ const FundamentalDataWidgetComponent = ({
     setMounted(true);
   }, []);
 
-  // FIX: Not a good solution since it rerenders too often and makes requests to the db
+  // FIXME: Not a good solution since it rerenders too often and makes requests to the db
   useEffect(() => {
     console.log("stock changed");
     // Only refetch if currentStock exists and differs from widget's stock
