@@ -81,7 +81,7 @@ const DnDFlow = () => {
           proOptions={{ hideAttribution: true }}
           fitView
         >
-          <Background />
+          <Background size={2.5} gap={34} />
           <Controls />
         </ReactFlow>
       </div>
