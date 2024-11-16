@@ -20,11 +20,24 @@ export const RunResultsSidebar = () => {
   return (
     <div
       className={cn(
-        "h-full border-l rounded-l-md bg-background border-gray-200 absolute top-0 right-0 w-1/3",
+        "flex flex-col gap-4 w-[500px] h-full absolute top-4 bottom-0 right-4 border rounded-md backdrop-blur-md bg-background/40 shadow-sm",
         runResults.length > 0 ? "block" : "hidden"
       )}
     >
-      {runNodes.length > 0 && (
+      <Tabs defaultValue="output">
+        <TabsList className="w-full">
+          <TabsTrigger value="output" className="w-1/2">
+            Output
+          </TabsTrigger>
+          <TabsTrigger value="logs" className="w-1/2">
+            Logs
+          </TabsTrigger>
+        </TabsList>
+        <TabsContent value="output">
+          <ResultContent resultRuns={runResults} />
+        </TabsContent>
+      </Tabs>
+      {/* {runNodes.length > 0 && (
         <Tabs defaultValue={runNodes[runNodes.length - 1].id}>
           <div className="relative rounded-sm overflow-x-scroll h-10 bg-muted">
             <TabsList className="absolute flex flex-row justify-stretch w-full">
@@ -47,7 +60,7 @@ export const RunResultsSidebar = () => {
             </TabsContent>
           ))}
         </Tabs>
-      )}
+      )} */}
     </div>
   );
 };

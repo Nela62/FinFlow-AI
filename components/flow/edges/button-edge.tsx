@@ -63,7 +63,7 @@ export default function ButtonEdge({
         >
           <button
             className={cn(
-              "bg-red-400 rounded-full p-2 transition-opacity duration-200 ease-in-out",
+              "bg-red-400 rounded-full p-1 transition-opacity duration-200 ease-in-out",
               data?.isHovered ? "opacity-100" : "opacity-0"
             )}
             onClick={onEdgeClick}
