@@ -96,12 +96,15 @@ export const ResultContent = ({
               Inputs
             </Button>
           </DialogTrigger>
-          <DialogContent className="w-[620px] h-[80vh]">
+          <DialogContent className="max-w-[540px] max-h-[80vh] flex flex-col">
             <DialogHeader>
               <DialogTitle>Inputs</DialogTitle>
             </DialogHeader>
-            <ScrollArea className="h-[calc(100%-50px)]">
-              {getContent(selectedResult?.inputData)}
+            {/* if i put overflow-auto, it works but doesn't use scrollarea bars */}
+            <ScrollArea className="flex-1 border-t overflow-auto">
+              <div className="h-full pr-2 pt-1">
+                {getContent(selectedResult?.inputData)}
+              </div>
             </ScrollArea>
           </DialogContent>
         </Dialog>
@@ -111,12 +114,14 @@ export const ResultContent = ({
               Params
             </Button>
           </DialogTrigger>
-          <DialogContent className="w-[620px] h-[80vh]">
+          <DialogContent className="max-w-[540px] max-h-[80vh] flex flex-col">
             <DialogHeader>
               <DialogTitle>Params</DialogTitle>
             </DialogHeader>
-            <ScrollArea className="h-[calc(100%-50px)]">
-              {getContent(selectedResult?.params)}
+            <ScrollArea className="flex-1 overflow-auto border-t">
+              <div className="h-full pr-2 pt-2">
+                {getContent(selectedResult?.params)}
+              </div>
             </ScrollArea>
           </DialogContent>
         </Dialog>
@@ -147,8 +152,7 @@ export const ResultContent = ({
       </div>
       <ScrollArea className="h-[calc(100vh-140px)] w-full px-4 py-2">
         {/* <ScrollBar orientation="horizontal" /> */}
-        <h2 className="text-lg font-semibold py-2">Output</h2>
-
+        <h2 className="text-lg font-semibold py-2 border-b">Output</h2>
         {getContent(selectedResult?.outputData)}
       </ScrollArea>
     </div>
