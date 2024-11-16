@@ -65,7 +65,7 @@ const DnDFlow = () => {
   return (
     <div className="h-full w-full">
       <div
-        className="h-[calc(100vh-62px)] w-[calc(100vw-70px)]"
+        className="h-[calc(100vh-18px)] w-[calc(100vw-70px)]"
         ref={reactFlowWrapper}
       >
         <ReactFlow

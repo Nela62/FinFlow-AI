@@ -13,6 +13,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { TopBarAddWidgets } from "@/components/widgets/top-bar-add-widgets";
+import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
 
 export const LayoutComponent = ({
@@ -33,17 +34,28 @@ export const LayoutComponent = ({
         <ResizablePanelGroup direction="horizontal" className="">
           <ResizablePanel defaultSize={75}>
             <Card className="flex-1 my-2 h-[calc(100vh-16px)] flex flex-col w-full">
-              <div className="flex items-center justify-between p-2">
-                <div className="flex items-center gap-2">
-                  <SidebarTrigger />
-                  <Separator orientation="vertical" className="h-4" />
-                  <Breadcrumbs />
-                </div>
-                <div className="items-center">
-                  <TopBarAddWidgets />
-                </div>
-              </div>
-              <ScrollArea className="">{children}</ScrollArea>
+              {!isWorkflowsPage ? (
+                <>
+                  <div
+                    className={cn(
+                      "flex items-center justify-between p-2",
+                      isWorkflowsPage && "bg-transparent"
+                    )}
+                  >
+                    <div className="flex items-center gap-2">
+                      <SidebarTrigger />
+                      <Separator orientation="vertical" className="h-4" />
+                      <Breadcrumbs />
+                    </div>
+                    <div className="items-center">
+                      <TopBarAddWidgets />
+                    </div>
+                  </div>
+                  <ScrollArea className="">{children}</ScrollArea>
+                </>
+              ) : (
+                <div className="relative">{children}</div>
+              )}
             </Card>
           </ResizablePanel>
           {!isWorkflowsPage && (

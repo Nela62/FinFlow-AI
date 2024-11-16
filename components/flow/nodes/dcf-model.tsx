@@ -52,11 +52,11 @@ type Params = {
 };
 
 const defaultParams: Params = {
-  discountRate: 8.4,
-  timeHorizon: 5,
+  discountRate: 0,
+  timeHorizon: 0,
   terminalValue: "exit-multiple",
   growthRate: 0,
-  intrinsicValue: 144.5,
+  intrinsicValue: 0,
 };
 
 const outputs: NodeOutput[] = [
@@ -162,7 +162,7 @@ function DcfModelNodeComponent({ id, data }: NodeProps<DcfModelNodeType>) {
             className="w-full"
             value={params.terminalValue}
             onValueChange={(value) =>
-              setParamsDebounced({ ...params, terminalValue: value })
+              setParams({ ...params, terminalValue: value })
             }
           >
             <TabsList className="w-full">
