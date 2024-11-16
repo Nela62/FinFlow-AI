@@ -208,7 +208,7 @@ function SummarizerNodeComponent({ id, data }: NodeProps<SummarizerNode>) {
             />
             <Button
               variant="outline"
-              className="px-1"
+              className="px-3"
               onClick={() => {
                 const newKeywords = inputKeywords
                   .split(",")
