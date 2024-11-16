@@ -65,7 +65,6 @@ export type Item = { id: string; title: string };
 
 const SortableList = ({ items: defaultItems }: { items: Item[] }) => {
   const [items, setItems] = useState(defaultItems);
-  console.log("items", items);
 
   useEffect(() => {
     setItems(defaultItems);

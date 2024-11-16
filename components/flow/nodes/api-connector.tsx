@@ -36,6 +36,9 @@ import { useDebouncedCallback } from "use-debounce";
 import { NodeWrapper } from "./utils/node-wrapper";
 import { Outputs } from "./utils/outputs";
 import { res } from "./temp/api";
+import { createClient } from "@/lib/supabase/client";
+import { useQuery } from "@supabase-cache-helpers/postgrest-react-query";
+import { fetchStockById } from "@/lib/queries";
 
 function MajesticonsDataLine(props: SVGProps<SVGSVGElement>) {
   return (
@@ -157,6 +160,7 @@ function ApiConnectorNodeComponent({ id, data }: NodeProps<ApiConnectorNode>) {
   // TODO: Check if there is an input and adjust the ticker param
   const updateNodeInternals = useUpdateNodeInternals();
   const [params, setParams] = useState<Record<string, any>>(data.params);
+  const [stockId, setStockId] = useState<string | null>(null);
   const setParamsDebounced = useDebouncedCallback(
     (params: Record<string, any>) => {
       setParams(params);
@@ -168,6 +172,17 @@ function ApiConnectorNodeComponent({ id, data }: NodeProps<ApiConnectorNode>) {
   const [selectedOutputs, setSelectedOutputs] = useState<NodeOutput[]>(
     data.outputs
   );
+
+  const supabase = createClient();
+  const { data: stock } = useQuery(fetchStockById(supabase, stockId ?? ""), {
+    enabled: !!stockId,
+  });
+
+  useEffect(() => {
+    if (stock) {
+      setParams({ ...params, ticker: stock.symbol });
+    }
+  }, [stock]);
 
   useEffect(() => {
     updateNodeInternals(id);
@@ -206,7 +221,7 @@ function ApiConnectorNodeComponent({ id, data }: NodeProps<ApiConnectorNode>) {
         <StockPicker
           currentStockTicker={params.ticker}
           onStockClick={(stockId) => {
-            setParamsDebounced({ ...params, ticker: stockId });
+            setStockId(stockId);
           }}
         />
         <Separator orientation="horizontal" />

@@ -27,6 +27,9 @@ import { useDebouncedCallback } from "use-debounce";
 import { Outputs } from "./utils/outputs";
 import { NodeWrapper } from "./utils/node-wrapper";
 import { res } from "./temp/sec";
+import { createClient } from "@/lib/supabase/client";
+import { fetchStockById } from "@/lib/queries";
+import { useQuery } from "@supabase-cache-helpers/postgrest-react-query";
 
 type NodeSectionDetail = {
   name: string;
@@ -556,6 +559,7 @@ export type SecFilingNodeType = Node<SecFilingNodeData>;
 function SecFilingNodeComponent({ id, data }: NodeProps<SecFilingNodeType>) {
   const updateNodeInternals = useUpdateNodeInternals();
   const [params, setParams] = useState<Record<string, any>>(data.params);
+  const [stockId, setStockId] = useState<string | null>(null);
   const setParamsDebounced = useDebouncedCallback(
     (params: Record<string, any>) => {
       setParams(params);
@@ -568,8 +572,20 @@ function SecFilingNodeComponent({ id, data }: NodeProps<SecFilingNodeType>) {
     data.outputs
   );
 
+  const supabase = createClient();
+  const { data: stock } = useQuery(fetchStockById(supabase, stockId ?? ""), {
+    enabled: !!stockId,
+  });
+
+  useEffect(() => {
+    if (stock) {
+      setParams({ ...params, ticker: stock.symbol });
+    }
+  }, [stock]);
+
   useEffect(() => {
     updateNodeData(id, { params });
+    console.log("params", params);
   }, [params]);
 
   useEffect(() => {
@@ -604,7 +620,7 @@ function SecFilingNodeComponent({ id, data }: NodeProps<SecFilingNodeType>) {
         <StockPicker
           currentStockTicker={params.ticker}
           onStockClick={(stockId) => {
-            setParamsDebounced({ ...params, ticker: stockId });
+            setStockId(stockId);
           }}
         />
         <Separator orientation="horizontal" />

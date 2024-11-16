@@ -5,7 +5,6 @@ import {
   Bot,
   Database,
   Files,
-  GalleryVerticalEnd,
   LayoutDashboard,
   SquareDashedKanban,
 } from "lucide-react";
