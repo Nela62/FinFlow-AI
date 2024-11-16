@@ -1,3 +1,5 @@
+"use client";
+
 import { cn } from "@/lib/utils";
 import { useNodesStore } from "@/providers/nodesProvider";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";

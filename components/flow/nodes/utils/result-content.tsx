@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -6,10 +8,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { NodeRunResult } from "@/types/node";
 import Markdown from "react-markdown";
-import ReactJson from "react-json-view";
 
 import remarkGfm from "remark-gfm";
 import {
@@ -21,6 +22,12 @@ import {
 import { useEffect, useMemo, useState } from "react";
 import { useNodesStore } from "@/providers/nodesProvider";
 import { ChevronDownIcon } from "lucide-react";
+import dynamic from "next/dynamic";
+
+// Dynamically import ReactJson with ssr disabled
+const ReactJson = dynamic(() => import("react-json-view"), {
+  ssr: false,
+});
 
 const getContent = (content: any) => {
   if (typeof content === "object") {
