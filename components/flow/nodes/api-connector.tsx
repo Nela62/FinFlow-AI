@@ -314,20 +314,15 @@ function ApiConnectorNodeComponent({ id, data }: NodeProps<ApiConnectorNode>) {
           </NodeTabs>
         </div>
         <Separator orientation="horizontal" />
-        <div className="flex justify-around">
+        <div className="flex justify-around py-2">
           <div className="flex items-center space-x-2">
             <Switch />
-            <div className="space-y-1">
-              <p className="text-xs">Price-Actual /</p>
-              <p className="text-xs">Split-Adjusted</p>
-            </div>
+
+            <p className="text-xs">Split-Adjusted</p>
           </div>
           <div className="flex items-center space-x-2">
             <Switch />
-            <div className="space-y-1">
-              <p className="text-xs">Inflation-Adjusted /</p>
-              <p className="text-xs">Nominal</p>
-            </div>
+            <p className="text-xs">Inflation-Adjusted</p>
           </div>
         </div>
         <Separator orientation="horizontal" />
