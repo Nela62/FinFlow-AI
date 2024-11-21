@@ -5,6 +5,7 @@ import { useNodesStore } from "@/providers/nodesProvider";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { ResultContent } from "./nodes/utils/result-content";
 import { useMemo } from "react";
+import { ResultLogs } from "./nodes/utils/result-logs";
 
 export const RunResultsSidebar = () => {
   const { nodes, runResults, edges } = useNodesStore((state) => state);
@@ -28,15 +29,18 @@ export const RunResultsSidebar = () => {
     >
       <Tabs defaultValue="output">
         <TabsList className="w-full">
-          <TabsTrigger value="output" className="w-1/2">
-            Output
-          </TabsTrigger>
           <TabsTrigger value="logs" className="w-1/2">
             Logs
+          </TabsTrigger>
+          <TabsTrigger value="output" className="w-1/2">
+            Output
           </TabsTrigger>
         </TabsList>
         <TabsContent value="output">
           <ResultContent resultRuns={runResults} />
+        </TabsContent>
+        <TabsContent value="logs">
+          <ResultLogs resultRuns={runResults} />
         </TabsContent>
       </Tabs>
       {/* {runNodes.length > 0 && (

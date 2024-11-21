@@ -94,19 +94,20 @@ export type NodeOutput = {
   dataType: DataType;
 };
 
-export type NodeData = {
-  label: string;
-  inputs: NodeInput[];
-  params: Record<string, any>;
-  outputs: NodeOutput[];
-  runFn: (params: Record<string, any>) => Promise<Record<string, any>>;
-};
-
 export type NodeRunResult = {
   id: string;
   inputData: Record<string, any>;
   params: Record<string, any>;
   outputData: Record<string, any>;
+  // logs: string[];
+};
+
+export type NodeData = {
+  label: string;
+  inputs: NodeInput[];
+  params: Record<string, any>;
+  outputs: NodeOutput[];
+  runFn: (params: Record<string, any>) => Promise<NodeRunResult>;
 };
 
 export type RunResults = NodeRunResult[];

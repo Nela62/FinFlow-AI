@@ -31,7 +31,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { ChevronDown } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { NodeInput, NodeOutput } from "@/types/node";
+import { NodeInput, NodeOutput, NodeRunResult } from "@/types/node";
 import { useDebouncedCallback } from "use-debounce";
 import { NodeWrapper } from "./utils/node-wrapper";
 import { Outputs } from "./utils/outputs";
@@ -91,9 +91,11 @@ const outputs: NodeOutput[] = [
 const runFn = async (params: Record<string, any>) => {
   await new Promise((resolve) => setTimeout(resolve, 1000));
   return {
+    id: "api-connector",
     inputData: params.ticker,
     params: params,
     outputData: res,
+    logs: [`Fetching data from ${params.apiProvider}`],
   };
 };
 
@@ -103,7 +105,7 @@ export type ApiConnectorNodeData = {
   params: Params;
   inputs: NodeInput[];
   outputs: NodeOutput[];
-  runFn: (params: Record<string, any>) => Promise<Record<string, any>>;
+  runFn: (params: Record<string, any>) => Promise<NodeRunResult>;
 };
 
 export const defaultData: ApiConnectorNodeData = {

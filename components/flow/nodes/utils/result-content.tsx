@@ -151,7 +151,6 @@ export const ResultContent = ({
         </DropdownMenu>
       </div>
       <ScrollArea className="h-[calc(100vh-140px)] w-full px-4 py-2">
-        {/* <ScrollBar orientation="horizontal" /> */}
         <h2 className="text-lg font-semibold py-2 border-b">Output</h2>
         {getContent(selectedResult?.outputData)}
       </ScrollArea>
