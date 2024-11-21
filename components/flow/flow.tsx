@@ -18,6 +18,7 @@ import { useNodesStore } from "@/providers/nodesProvider";
 import { edgeTypes, nodeTypes } from "@/stores/nodesStore";
 import { RunResultsSidebar } from "./run-results-sidebar";
 import { defaultDataMap } from "./nodes";
+import { Toolbar } from "./toolbar";
 
 const DnDFlow = () => {
   const reactFlowWrapper = useRef(null);
@@ -66,9 +67,10 @@ const DnDFlow = () => {
   return (
     <div className="h-full w-full">
       <div
-        className="h-[calc(100vh-18px)] w-[calc(100vw-70px)]"
+        className="h-[calc(100vh-18px)] w-[calc(100vw-70px)] relative"
         ref={reactFlowWrapper}
       >
+        <Toolbar />
         <ReactFlow
           nodes={nodes}
           nodeTypes={nodeTypes}

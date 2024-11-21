@@ -18,40 +18,6 @@ const nodesList = [
 
 export default () => {
   const [_, setType] = useDnD();
-  const { nodes, addRunResult } = useNodesStore((state) => state);
-  const [isRunning, setIsRunning] = useState(false);
-
-  const run = async () => {
-    setIsRunning(true);
-    const order = [
-      "api-connector",
-      "sec-filing",
-      "summarizer",
-      "dcf-model",
-      "financial-analysis",
-      "appender",
-      "document-compiler",
-    ];
-    // const order = ["a", "b", "d", "e", "i", "f", "g"];
-    for (const nodeType of order) {
-      console.log("running ", nodeType);
-      const node = nodes.find((node) => node.type === nodeType);
-      if (!node) {
-        // console.error("Node not found: ", nodeType);
-        continue;
-      }
-      // console.log("node ", node);
-      const result = await node?.data.runFn(node.data.params);
-
-      addRunResult({
-        id: nodeType,
-        inputData: result.inputData,
-        outputData: result.outputData,
-        params: node.data.params,
-      });
-    }
-    setIsRunning(false);
-  };
 
   const onDragStart = (
     event: React.DragEvent<HTMLDivElement>,
@@ -79,9 +45,6 @@ export default () => {
             </CardContent>
           </Card>
         ))}
-      <Button onClick={run} disabled={isRunning}>
-        {isRunning ? "Running..." : "Run"}
-      </Button>
     </aside>
   );
 };
