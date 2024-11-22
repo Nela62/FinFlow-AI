@@ -1,9 +1,22 @@
 "use client";
 
 import { Flow } from "@/components/flow/flow";
+import { createClient } from "@/lib/supabase/client";
+import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 export default function WorkflowPage() {
+  const supabase = createClient();
+  const router = useRouter();
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => {
+      if (data.user?.email === "demo-user@fin-flow.ai") {
+        router.push("/panels");
+      }
+    });
+  }, []);
+
   useEffect(() => {
     // Disable page zooming
     const meta = document.createElement("meta");
