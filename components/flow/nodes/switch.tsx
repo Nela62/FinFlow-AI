@@ -35,7 +35,7 @@ const defaultParams: Params = {
   selectedInput: "handle-node-1",
 };
 
-const outputs: NodeOutput[] = [{ label: "node-1", dataType: "ANY" }];
+const outputs: NodeOutput[] = [{ label: "node", dataType: "ANY" }];
 
 const runFn = async (params: Record<string, any>) => {
   return {};
