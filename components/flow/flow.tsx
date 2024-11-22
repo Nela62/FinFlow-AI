@@ -19,6 +19,8 @@ import { edgeTypes, nodeTypes } from "@/stores/nodesStore";
 import { RunResultsSidebar } from "./run-results-sidebar";
 import { defaultDataMap } from "./nodes";
 import { Toolbar } from "./toolbar";
+import { Dialog } from "../ui/dialog";
+import { Popover } from "../ui/popover";
 
 const DnDFlow = () => {
   const reactFlowWrapper = useRef(null);
@@ -66,40 +68,44 @@ const DnDFlow = () => {
 
   return (
     <div className="h-full w-full">
-      <div
-        className="h-[calc(100vh-18px)] w-[calc(100vw-70px)] relative"
-        ref={reactFlowWrapper}
-      >
-        <Toolbar />
-        <ReactFlow
-          nodes={nodes}
-          nodeTypes={nodeTypes}
-          edges={edges}
-          edgeTypes={edgeTypes}
-          onNodesChange={onNodesChange}
-          onEdgesChange={onEdgesChange}
-          onConnect={onConnect}
-          onDrop={onDrop}
-          onDragOver={onDragOver}
-          proOptions={{ hideAttribution: true }}
-          onEdgeMouseEnter={(_, edge) => {
-            updateEdge(edge.id, (oldEdge) => ({
-              data: { ...oldEdge.data, isHovered: true },
-            }));
-          }}
-          onEdgeMouseLeave={(_, edge) => {
-            updateEdge(edge.id, (oldEdge) => ({
-              data: { ...oldEdge.data, isHovered: false },
-            }));
-          }}
-          fitView
-        >
-          <Background size={2.5} gap={34} />
-          <Controls />
-        </ReactFlow>
-      </div>
-      <Sidebar />
-      <RunResultsSidebar />
+      <Dialog>
+        <Popover>
+          <div
+            className="h-[calc(100vh-18px)] w-[calc(100vw-70px)] relative"
+            ref={reactFlowWrapper}
+          >
+            <Toolbar />
+            <ReactFlow
+              nodes={nodes}
+              nodeTypes={nodeTypes}
+              edges={edges}
+              edgeTypes={edgeTypes}
+              onNodesChange={onNodesChange}
+              onEdgesChange={onEdgesChange}
+              onConnect={onConnect}
+              onDrop={onDrop}
+              onDragOver={onDragOver}
+              proOptions={{ hideAttribution: true }}
+              onEdgeMouseEnter={(_, edge) => {
+                updateEdge(edge.id, (oldEdge) => ({
+                  data: { ...oldEdge.data, isHovered: true },
+                }));
+              }}
+              onEdgeMouseLeave={(_, edge) => {
+                updateEdge(edge.id, (oldEdge) => ({
+                  data: { ...oldEdge.data, isHovered: false },
+                }));
+              }}
+              fitView
+            >
+              <Background size={2.5} gap={34} />
+              <Controls />
+            </ReactFlow>
+          </div>
+          <Sidebar />
+          <RunResultsSidebar />
+        </Popover>
+      </Dialog>
     </div>
   );
 };
