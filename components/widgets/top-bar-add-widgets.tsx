@@ -56,7 +56,7 @@ export const TopBarAddWidgets = () => {
           <AddWidgetComponent
             selectedWidgets={selectedWidgets}
             setSelectedWidgets={setSelectedWidgets}
-          />{" "}
+          />
           <DialogFooter>
             <Button>Add widgets</Button>
           </DialogFooter>

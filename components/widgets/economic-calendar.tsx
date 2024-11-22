@@ -2,7 +2,6 @@
 
 import { memo } from "react";
 import { useTheme } from "next-themes";
-import { Stock } from "@/types/panel";
 
 import dynamic from "next/dynamic";
 

@@ -28,7 +28,7 @@ const handleAuthError = (
   const errorMessages: Record<number, string> = {
     429: "We are experiencing an unusually high load. Please try again later.",
     400: "Invalid login credentials",
-    422: "Account not found. Please sign up instead.",
+    422: "Please email team@finflow-ai.com to request access",
     403: "Your code has expired or is invalid.",
   };
 
@@ -90,8 +90,10 @@ export const signInWithOtp = async (email: string): Promise<AuthResponse> => {
 
     const { error } = await supabase.auth.signInWithOtp({
       email,
-      options: { shouldCreateUser: true },
+      options: { shouldCreateUser: false },
     });
+
+    console.log("error ", error);
 
     if (error) {
       return handleAuthError(error, "signInWithOtp", { email });
