@@ -1,7 +1,9 @@
 import { useCallback, useState } from "react";
 import Select from "react-tailwindcss-select";
+import { v4 as uuidv4 } from "uuid";
 import { Option } from "react-tailwindcss-select/dist/components/type";
 import { Label } from "@/components/ui/label";
+import { Trigger } from "../toolbar";
 
 const options: Option[] = [
   { label: "Quarterly Earnings Calls", value: "Quarterly Earnings Calls" },
@@ -22,7 +24,11 @@ const options: Option[] = [
   },
 ];
 
-export const EarningsCallTypeSelector = () => {
+export const EarningsCallTypeSelector = ({
+  setTrigger,
+}: {
+  setTrigger: (trigger: Trigger) => void;
+}) => {
   const [value, setValue] = useState<Option[]>([]);
 
   const filterOptions = useCallback((data: Option[]) => {
@@ -35,7 +41,16 @@ export const EarningsCallTypeSelector = () => {
       <Select
         options={filterOptions(options)}
         value={value}
-        onChange={(value) => value && Array.isArray(value) && setValue(value)}
+        onChange={(value) => {
+          if (value && Array.isArray(value)) {
+            setValue(value);
+            setTrigger({
+              id: uuidv4(),
+              name: "Earnings Call",
+              config: { callTypes: value.map((v) => v.label) },
+            });
+          }
+        }}
         primaryColor="sky"
         isClearable
         isSearchable

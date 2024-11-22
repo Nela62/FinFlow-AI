@@ -1,7 +1,9 @@
 import { useCallback, useState } from "react";
+import { v4 as uuidv4 } from "uuid";
 import Select from "react-tailwindcss-select";
 import { Option } from "react-tailwindcss-select/dist/components/type";
 import { Label } from "@/components/ui/label";
+import { Trigger } from "../toolbar";
 
 const options: Option[] = [
   { label: "Price Change", value: "Price Change" },
@@ -16,7 +18,11 @@ const options: Option[] = [
   { label: "FDA Approval", value: "FDA Approval" },
 ];
 
-export const NewsAlertCategoriesSelector = () => {
+export const NewsAlertCategoriesSelector = ({
+  setTrigger,
+}: {
+  setTrigger: (trigger: Trigger) => void;
+}) => {
   const [value, setValue] = useState<Option[]>([]);
 
   const filterOptions = useCallback((data: Option[]) => {
@@ -29,7 +35,16 @@ export const NewsAlertCategoriesSelector = () => {
       <Select
         options={filterOptions(options)}
         value={value}
-        onChange={(value) => value && Array.isArray(value) && setValue(value)}
+        onChange={(value) => {
+          if (value && Array.isArray(value)) {
+            setValue(value);
+            setTrigger({
+              id: uuidv4(),
+              name: "News Alert",
+              config: { categories: value.map((v) => v.label) },
+            });
+          }
+        }}
         primaryColor="sky"
         isClearable
         isSearchable

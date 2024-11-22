@@ -1,5 +1,6 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { v4 as uuidv4 } from "uuid";
 import {
   Select,
   SelectContent,
@@ -7,6 +8,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Trigger } from "../toolbar";
+import { useEffect } from "react";
 
 const metricOptions = [
   { label: "Price Change", value: "Price Change" },
@@ -27,7 +30,23 @@ const filterOptions = [
   { label: "Less Than", value: "Less Than" },
 ];
 
-export const ByMetricSelector = () => {
+export const ByMetricSelector = ({
+  setTrigger,
+}: {
+  setTrigger: (trigger: Trigger) => void;
+}) => {
+  useEffect(() => {
+    setTrigger({
+      id: uuidv4(),
+      name: "By Metric",
+      config: {
+        metric: "Price Change",
+        filter: "Greater Than",
+        value: "10",
+      },
+    });
+  }, []);
+
   return (
     <div className="flex flex-col gap-2">
       <Label className="text-sm font-semibold">By Metric</Label>

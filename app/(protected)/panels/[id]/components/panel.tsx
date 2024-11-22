@@ -324,8 +324,8 @@ export const Panel = ({
                 </div>
               </div>
             </CardHeader>
-            <CardContent className="p-0 h-full">
-              <div className="h-full w-full pb-2">{widget.content}</div>
+            <CardContent className="p-0 m-0 h-full">
+              <div className="h-full w-full pb-10">{widget.content}</div>
             </CardContent>
           </Card>
         </div>

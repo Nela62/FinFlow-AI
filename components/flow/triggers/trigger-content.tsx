@@ -1,4 +1,5 @@
 import {
+  DialogClose,
   DialogContent,
   DialogFooter,
   DialogHeader,
@@ -26,6 +27,7 @@ export const TriggerContent = ({
   const [stockSymbol, setStockSymbol] = useState<string>("AAPL");
   const [stockId, setStockId] = useState<string | null>(null);
   const [tab, setTab] = useState<string>("sec-filing");
+  const [trigger, setTrigger] = useState<Trigger | null>(null);
 
   const supabase = createClient();
   const { data: stock } = useQuery(fetchStockById(supabase, stockId ?? ""), {
@@ -35,6 +37,14 @@ export const TriggerContent = ({
   useEffect(() => {
     if (stock) {
       setStockSymbol(stock.symbol);
+      setTrigger((state) =>
+        state
+          ? {
+              ...state,
+              config: { ...state?.config, stockSymbol: stock.symbol },
+            }
+          : null
+      );
     }
   }, [stock]);
 
@@ -61,7 +71,7 @@ export const TriggerContent = ({
                 }}
               />
             </div>
-            <SecFilingTypeSelector />
+            <SecFilingTypeSelector setTrigger={setTrigger} />
           </div>
         </TabsContent>
         <TabsContent value="earnings-call">
@@ -75,7 +85,7 @@ export const TriggerContent = ({
                 }}
               />
             </div>
-            <EarningsCallTypeSelector />
+            <EarningsCallTypeSelector setTrigger={setTrigger} />
           </div>
         </TabsContent>
         <TabsContent value="news-alert">
@@ -89,7 +99,7 @@ export const TriggerContent = ({
                 }}
               />
             </div>
-            <NewsAlertCategoriesSelector />
+            <NewsAlertCategoriesSelector setTrigger={setTrigger} />
           </div>
         </TabsContent>
         <TabsContent value="by-metric">
@@ -103,12 +113,24 @@ export const TriggerContent = ({
                 }}
               />
             </div>
-            <ByMetricSelector />
+            <ByMetricSelector setTrigger={setTrigger} />
           </div>
         </TabsContent>
       </Tabs>
       <DialogFooter>
-        <Button>Create</Button>
+        <DialogClose asChild>
+          <Button
+            onClick={() =>
+              trigger &&
+              addTrigger({
+                ...trigger,
+                config: { ...trigger.config, symbol: stockSymbol },
+              })
+            }
+          >
+            Create
+          </Button>
+        </DialogClose>
       </DialogFooter>
     </DialogContent>
   );

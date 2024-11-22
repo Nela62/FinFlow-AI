@@ -4,7 +4,7 @@ import { useCallback, useState } from "react";
 import { useNodesStore } from "@/providers/nodesProvider";
 import { PopoverContent, PopoverTrigger } from "../ui/popover";
 import { DialogTrigger } from "../ui/dialog";
-import { TriggerContent } from "./utils/trigger-content";
+import { TriggerContent } from "./triggers/trigger-content";
 
 export type Trigger = {
   id: string;
