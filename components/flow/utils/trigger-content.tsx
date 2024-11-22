@@ -1,29 +1,22 @@
-import { v4 as uuidv4 } from "uuid";
-import Select from "react-tailwindcss-select";
 import {
   DialogContent,
   DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
 import { Trigger } from "../toolbar";
 import { Tabs, TabsTrigger, TabsList, TabsContent } from "@/components/ui/tabs";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { useCallback, useEffect, useState } from "react";
-import { Checkbox } from "@/components/ui/checkbox";
+import { useEffect, useState } from "react";
 import { SecFilingTypeSelector } from "./sec-filing-type";
 import { StockPicker } from "@/components/widgets/utils/stock-picker";
 import { createClient } from "@/lib/supabase/client";
 import { useQuery } from "@supabase-cache-helpers/postgrest-react-query";
 import { fetchStockById } from "@/lib/queries";
+import { EarningsCallTypeSelector } from "./earnings-call";
+import { NewsAlertCategoriesSelector } from "./news-alert-categories";
+import { ByMetricSelector } from "./by-metric";
 
 export const TriggerContent = ({
   addTrigger,
@@ -59,7 +52,6 @@ export const TriggerContent = ({
         </TabsList>
         <TabsContent value="sec-filing">
           <div className="space-y-4 py-4">
-            <SecFilingTypeSelector />
             <div className="flex flex-col gap-2 w-fit">
               <Label className="text-sm font-semibold">Company</Label>
               <StockPicker
@@ -69,6 +61,49 @@ export const TriggerContent = ({
                 }}
               />
             </div>
+            <SecFilingTypeSelector />
+          </div>
+        </TabsContent>
+        <TabsContent value="earnings-call">
+          <div className="space-y-4 py-4">
+            <div className="flex flex-col gap-2 w-fit">
+              <Label className="text-sm font-semibold">Company</Label>
+              <StockPicker
+                currentStockTicker={stockSymbol}
+                onStockClick={(stockId) => {
+                  setStockId(stockId);
+                }}
+              />
+            </div>
+            <EarningsCallTypeSelector />
+          </div>
+        </TabsContent>
+        <TabsContent value="news-alert">
+          <div className="space-y-4 py-4">
+            <div className="flex flex-col gap-2 w-fit">
+              <Label className="text-sm font-semibold">Company</Label>
+              <StockPicker
+                currentStockTicker={stockSymbol}
+                onStockClick={(stockId) => {
+                  setStockId(stockId);
+                }}
+              />
+            </div>
+            <NewsAlertCategoriesSelector />
+          </div>
+        </TabsContent>
+        <TabsContent value="by-metric">
+          <div className="space-y-4 py-4">
+            <div className="flex flex-col gap-2 w-fit">
+              <Label className="text-sm font-semibold">Company</Label>
+              <StockPicker
+                currentStockTicker={stockSymbol}
+                onStockClick={(stockId) => {
+                  setStockId(stockId);
+                }}
+              />
+            </div>
+            <ByMetricSelector />
           </div>
         </TabsContent>
       </Tabs>
