@@ -110,6 +110,7 @@ export type NodesActions = {
   onNodesChange: OnNodesChange<AppNode>;
   onEdgesChange: OnEdgesChange;
   onConnect: OnConnect;
+  addNode: (node: AppNode) => void;
   setNodes: (nodes: AppNode[]) => void;
   setEdges: (edges: Edge[]) => void;
   deleteNode: (nodeId: string) => void;
@@ -314,6 +315,11 @@ export const createNodesStore = (initState: NodesState = defaultInitState) => {
             { ...connection, type: "button-edge", animated: true },
             state.edges
           ),
+        }));
+      },
+      addNode: (node) => {
+        set((state) => ({
+          nodes: [...state.nodes, node],
         }));
       },
       setNodes: (nodes) => {

@@ -15,7 +15,7 @@ import "@xyflow/react/dist/style.css";
 import { DnDProvider, useDnD } from "./dnd-context";
 import Sidebar from "./node-library-sidebar";
 import { useNodesStore } from "@/providers/nodesProvider";
-import { edgeTypes, nodeTypes } from "@/stores/nodesStore";
+import { AppNode, edgeTypes, nodeTypes } from "@/stores/nodesStore";
 import { RunResultsSidebar } from "./run-results-sidebar";
 import { defaultDataMap } from "./nodes";
 import { Toolbar } from "./toolbar";
@@ -27,8 +27,15 @@ const DnDFlow = () => {
   const { screenToFlowPosition } = useReactFlow();
   const [type] = useDnD();
 
-  const { nodes, setNodes, onNodesChange, edges, onEdgesChange, onConnect } =
-    useNodesStore((state) => state);
+  const {
+    nodes,
+    addNode,
+    setNodes,
+    onNodesChange,
+    edges,
+    onEdgesChange,
+    onConnect,
+  } = useNodesStore((state) => state);
   const { updateEdge } = useReactFlow();
 
   const onDragOver = useCallback((event: React.DragEvent<HTMLDivElement>) => {
@@ -52,16 +59,17 @@ const DnDFlow = () => {
         x: event.clientX,
         y: event.clientY,
       });
-      const newNode = {
+
+      const newNode: AppNode = {
         id: uuidv4(),
+        // @ts-ignore
         type,
         position,
         // @ts-ignore
         data: defaultDataMap[type],
       };
 
-      // @ts-ignore
-      setNodes([...nodes, newNode]);
+      addNode(newNode);
     },
     [screenToFlowPosition, type]
   );
