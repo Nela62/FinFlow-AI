@@ -7,7 +7,7 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { NodeHeader } from "./utils/header";
 import { Input } from "@/components/ui/input";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { dataTypesList, NodeInput, NodeOutput } from "@/types/node";
 import { useDebouncedCallback } from "use-debounce";
 import { NodeWrapper } from "./utils/node-wrapper";
@@ -139,10 +139,7 @@ function DcfModelNodeComponent({ id, data }: NodeProps<DcfModelNodeType>) {
                 type="number"
                 value={params.discountRate}
                 onChange={(e) =>
-                  setParamsDebounced({
-                    ...params,
-                    discountRate: e.target.value,
-                  })
+                  setParams({ ...params, discountRate: e.target.value })
                 }
               />
             </div>
@@ -152,7 +149,7 @@ function DcfModelNodeComponent({ id, data }: NodeProps<DcfModelNodeType>) {
                 type="number"
                 value={params.timeHorizon}
                 onChange={(e) =>
-                  setParamsDebounced({ ...params, timeHorizon: e.target.value })
+                  setParams({ ...params, timeHorizon: e.target.value })
                 }
               />
             </div>
@@ -176,32 +173,67 @@ function DcfModelNodeComponent({ id, data }: NodeProps<DcfModelNodeType>) {
                 Gordon Growth Model
               </TabsTrigger>
             </TabsList>
+            <TabsContent value="exit-multiple">
+              <div className="flex gap-4">
+                <div className="space-y-1">
+                  <p className="text-xs">Growth Rate (%)</p>
+                  <Input
+                    type="number"
+                    value={params.growthRate}
+                    onChange={(e) =>
+                      setParams({
+                        ...params,
+                        growthRate: e.target.value,
+                      })
+                    }
+                  />
+                </div>
+                <div className="space-y-1">
+                  <p className="text-xs">Exit Multiple</p>
+                  <Input
+                    type="number"
+                    value={params.intrinsicValue}
+                    onChange={(e) =>
+                      setParams({
+                        ...params,
+                        intrinsicValue: e.target.value,
+                      })
+                    }
+                  />
+                </div>
+              </div>
+            </TabsContent>
+            <TabsContent value="gordon-growth-model">
+              <div className="flex gap-4">
+                <div className="space-y-1">
+                  <p className="text-xs">Growth Rate (%)</p>
+                  <Input
+                    type="number"
+                    value={params.growthRate}
+                    onChange={(e) =>
+                      setParams({
+                        ...params,
+                        growthRate: e.target.value,
+                      })
+                    }
+                  />
+                </div>
+                <div className="space-y-1">
+                  <p className="text-xs">Average FCF ($)</p>
+                  <Input
+                    type="number"
+                    value={params.intrinsicValue}
+                    onChange={(e) =>
+                      setParams({
+                        ...params,
+                        intrinsicValue: e.target.value,
+                      })
+                    }
+                  />
+                </div>
+              </div>
+            </TabsContent>
           </Tabs>
-          <div className="flex gap-4">
-            <div className="space-y-1">
-              <p className="text-xs">Growth Rate (%)</p>
-              <Input
-                type="number"
-                value={params.growthRate}
-                onChange={(e) =>
-                  setParamsDebounced({ ...params, growthRate: e.target.value })
-                }
-              />
-            </div>
-            <div className="space-y-1">
-              <p className="text-xs">Intrinsic Value ($)</p>
-              <Input
-                type="number"
-                value={params.intrinsicValue}
-                onChange={(e) =>
-                  setParamsDebounced({
-                    ...params,
-                    intrinsicValue: e.target.value,
-                  })
-                }
-              />
-            </div>
-          </div>
         </div>
         <Separator orientation="horizontal" />
         <Outputs
