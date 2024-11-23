@@ -246,7 +246,7 @@ export const BaseAuthForm: React.FC<BaseAuthFormProps> = ({
           />
         ) : (
           <>
-            {!isPassword && (
+            {/* {!isPassword && (
               <>
                 <div className="w-full">
                   <GoogleSignInButton onClick={buttonClick} />
@@ -257,7 +257,7 @@ export const BaseAuthForm: React.FC<BaseAuthFormProps> = ({
                   <Separator orientation="horizontal" className="grow shrink" />
                 </div>
               </>
-            )}
+            )} */}
             <FormField
               control={form.control}
               name="email"
