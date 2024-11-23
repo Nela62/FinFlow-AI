@@ -117,6 +117,7 @@ export type NodesActions = {
   deleteEdge: (edgeId: string) => void;
   addRunResult: (runResult: NodeRunResult) => void;
   clearRunResults: () => void;
+  getInputNodes: (nodeId: string) => AppNode[];
 };
 
 export type NodesStore = NodesState & NodesActions;
@@ -296,63 +297,70 @@ const defaultInitState: NodesState = {
 };
 
 export const createNodesStore = (initState: NodesState = defaultInitState) => {
-  return createStore<NodesStore>()(
-    devtools((set) => ({
-      ...initState,
-      onNodesChange: (changes) => {
-        set((state) => ({
-          nodes: applyNodeChanges(changes, state.nodes),
-        }));
-      },
-      onEdgesChange: (changes) => {
-        set((state) => ({
-          edges: applyEdgeChanges(changes, state.edges),
-        }));
-      },
-      onConnect: (connection) => {
-        set((state) => ({
-          edges: addEdge(
-            { ...connection, type: "button-edge", animated: true },
-            state.edges
-          ),
-        }));
-      },
-      addNode: (node) => {
-        set((state) => ({
-          nodes: [...state.nodes, node],
-        }));
-      },
-      setNodes: (nodes) => {
-        if (Array.isArray(nodes)) {
-          set({ nodes });
-        } else {
-          console.log("nodes ", nodes);
-        }
-      },
-      setEdges: (edges) => {
-        set({ edges });
-      },
-      deleteNode: (nodeId) => {
-        set((state) => ({
-          nodes: state.nodes?.filter((node) => node.id !== nodeId),
-          edges: state.edges?.filter(
-            (edge) => edge.source !== nodeId && edge.target !== nodeId
-          ),
-        }));
-      },
-      deleteEdge: (edgeId) => {
-        set((state) => ({
-          edges: state.edges?.filter((edge) => edge.id !== edgeId),
-        }));
-      },
-      addRunResult: (runResult) => {
-        set((state) => ({
-          runResults: [...state.runResults, runResult],
-        }));
-      },
-      clearRunResults: () => {
-        set({ runResults: [] });
-      },
-    }))
-  );
+  return createStore<NodesStore>()((set, get) => ({
+    ...initState,
+    onNodesChange: (changes) => {
+      set((state) => ({
+        nodes: applyNodeChanges(changes, state.nodes),
+      }));
+    },
+    onEdgesChange: (changes) => {
+      set((state) => ({
+        edges: applyEdgeChanges(changes, state.edges),
+      }));
+    },
+    onConnect: (connection) => {
+      set((state) => ({
+        edges: addEdge(
+          { ...connection, type: "button-edge", animated: true },
+          state.edges
+        ),
+      }));
+    },
+    addNode: (node) => {
+      set((state) => ({
+        nodes: [...state.nodes, node],
+      }));
+    },
+    setNodes: (nodes) => {
+      if (Array.isArray(nodes)) {
+        set({ nodes });
+      } else {
+        console.log("nodes ", nodes);
+      }
+    },
+    setEdges: (edges) => {
+      set({ edges });
+    },
+    deleteNode: (nodeId) => {
+      set((state) => ({
+        nodes: state.nodes?.filter((node) => node.id !== nodeId),
+        edges: state.edges?.filter(
+          (edge) => edge.source !== nodeId && edge.target !== nodeId
+        ),
+      }));
+    },
+    deleteEdge: (edgeId) => {
+      set((state) => ({
+        edges: state.edges?.filter((edge) => edge.id !== edgeId),
+      }));
+    },
+    addRunResult: (runResult) => {
+      set((state) => ({
+        runResults: [...state.runResults, runResult],
+      }));
+    },
+    clearRunResults: () => {
+      set({ runResults: [] });
+    },
+    getInputNodes: (nodeId: string) => {
+      const edges = get().edges;
+      const nodes = get().nodes;
+      const inputEdges = edges.filter((edge) => edge.target === nodeId);
+      const inputNodes = inputEdges.map((edge) =>
+        nodes.find((node) => node.id === edge.source)
+      );
+      return inputNodes.filter((node) => node !== undefined) as AppNode[];
+    },
+  }));
 };

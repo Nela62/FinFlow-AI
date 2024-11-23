@@ -22,6 +22,7 @@ import { NodeWrapper } from "./utils/node-wrapper";
 import { Outputs } from "./utils/outputs";
 import { csv } from "./temp/dcf";
 import { res } from "./temp/fin-analysis";
+import { useNodesStore } from "@/providers/nodesProvider";
 
 function MdiChartFinance(props: SVGProps<SVGSVGElement>) {
   return (
@@ -43,7 +44,7 @@ function MdiChartFinance(props: SVGProps<SVGSVGElement>) {
 // TODO: Add financial data and maybe other inputs -- Altan
 const inputs: NodeInput[] = [
   {
-    label: "dcf-model",
+    label: "financial-data",
     acceptedFormat: "Tabular",
     acceptedTypes: ["CSV", "XLSX"],
   },
@@ -108,6 +109,7 @@ function FinancialAnalysisNodeComponent({
   id,
   data,
 }: NodeProps<FinancialAnalysisNodeType>) {
+  const { getInputNodes } = useNodesStore((state) => state);
   const updateNodeInternals = useUpdateNodeInternals();
   const [params, setParams] = useState<Record<string, any>>(data.params);
   const setParamsDebounced = useDebouncedCallback(
@@ -121,6 +123,10 @@ function FinancialAnalysisNodeComponent({
   const [selectedOutputs, setSelectedOutputs] = useState<NodeOutput[]>(
     data.outputs
   );
+
+  const inputNodes = getInputNodes(id);
+  console.log(inputNodes);
+  const isDCFModel = inputNodes.some((node) => node.type === "dcf-model");
 
   useEffect(() => {
     updateNodeData(id, { params });
@@ -149,35 +155,45 @@ function FinancialAnalysisNodeComponent({
 
       <div className="space-y-2 px-2">
         <div className="space-y-4 nodrag">
-          <p className="text-sm font-semibold">Inputs from DCF model</p>
-          <div className="grid grid-cols-2 gap-2">
-            <div className="flex items-center space-x-2">
-              <Checkbox id="intrinsic-value-per-share" />
-              <Label htmlFor="intrinsic-value-per-share" className="text-xs">
-                Intrinsic Value per Share
-              </Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Checkbox id="discount-rate" />
-              <Label htmlFor="discount-rate" className="text-xs">
-                Discount Rate (WACC)
-              </Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Checkbox id="terminal-growth-rate" />
-              <Label htmlFor="terminal-growth-rate" className="text-xs">
-                Terminal Growth Rate
-              </Label>
-            </div>
+          {isDCFModel && (
+            <>
+              <p className="text-sm font-semibold">Inputs from DCF model</p>
+              <div className="grid grid-cols-2 gap-2">
+                <div className="flex items-center space-x-2">
+                  <Checkbox id="intrinsic-value-per-share" defaultChecked />
+                  <Label
+                    htmlFor="intrinsic-value-per-share"
+                    className="text-xs"
+                  >
+                    Intrinsic Value per Share
+                  </Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Checkbox id="discount-rate" defaultChecked />
+                  <Label htmlFor="discount-rate" className="text-xs">
+                    Discount Rate (WACC)
+                  </Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Checkbox id="terminal-growth-rate" defaultChecked />
+                  <Label htmlFor="terminal-growth-rate" className="text-xs">
+                    Terminal Growth Rate
+                  </Label>
+                </div>
 
-            <div className="flex items-center space-x-2">
-              <Checkbox id="projected-free-cash-flows" />
-              <Label htmlFor="projected-free-cash-flows" className="text-xs">
-                Projected Free Cash Flows
-              </Label>
-            </div>
-          </div>
-          <Separator orientation="horizontal" />
+                <div className="flex items-center space-x-2">
+                  <Checkbox id="projected-free-cash-flows" defaultChecked />
+                  <Label
+                    htmlFor="projected-free-cash-flows"
+                    className="text-xs"
+                  >
+                    Projected Free Cash Flows
+                  </Label>
+                </div>
+              </div>
+              <Separator orientation="horizontal" />
+            </>
+          )}
           <div className="space-y-3">
             <p className="text-sm font-semibold">Analysis Type</p>
             <DropdownMenu>
@@ -223,13 +239,13 @@ function FinancialAnalysisNodeComponent({
             </div>
             <div className="flex justify-around">
               <div className="flex items-center space-x-2">
-                <Checkbox id="include-charts" />
+                <Checkbox id="include-charts" defaultChecked />
                 <Label htmlFor="include-charts" className="text-xs">
                   Include Charts
                 </Label>
               </div>
               <div className="flex items-center space-x-2">
-                <Checkbox id="include-tables" />
+                <Checkbox id="include-tables" defaultChecked />
                 <Label htmlFor="include-tables" className="text-xs">
                   Include Tables
                 </Label>
