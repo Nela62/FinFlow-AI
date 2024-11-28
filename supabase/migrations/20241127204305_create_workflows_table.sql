@@ -18,7 +18,6 @@ CREATE TABLE IF NOT EXISTS runs(
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id uuid NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE ON UPDATE CASCADE,
   workflow_id uuid NOT NULL REFERENCES workflows(id) ON DELETE CASCADE ON UPDATE CASCADE,
-  name text NOT NULL,
   status text NOT NULL DEFAULT 'PENDING'
 );
 
@@ -114,4 +113,28 @@ CREATE POLICY "Enable ALL to authenticated users based on user id" ON "edges" TO
       WITH CHECK (((
         SELECT
           "auth"."uid"() AS "uid") = "user_id"));
+
+CREATE SEQUENCE task_id_sequence;
+
+CREATE TABLE IF NOT EXISTS celery_taskmeta(
+  id serial NOT NULL PRIMARY KEY,
+  task_id varchar(155) UNIQUE NOT NULL,
+  status varchar(50) NOT NULL,
+  result text,
+  date_done timestamp with time zone,
+  traceback text,
+  name varchar(155),
+  args text,
+  kwargs text,
+  worker varchar(155),
+  retries integer,
+  queue varchar(155)
+);
+
+CREATE TABLE IF NOT EXISTS celery_tasksetmeta(
+  id serial NOT NULL PRIMARY KEY,
+  taskset_id varchar(155) UNIQUE NOT NULL,
+  result text NOT NULL,
+  date_done timestamp with time zone NOT NULL
+);
 

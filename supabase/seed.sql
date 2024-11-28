@@ -12164,11 +12164,11 @@ INSERT INTO public.widget_groups(user_id, panel_id, ticker_id, name)
   VALUES ('8c693361-135d-4489-a025-4701e6d76ef4','25a64d7e-56f4-41d2-b720-b5131452c15b', '16240d72-51ea-4f30-8e78-592e490ce0fa', 'Blue'); 
 
 
-INSERT INTO workflows(id, user_id, name)
+INSERT INTO public.workflows(id, user_id, name)
   VALUES ('df43a301-9ad9-4e56-b136-e00174c4596f', '8c693361-135d-4489-a025-4701e6d76ef4', 'SEC Filing Question Answerer');
 
-INSERT INTO nodes(user_id, workflow_id, name, type, position, data)
-  VALUES ('8c693361-135d-4489-a025-4701e6d76ef4', 'df43a301-9ad9-4e56-b136-e00174c4596f', 'SEC Filing Parser', 'sec-filing', '{"x": 0, "y": 0}', '{"ticker": "AAPL", "filingType": "10-K"}');
+INSERT INTO public.nodes(user_id, workflow_id, name, type, position, data)
+  VALUES ('8c693361-135d-4489-a025-4701e6d76ef4', 'df43a301-9ad9-4e56-b136-e00174c4596f', 'SEC Filing Parser', 'sec-filing', '{"x": 0, "y": 0}', '{"ticker": "AAPL", "filing_type": "10-K"}');
 
 
 --
