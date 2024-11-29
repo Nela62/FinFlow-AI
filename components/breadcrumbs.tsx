@@ -13,7 +13,7 @@ import {
   useQuery,
   useUpdateMutation,
 } from "@supabase-cache-helpers/postgrest-react-query";
-import { fetchAllPanels } from "@/lib/queries";
+import { fetchAllPanels, fetchAllWorkflows } from "@/lib/queries";
 import { createClient } from "@/lib/supabase/client";
 import { Fragment, useCallback, useMemo, useState } from "react";
 import { Check, Pencil, Trash2, X } from "lucide-react";
@@ -39,6 +39,7 @@ export const Breadcrumbs = () => {
 
   const supabase = createClient();
   const { data: panels } = useQuery(fetchAllPanels(supabase));
+  const { data: workflows } = useQuery(fetchAllWorkflows(supabase));
 
   const { mutateAsync: updatePanel } = useUpdateMutation(
     supabase.from("panels"),
@@ -53,7 +54,9 @@ export const Breadcrumbs = () => {
 
   const content = useMemo(() => {
     if (
-      (paths.includes("panels") || paths.includes("reports")) &&
+      (paths.includes("panels") ||
+        paths.includes("reports") ||
+        paths.includes("workflows")) &&
       !paths.includes("new")
     ) {
       if (paths.includes("panels")) {
@@ -61,6 +64,10 @@ export const Breadcrumbs = () => {
           ?.name;
       } else if (paths.includes("reports")) {
         return "Reports";
+      } else if (paths.includes("workflows")) {
+        return workflows?.find(
+          (workflow) => workflow.id === paths[paths.length - 1]
+        )?.name;
       }
       return null;
     } else {

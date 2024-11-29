@@ -25,7 +25,7 @@ export const LayoutComponent = ({
 }) => {
   const pathname = usePathname();
   const paths = pathname.split("/");
-  const isWorkflowsPage = paths[paths.length - 1] === "workflows";
+  const isWorkflowsPage = paths[1] === "workflows";
 
   return (
     <SidebarProvider>
