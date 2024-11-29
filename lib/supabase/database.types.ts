@@ -9,6 +9,142 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      actions: {
+        Row: {
+          action_id: string
+          completed_at: string | null
+          config: Json
+          created_at: string
+          execution_id: string
+          id: string
+          inputs: Json
+          name: string
+          outputs: Json
+          started_at: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          action_id: string
+          completed_at?: string | null
+          config: Json
+          created_at?: string
+          execution_id: string
+          id?: string
+          inputs: Json
+          name: string
+          outputs: Json
+          started_at?: string
+          status: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          action_id?: string
+          completed_at?: string | null
+          config?: Json
+          created_at?: string
+          execution_id?: string
+          id?: string
+          inputs?: Json
+          name?: string
+          outputs?: Json
+          started_at?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "actions_action_id_fkey"
+            columns: ["action_id"]
+            isOneToOne: false
+            referencedRelation: "actions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "actions_execution_id_fkey"
+            columns: ["execution_id"]
+            isOneToOne: false
+            referencedRelation: "executions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "actions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      celery_taskmeta: {
+        Row: {
+          args: string | null
+          date_done: string | null
+          id: number
+          kwargs: string | null
+          name: string | null
+          queue: string | null
+          result: string | null
+          retries: number | null
+          status: string
+          task_id: string
+          traceback: string | null
+          worker: string | null
+        }
+        Insert: {
+          args?: string | null
+          date_done?: string | null
+          id?: number
+          kwargs?: string | null
+          name?: string | null
+          queue?: string | null
+          result?: string | null
+          retries?: number | null
+          status: string
+          task_id: string
+          traceback?: string | null
+          worker?: string | null
+        }
+        Update: {
+          args?: string | null
+          date_done?: string | null
+          id?: number
+          kwargs?: string | null
+          name?: string | null
+          queue?: string | null
+          result?: string | null
+          retries?: number | null
+          status?: string
+          task_id?: string
+          traceback?: string | null
+          worker?: string | null
+        }
+        Relationships: []
+      }
+      celery_tasksetmeta: {
+        Row: {
+          date_done: string
+          id: number
+          result: string
+          taskset_id: string
+        }
+        Insert: {
+          date_done: string
+          id?: number
+          result: string
+          taskset_id: string
+        }
+        Update: {
+          date_done?: string
+          id?: number
+          result?: string
+          taskset_id?: string
+        }
+        Relationships: []
+      }
       chat_history: {
         Row: {
           created_at: string | null
@@ -50,6 +186,179 @@ export type Database = {
             columns: ["workspace_id"]
             isOneToOne: false
             referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      edges: {
+        Row: {
+          animated: boolean
+          created_at: string
+          id: string
+          source: string
+          source_handle: string
+          target: string
+          target_handle: string
+          type: string
+          updated_at: string
+          user_id: string
+          workflow_id: string
+        }
+        Insert: {
+          animated: boolean
+          created_at?: string
+          id?: string
+          source: string
+          source_handle: string
+          target: string
+          target_handle: string
+          type: string
+          updated_at?: string
+          user_id: string
+          workflow_id: string
+        }
+        Update: {
+          animated?: boolean
+          created_at?: string
+          id?: string
+          source?: string
+          source_handle?: string
+          target?: string
+          target_handle?: string
+          type?: string
+          updated_at?: string
+          user_id?: string
+          workflow_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "edges_source_fkey"
+            columns: ["source"]
+            isOneToOne: false
+            referencedRelation: "nodes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "edges_target_fkey"
+            columns: ["target"]
+            isOneToOne: false
+            referencedRelation: "nodes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "edges_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "edges_workflow_id_fkey"
+            columns: ["workflow_id"]
+            isOneToOne: false
+            referencedRelation: "workflows"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      executions: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          id: string
+          name: string
+          started_at: string
+          status: string
+          updated_at: string
+          user_id: string
+          workflow_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          name: string
+          started_at?: string
+          status: string
+          updated_at?: string
+          user_id: string
+          workflow_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          name?: string
+          started_at?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+          workflow_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "executions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "executions_workflow_id_fkey"
+            columns: ["workflow_id"]
+            isOneToOne: false
+            referencedRelation: "workflows"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      nodes: {
+        Row: {
+          created_at: string
+          data: Json
+          id: string
+          name: string
+          position: Json
+          type: string
+          updated_at: string
+          user_id: string
+          workflow_id: string
+        }
+        Insert: {
+          created_at?: string
+          data: Json
+          id?: string
+          name: string
+          position: Json
+          type: string
+          updated_at?: string
+          user_id: string
+          workflow_id: string
+        }
+        Update: {
+          created_at?: string
+          data?: Json
+          id?: string
+          name?: string
+          position?: Json
+          type?: string
+          updated_at?: string
+          user_id?: string
+          workflow_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "nodes_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "nodes_workflow_id_fkey"
+            columns: ["workflow_id"]
+            isOneToOne: false
+            referencedRelation: "workflows"
             referencedColumns: ["id"]
           },
         ]
@@ -169,6 +478,57 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "settings_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      subactions: {
+        Row: {
+          action_id: string
+          completed_at: string | null
+          created_at: string
+          id: string
+          name: string
+          started_at: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          action_id: string
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          name: string
+          started_at?: string
+          status: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          action_id?: string
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          name?: string
+          started_at?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subactions_action_id_fkey"
+            columns: ["action_id"]
+            isOneToOne: false
+            referencedRelation: "actions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "subactions_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"
@@ -312,6 +672,38 @@ export type Database = {
           },
           {
             foreignKeyName: "widgets_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      workflows: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workflows_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"

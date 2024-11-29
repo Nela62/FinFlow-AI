@@ -138,8 +138,7 @@ export const BaseAuthForm: React.FC<BaseAuthFormProps> = ({
     try {
       if (
         values.email === "helen@finpanel.com" ||
-        values.email === "user@fin-flow.ai" ||
-        values.email === "demo-user@fin-flow.ai"
+        values.email === "user@fin-flow.ai"
       ) {
         if (isPassword) {
           setIsLoading(true);
@@ -159,11 +158,7 @@ export const BaseAuthForm: React.FC<BaseAuthFormProps> = ({
 
           await identifyUser(supabase);
           // analytics.track("User logged in");
-          if (values.email === "demo-user@fin-flow.ai") {
-            router.push("/panels");
-          } else {
-            router.push("/workflows");
-          }
+          router.push("/workflows");
         } else {
           setPassword(true);
           setIsLoading(false);

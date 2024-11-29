@@ -1,7 +1,9 @@
 CREATE TABLE IF NOT EXISTS workflows(
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id uuid NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE ON UPDATE CASCADE,
-  name text NOT NULL
+  name text NOT NULL,
+  created_at timestamp with time zone DEFAULT now() NOT NULL,
+  updated_at timestamp with time zone DEFAULT now() NOT NULL
 );
 
 ALTER TABLE workflows ENABLE ROW LEVEL SECURITY;
@@ -14,16 +16,21 @@ CREATE POLICY "Enable ALL to authenticated users based on user id" ON "workflows
         SELECT
           "auth"."uid"() AS "uid") = "user_id"));
 
-CREATE TABLE IF NOT EXISTS runs(
+CREATE TABLE IF NOT EXISTS executions(
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id uuid NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE ON UPDATE CASCADE,
   workflow_id uuid NOT NULL REFERENCES workflows(id) ON DELETE CASCADE ON UPDATE CASCADE,
-  status text NOT NULL DEFAULT 'PENDING'
+  name text NOT NULL,
+  status text NOT NULL,
+  started_at timestamp with time zone DEFAULT now() NOT NULL,
+  completed_at timestamp with time zone,
+  created_at timestamp with time zone DEFAULT now() NOT NULL,
+  updated_at timestamp with time zone DEFAULT now() NOT NULL
 );
 
-ALTER TABLE runs ENABLE ROW LEVEL SECURITY;
+ALTER TABLE executions ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Enable ALL to authenticated users based on user id" ON "runs" TO "authenticated"
+CREATE POLICY "Enable ALL to authenticated users based on user id" ON "executions" TO "authenticated"
   USING (((
     SELECT
       "auth"."uid"() AS "uid") = "user_id"))
@@ -34,10 +41,15 @@ CREATE POLICY "Enable ALL to authenticated users based on user id" ON "runs" TO 
 CREATE TABLE IF NOT EXISTS actions(
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id uuid NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE ON UPDATE CASCADE,
-  run_id uuid NOT NULL REFERENCES runs(id) ON DELETE CASCADE ON UPDATE CASCADE,
+  execution_id uuid NOT NULL REFERENCES executions(id) ON DELETE CASCADE ON UPDATE CASCADE,
   action_id uuid NOT NULL REFERENCES actions(id) ON DELETE CASCADE ON UPDATE CASCADE,
   name text NOT NULL,
   status text NOT NULL,
+  inputs jsonb NOT NULL,
+  outputs jsonb NOT NULL,
+  config jsonb NOT NULL,
+  started_at timestamp with time zone DEFAULT now() NOT NULL,
+  completed_at timestamp with time zone,
   created_at timestamp with time zone DEFAULT now() NOT NULL,
   updated_at timestamp with time zone DEFAULT now() NOT NULL
 );
@@ -47,9 +59,12 @@ ALTER TABLE actions ENABLE ROW LEVEL SECURITY;
 CREATE TABLE IF NOT EXISTS subactions(
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id uuid NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE ON UPDATE CASCADE,
+  execution_id uuid NOT NULL REFERENCES executions(id) ON DELETE CASCADE ON UPDATE CASCADE,
   action_id uuid NOT NULL REFERENCES actions(id) ON DELETE CASCADE ON UPDATE CASCADE,
   name text NOT NULL,
   status text NOT NULL,
+  started_at timestamp with time zone DEFAULT now() NOT NULL,
+  completed_at timestamp with time zone,
   created_at timestamp with time zone DEFAULT now() NOT NULL,
   updated_at timestamp with time zone DEFAULT now() NOT NULL
 );
@@ -79,7 +94,9 @@ CREATE TABLE IF NOT EXISTS nodes(
   name text NOT NULL,
   type text NOT NULL,
   position jsonb NOT NULL,
-  data jsonb NOT NULL
+  data jsonb NOT NULL,
+  created_at timestamp with time zone DEFAULT now() NOT NULL,
+  updated_at timestamp with time zone DEFAULT now() NOT NULL
 );
 
 ALTER TABLE nodes ENABLE ROW LEVEL SECURITY;
@@ -101,7 +118,9 @@ CREATE TABLE IF NOT EXISTS edges(
   source_handle text NOT NULL,
   target_handle text NOT NULL,
   type text NOT NULL,
-  animated boolean NOT NULL
+  animated boolean NOT NULL,
+  created_at timestamp with time zone DEFAULT now() NOT NULL,
+  updated_at timestamp with time zone DEFAULT now() NOT NULL
 );
 
 ALTER TABLE edges ENABLE ROW LEVEL SECURITY;

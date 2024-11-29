@@ -1,40 +1,32 @@
-"use client";
-
-import { Flow } from "@/components/flow/flow";
+import { Skeleton } from "@/components/ui/skeleton";
+import { fetchAllWorkflows } from "@/lib/queries";
 import { createClient } from "@/lib/supabase/client";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { nanoid } from "nanoid";
+import { redirect } from "next/navigation";
 
-export default function WorkflowPage() {
+export default async function WorkflowsPage() {
   const supabase = createClient();
-  const router = useRouter();
+  const { data: workflows } = await fetchAllWorkflows(supabase);
+  const userResponse = await supabase.auth.getUser();
 
-  useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
-      if (data.user?.email === "demo-user@fin-flow.ai") {
-        router.push("/panels");
-      }
-    });
-  }, []);
+  if (!userResponse.data.user) {
+    redirect("/sign-in");
+  }
 
-  useEffect(() => {
-    // Disable page zooming
-    const meta = document.createElement("meta");
-    meta.name = "viewport";
-    meta.content =
-      "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no";
-    document.getElementsByTagName("head")[0].appendChild(meta);
-
-    // Cleanup function to remove the meta tag when component unmounts
-    return () => {
-      document.getElementsByTagName("head")[0].removeChild(meta);
-    };
-  }, []);
-
-  return (
-    // FIXME:
-    <div className="h-[calc(100vh-62px)] w-[calc(100vw-70px)]">
-      <Flow />
-    </div>
-  );
+  if (!workflows) return <Skeleton className="w-full h-10" />;
+  else if (workflows.length === 0) {
+    const workflowNameId = nanoid(10);
+    const { data: id } = await supabase
+      .from("workflows")
+      .insert([
+        {
+          name: `Workflow ${workflowNameId}`,
+          user_id: userResponse.data.user?.id,
+        },
+      ])
+      .select();
+    redirect(`/workflows/${id}`);
+  } else {
+    redirect(`/workflows/${workflows[0].id}`);
+  }
 }

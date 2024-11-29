@@ -103,6 +103,7 @@ export type AppNode =
 export type NodesState = {
   nodes: AppNode[];
   edges: Edge[];
+  currentRunId: string | null;
   runResults: RunResults;
 };
 
@@ -293,6 +294,7 @@ const defaultEdges: Edge[] = [
 const defaultInitState: NodesState = {
   nodes: defaultNodes,
   edges: defaultEdges,
+  currentRunId: null,
   runResults: [],
 };
 

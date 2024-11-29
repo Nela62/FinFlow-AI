@@ -115,3 +115,64 @@ export function fetchSettings(client: TypedSupabaseClient) {
     .maybeSingle()
     .throwOnError();
 }
+
+// WORKFLOWS
+export function fetchAllWorkflows(client: TypedSupabaseClient) {
+  return client
+    .from("workflows")
+    .select("id, name, created_at, updated_at")
+    .throwOnError();
+}
+
+export function fetchWorkflowById(client: TypedSupabaseClient, id: string) {
+  return client
+    .from("workflows")
+    .select("id, name, created_at, updated_at")
+    .eq("id", id)
+    .maybeSingle()
+    .throwOnError();
+}
+
+export function fetchAllExecutionsByWorkflowId(
+  client: TypedSupabaseClient,
+  workflowId: string
+) {
+  return client
+    .from("executions")
+    .select("id, name, status, started_at, completed_at")
+    .eq("workflow_id", workflowId)
+    .throwOnError();
+}
+
+export function fetchExecutionById(client: TypedSupabaseClient, id: string) {
+  return client
+    .from("executions")
+    .select("id, name, status, started_at, completed_at")
+    .eq("id", id)
+    .maybeSingle()
+    .throwOnError();
+}
+
+export function fetchAllActionsByExecutionId(
+  client: TypedSupabaseClient,
+  executionId: string
+) {
+  return client
+    .from("actions")
+    .select(
+      "id, name, status, inputs, outputs, config, started_at, completed_at"
+    )
+    .eq("execution_id", executionId)
+    .throwOnError();
+}
+
+export function fetchAllSubactionsByExecutionId(
+  client: TypedSupabaseClient,
+  executionId: string
+) {
+  return client
+    .from("subactions")
+    .select("id, name, status, started_at, completed_at")
+    .eq("execution_id", executionId)
+    .throwOnError();
+}
