@@ -13,16 +13,15 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
+import { NodeInput, NodeOutput } from "@/types/node";
+import { NodeWrapper } from "./utils/node-wrapper";
+import { useDebouncedCallback } from "use-debounce";
+import { Outputs } from "./utils/outputs";
 import {
   DataCategoryEnum,
   dataTypesList,
   FileFormat,
-  NodeInput,
-  NodeOutput,
-} from "@/types/node";
-import { NodeWrapper } from "./utils/node-wrapper";
-import { useDebouncedCallback } from "use-debounce";
-import { Outputs } from "./utils/outputs";
+} from "@/types/dataFormat";
 
 function Fa6SolidArrowDownWideShort(props: SVGProps<SVGSVGElement>) {
   return (

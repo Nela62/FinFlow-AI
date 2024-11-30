@@ -20,12 +20,8 @@ import { createClient } from "@/lib/supabase/client";
 import { fetchStockById } from "@/lib/queries";
 import { useQuery } from "@supabase-cache-helpers/postgrest-react-query";
 import { SEC_FILING_TYPES } from "@/lib/sec-filings";
-import {
-  DataCategoryEnum,
-  FileFormat,
-  NodeInput,
-  NodeOutput,
-} from "@/types/node";
+import { DataCategoryEnum, FileFormat } from "@/types/dataFormat";
+import { NodeInput, NodeOutput } from "@/types/node";
 
 // TODO: Add time period
 // TODO: Add selection of sections
@@ -107,12 +103,12 @@ function SecFilingNodeComponent({ id, data }: NodeProps<SecFilingNodeType>) {
   }, [stock]);
 
   useEffect(() => {
-    updateNodeData(id, { config });
+    // updateNodeData(id, { config });
   }, [config]);
 
   useEffect(() => {
-    updateNodeInternals(id);
-    updateNodeData(id, { outputs: selectedOutputs });
+    // updateNodeInternals(id);
+    // updateNodeData(id, { outputs: selectedOutputs });
   }, [selectedOutputs]);
 
   const sections = useMemo(() => {

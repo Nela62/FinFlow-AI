@@ -3,7 +3,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { dataTypesList, NodeInput } from "@/types/node";
+import { NodeInput } from "@/types/node";
 import { Handle, Position } from "@xyflow/react";
 import { CircleHelp, File } from "lucide-react";
 import { Fragment, useMemo } from "react";
@@ -29,7 +29,7 @@ export const InputHandle = ({
             <div className="flex gap-1 bg-background rounded-md px-2 py-0.5 items-center">
               {/* <File className="h-2 w-2 text-muted-foreground" /> */}
               <p className="text-xs text-muted-foreground">
-                {input.acceptedFormat}
+                {input.acceptedDataCategory}
               </p>
               <CircleHelp className="h-2 w-2 text-muted-foreground" />
             </div>
@@ -37,10 +37,10 @@ export const InputHandle = ({
           <TooltipContent className="shadow-sm">
             <div className="flex">
               <p>Accepted formats: </p>
-              {input.acceptedTypes.map((type, i) => (
+              {input.acceptedFileFormats.map((type, i) => (
                 <Fragment key={type}>
                   <p className="font-semibold pl-1">{type}</p>
-                  {i !== input.acceptedTypes.length - 1 && <p>, </p>}
+                  {i !== input.acceptedFileFormats.length - 1 && <p>, </p>}
                 </Fragment>
               ))}
             </div>

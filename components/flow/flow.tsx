@@ -145,7 +145,7 @@ const DnDFlow = ({
             existingNode = nodes.find((node) => node.id === change.id);
             if (!existingNode) return;
             console.log(change.item);
-
+            // @ts-ignore
             updatedNodes.push({ ...change.item, id: existingNode.id });
             break;
         }
@@ -204,7 +204,7 @@ const DnDFlow = ({
         // @ts-ignore
         data: defaultDataMap[type],
       };
-
+      // @ts-ignore
       insertNodes([newNode]);
     },
     [screenToFlowPosition, type]

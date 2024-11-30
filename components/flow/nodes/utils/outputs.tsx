@@ -1,7 +1,8 @@
 import { useMemo } from "react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
-import { dataTypesList, NodeOutput } from "@/types/node";
+import { NodeOutput } from "@/types/node";
+import { dataTypesList } from "@/types/dataFormat";
 
 export const Outputs = ({
   nodeId,

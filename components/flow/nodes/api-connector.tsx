@@ -31,7 +31,12 @@ import {
 import { Button } from "@/components/ui/button";
 import { ChevronDown } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { NodeInput, NodeOutput, NodeRunResult } from "@/types/node";
+import {
+  FileFormat,
+  DataCategoryEnum,
+  NodeInput,
+  NodeOutput,
+} from "@/types/node";
 import { useDebouncedCallback } from "use-debounce";
 import { NodeWrapper } from "./utils/node-wrapper";
 import { Outputs } from "./utils/outputs";
@@ -64,8 +69,8 @@ function MajesticonsDataLine(props: SVGProps<SVGSVGElement>) {
 const inputs: NodeInput[] = [
   {
     label: "ticker",
-    acceptedFormat: "Text",
-    acceptedTypes: ["TXT"],
+    acceptedDataCategory: DataCategoryEnum.Text,
+    acceptedFileFormats: [FileFormat.TXT],
   },
 ];
 
@@ -82,10 +87,10 @@ const defaultParams: Params = {
 };
 
 const outputs: NodeOutput[] = [
-  { label: "data", dataType: "JSON" },
-  { label: "data", dataType: "XML" },
-  { label: "tables", dataType: "CSV" },
-  { label: "tables", dataType: "XLSX" },
+  { label: "data", dataType: FileFormat.JSON },
+  // { label: "data", dataType: FileFormat.XML },
+  // { label: "tables", dataType: FileFormat.CSV },
+  // { label: "tables", dataType: FileFormat.XLSX },
 ];
 
 const runFn = async (params: Record<string, any>) => {
@@ -105,15 +110,13 @@ export type ApiConnectorNodeData = {
   params: Params;
   inputs: NodeInput[];
   outputs: NodeOutput[];
-  runFn: (params: Record<string, any>) => Promise<NodeRunResult>;
 };
 
 export const defaultData: ApiConnectorNodeData = {
   label: "API Connector",
   params: defaultParams,
   inputs,
-  outputs: [{ label: "data", dataType: "JSON" }],
-  runFn,
+  outputs: [{ label: "data", dataType: FileFormat.JSON }],
 };
 
 export type ApiConnectorNode = Node<ApiConnectorNodeData>;
@@ -209,15 +212,14 @@ function ApiConnectorNodeComponent({ id, data }: NodeProps<ApiConnectorNode>) {
       width="w-[360px]"
       inputs={inputs}
       outputs={selectedOutputs}
+      headerProps={{
+        title: "API Connector",
+        bgColor: "bg-purple-200",
+        iconBgColor: "bg-purple-400",
+        textColor: "text-purple-900",
+        iconFn: MajesticonsDataLine,
+      }}
     >
-      <NodeHeader
-        title="API Connector"
-        bgColor="bg-purple-200"
-        iconBgColor="bg-purple-400"
-        textColor="text-purple-900"
-        iconFn={MajesticonsDataLine}
-      />
-
       <div className="space-y-2 px-2">
         <p className="text-sm font-semibold">Company</p>
         <StockPicker

@@ -12053,7 +12053,7 @@ INSERT INTO public.workflows(id, user_id, name)
   VALUES ('df43a301-9ad9-4e56-b136-e00174c4596f', '8c693361-135d-4489-a025-4701e6d76ef4', 'SEC Filing Question Answerer');
 
 INSERT INTO public.nodes(user_id, workflow_id, name, type, position, data)
-  VALUES ('8c693361-135d-4489-a025-4701e6d76ef4', 'df43a301-9ad9-4e56-b136-e00174c4596f', 'SEC Filing Parser', 'sec-filing', '{"x": 0, "y": 0}', '{"ticker": "NVDA", "filing_type": "10-Q", "limit": 1}');
+  VALUES ('8c693361-135d-4489-a025-4701e6d76ef4', 'df43a301-9ad9-4e56-b136-e00174c4596f', 'SEC Filing Parser', 'sec-filing', '{"x": 0, "y": 0}', '{"inputs": [{"label":"ticker","acceptedDataCategory":"Text","acceptedFileFormats":["TXT"]},{"label":"filingType","acceptedDataCategory":"Text","acceptedFileFormats":["TXT"]}], "label": "SEC Filing Parser", "outputs": [{"label": "filing", "dataType": "MD"}], "config": {"ticker": "NVDA", "filing_type": "10-Q", "limit": 1}}');
 
 
 --
