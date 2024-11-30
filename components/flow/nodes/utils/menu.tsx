@@ -1,9 +1,12 @@
 import { Button } from "@/components/ui/button";
+import { createClient } from "@/lib/supabase/client";
 import { useNodesStore } from "@/providers/nodesProvider";
+import { useReactFlow } from "@xyflow/react";
 import { Copy, PenLine, Trash2 } from "lucide-react";
 
 export const Menu = ({ nodeId }: { nodeId: string }) => {
-  const { deleteNode } = useNodesStore((state) => state);
+  const { deleteElements } = useReactFlow();
+  const supabase = createClient();
 
   return (
     <div className="hidden group-hover:block absolute right-0 top-0 translate-x-full opacity-0 group-hover:opacity-100 transition-opacity">
@@ -32,8 +35,11 @@ export const Menu = ({ nodeId }: { nodeId: string }) => {
           variant="ghost"
           size="icon"
           className="h-8 w-8"
-          onClick={() => {
-            nodeId && deleteNode(nodeId);
+          onClick={async () => {
+            if (nodeId) {
+              deleteElements({ nodes: [{ id: nodeId }] });
+              await supabase.from("nodes").delete().eq("id", nodeId);
+            }
           }}
         >
           <Trash2 className="h-4 w-4" />

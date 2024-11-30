@@ -70,9 +70,6 @@ const DnDFlow = ({
     return edgesRes;
   }, [supabase, workflowId]);
 
-  // TODO: data doesn't update
-  // TODO: sec-filing filingType doesn't show
-
   const updateNodes = useDebouncedCallback(async (nodes: AppNode[]) => {
     const { error } = await supabase.from("nodes").upsert(
       nodes.map((node) => ({
@@ -111,10 +108,6 @@ const DnDFlow = ({
 
   const [nodes, setNodes] = useState<AppNode[]>([]);
   const [edges, setEdges] = useState<CustomEdgeType[]>([]);
-  const [rfInstance, setRfInstance] = useState<ReactFlowInstance<
-    AppNode,
-    CustomEdgeType
-  > | null>(null);
 
   useEffect(() => {
     fetchNodes().then((nodesRes) => {
@@ -158,7 +151,12 @@ const DnDFlow = ({
 
   const onConnect = useCallback(
     (conn: Connection) => {
-      setEdges((eds) => addEdge(conn, eds));
+      setEdges((eds) =>
+        addEdge(
+          { ...conn, id: uuidv4(), type: "button-edge", animated: true },
+          eds
+        )
+      );
     },
     [setEdges]
   );
@@ -222,7 +220,6 @@ const DnDFlow = ({
               onConnect={onConnect}
               onDrop={onDrop}
               onDragOver={onDragOver}
-              onInit={setRfInstance}
               proOptions={{ hideAttribution: true }}
               onEdgeMouseEnter={(_, edge) => {
                 updateEdge(edge.id, (oldEdge) => ({

@@ -86,8 +86,6 @@ function SecFilingNodeComponent({ id, data }: NodeProps<SecFilingNodeType>) {
   const [config, setConfig] = useState<Record<string, any>>(data.config);
   const [stockId, setStockId] = useState<string | null>(null);
 
-  console.log(config.filing_type);
-
   const { updateNodeData } = useReactFlow();
 
   const [selectedOutputs, setSelectedOutputs] = useState<NodeOutput[]>(
