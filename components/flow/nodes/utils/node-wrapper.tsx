@@ -4,6 +4,16 @@ import { NodeInput, NodeOutput } from "@/types/node";
 import { Position } from "@xyflow/react";
 import { InputHandle } from "./input-handle";
 import { OutputHandle } from "./output-handle";
+import { NodeHeader, NodeHeaderProps } from "./header";
+
+type NodeWrapperProps = {
+  nodeId: string;
+  inputs: NodeInput[];
+  outputs: NodeOutput[];
+  children: React.ReactNode;
+  width?: string;
+  headerProps: NodeHeaderProps;
+};
 
 export const NodeWrapper = ({
   nodeId,
@@ -11,13 +21,8 @@ export const NodeWrapper = ({
   outputs,
   children,
   width = "w-fit",
-}: {
-  nodeId: string;
-  inputs: NodeInput[];
-  outputs: NodeOutput[];
-  children: React.ReactNode;
-  width?: string;
-}) => {
+  headerProps,
+}: NodeWrapperProps) => {
   return (
     <div className="">
       <div className="">
@@ -47,7 +52,10 @@ export const NodeWrapper = ({
         )}
       >
         <Menu nodeId={nodeId} />
-        <div className="">{children}</div>
+        <div className="">
+          <NodeHeader {...headerProps} />
+          {children}
+        </div>
       </div>
     </div>
   );

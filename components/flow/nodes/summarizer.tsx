@@ -7,19 +7,22 @@ import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { NodeHeader } from "./utils/header";
 import { Slider as DoubleSlider } from "@/components/ui/double-slider";
 import { Slider } from "@/components/ui/slider";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
-import { dataTypesList, NodeInput, NodeOutput } from "@/types/node";
+import {
+  DataCategoryEnum,
+  dataTypesList,
+  FileFormat,
+  NodeInput,
+  NodeOutput,
+} from "@/types/node";
 import { NodeWrapper } from "./utils/node-wrapper";
 import { useDebouncedCallback } from "use-debounce";
 import { Outputs } from "./utils/outputs";
-import { res as secRes } from "./temp/sec";
-import { res as summaryRes } from "./temp/summary";
 
 function Fa6SolidArrowDownWideShort(props: SVGProps<SVGSVGElement>) {
   return (
@@ -41,62 +44,49 @@ function Fa6SolidArrowDownWideShort(props: SVGProps<SVGSVGElement>) {
 const inputs: NodeInput[] = [
   {
     label: "text",
-    acceptedFormat: "Text",
-    acceptedTypes: dataTypesList
-      .filter((item) => item.formats.includes("Text"))
-      ?.map((item) => item.name),
+    acceptedDataCategory: DataCategoryEnum.Text,
+    acceptedFileFormats: dataTypesList
+      .filter((item) => item.dataCategory === DataCategoryEnum.Text)
+      ?.map((item) => item.type),
   },
 ];
 
-type Params = {
+type Config = {
   wordCount: [number, number];
   keywords: string[];
   relevanceThreshold: number;
 };
 
-const defaultParams: Params = {
+const outputs: NodeOutput[] = [
+  { label: "summary", dataType: FileFormat.MD },
+  { label: "summary", dataType: FileFormat.TXT },
+];
+
+export type SummarizerNodeData = {
+  label: string;
+  config: Config;
+  inputs: NodeInput[];
+  outputs: NodeOutput[];
+};
+
+export type SummarizerNodeType = Node<SummarizerNodeData>;
+
+const defaultConfig: Config = {
   wordCount: [100, 500],
   keywords: [],
   relevanceThreshold: 0.3,
 };
 
-const outputs: NodeOutput[] = [
-  { label: "summary", dataType: "MD" },
-  { label: "summary", dataType: "TXT" },
-  { label: "summary", dataType: "PDF" },
-  { label: "summary", dataType: "DOCX" },
-];
-
-const runFn = async (params: Record<string, any>) => {
-  await new Promise((resolve) => setTimeout(resolve, 3000));
-  return {
-    inputData: secRes,
-    params: params,
-    outputData: summaryRes,
-  };
-};
-
-export type SummarizerNodeData = {
-  label: string;
-  params: Params;
-  inputs: NodeInput[];
-  outputs: NodeOutput[];
-  runFn: (params: Record<string, any>) => Promise<Record<string, any>>;
-};
-
-export const defaultData: SummarizerNodeData = {
+export const SUMMARIZER_NODE_DEFAULT_DATA: SummarizerNodeData = {
   label: "Summarizer",
-  params: defaultParams,
+  config: defaultConfig,
   inputs,
-  outputs: [{ label: "summary", dataType: "MD" }],
-  runFn,
+  outputs: [{ label: "summary", dataType: FileFormat.MD }],
 };
 
-export type SummarizerNode = Node<SummarizerNodeData>;
-
-function SummarizerNodeComponent({ id, data }: NodeProps<SummarizerNode>) {
+function SummarizerNodeComponent({ id, data }: NodeProps<SummarizerNodeType>) {
   const updateNodeInternals = useUpdateNodeInternals();
-  const [params, setParams] = useState<Record<string, any>>(data.params);
+  const [params, setParams] = useState<Record<string, any>>(data.config);
   const setParamsDebounced = useDebouncedCallback(
     (params: Record<string, any>) => {
       setParams(params);
@@ -125,15 +115,14 @@ function SummarizerNodeComponent({ id, data }: NodeProps<SummarizerNode>) {
       width="w-[360px]"
       inputs={inputs}
       outputs={selectedOutputs}
+      headerProps={{
+        title: data.label,
+        bgColor: "bg-orange-200",
+        textColor: "text-orange-900",
+        iconFn: Fa6SolidArrowDownWideShort,
+        iconBgColor: "bg-orange-500",
+      }}
     >
-      <NodeHeader
-        title={data.label}
-        bgColor="bg-orange-200"
-        textColor="text-orange-900"
-        iconFn={Fa6SolidArrowDownWideShort}
-        iconBgColor="bg-orange-500"
-      />
-
       <div className="space-y-4 px-2 py-1">
         {/* Word Count */}
         <div className="space-y-2 nodrag">

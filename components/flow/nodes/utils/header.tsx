@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 import Image from "next/image";
 import { SVGProps } from "react";
 
-type NodeHeaderProps = {
+export type NodeHeaderProps = {
   title: string;
   bgColor: string;
   iconBgColor?: string;

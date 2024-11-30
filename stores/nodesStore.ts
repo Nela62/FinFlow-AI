@@ -1,5 +1,4 @@
 import { createStore } from "zustand/vanilla";
-import { devtools } from "zustand/middleware";
 
 import {
   addEdge,
@@ -16,195 +15,96 @@ import {
   type OnEdgesChange,
   type OnConnect,
 } from "@xyflow/react";
-import {
-  SecFilingNode,
-  type SecFilingNodeType,
-  defaultData as secFilingDefaultData,
-} from "@/components/flow/nodes/sec-filing";
-import {
-  ApiConnectorNode,
-  type ApiConnectorNode as ApiConnectorNodeType,
-  defaultData as apiConnectorDefaultData,
-} from "@/components/flow/nodes/api-connector";
-import {
-  SwitchNode,
-  type SwitchNode as SwitchNodeType,
-  defaultData as switchDefaultData,
-} from "@/components/flow/nodes/switch";
-import ButtonEdge, {
-  type ButtonEdge as ButtonEdgeType,
-} from "@/components/flow/edges/button-edge";
-import {
-  defaultData as summarizerDefaultData,
-  SummarizerNode,
-  type SummarizerNode as SummarizerNodeType,
-} from "@/components/flow/nodes/summarizer";
-import {
-  DcfModelNode,
-  DcfModelNodeType,
-  defaultData as dcfModelDefaultData,
-} from "@/components/flow/nodes/dcf-model";
-import {
-  AppenderNode,
-  AppenderNodeType,
-  defaultData as appenderDefaultData,
-} from "@/components/flow/nodes/appender";
-import {
-  DocumentCompilerNode,
-  DocumentCompilerNodeType,
-  defaultData as documentCompilerDefaultData,
-} from "@/components/flow/nodes/document-compiler";
-import {
-  EmailSenderNode,
-  EmailSenderNodeType,
-  defaultData as emailSenderDefaultData,
-} from "@/components/flow/nodes/email-sender";
-import {
-  FinancialAnalysisNode,
-  FinancialAnalysisNodeType,
-  defaultData as financialAnalysisDefaultData,
-} from "@/components/flow/nodes/financial-analysis";
-import { dataTypesList, NodeRunResult, RunResults } from "@/types/node";
+import { AppNode } from "@/types/node";
 
-export const edgeTypes = {
-  "button-edge": ButtonEdge,
-} satisfies EdgeTypes;
+export type NodesState = {};
 
-export type CustomEdgeType = BuiltInEdge | ButtonEdgeType;
-
-export const nodeTypes = {
-  "sec-filing": SecFilingNode,
-  "api-connector": ApiConnectorNode,
-  summarizer: SummarizerNode,
-  switch: SwitchNode,
-  "dcf-model": DcfModelNode,
-  "financial-analysis": FinancialAnalysisNode,
-  appender: AppenderNode,
-  "document-compiler": DocumentCompilerNode,
-  "email-sender": EmailSenderNode,
-} satisfies NodeTypes;
-
-const textTypes = dataTypesList
-  .filter((item) => item.formats.includes("Text"))
-  ?.map((item) => item.name);
-
-export type AppNode =
-  // | BuiltInNode
-  | SecFilingNodeType
-  | ApiConnectorNodeType
-  | SwitchNodeType
-  | SummarizerNodeType
-  | DcfModelNodeType
-  | AppenderNodeType
-  | DocumentCompilerNodeType
-  | EmailSenderNodeType
-  | FinancialAnalysisNodeType;
-
-export type NodesState = {
-  nodes: AppNode[];
-  edges: Edge[];
-  currentRunId: string | null;
-  runResults: RunResults;
-};
-
-export type NodesActions = {
-  onNodesChange: OnNodesChange<AppNode>;
-  onEdgesChange: OnEdgesChange;
-  onConnect: OnConnect;
-  addNode: (node: AppNode) => void;
-  setNodes: (nodes: AppNode[]) => void;
-  setEdges: (edges: Edge[]) => void;
-  deleteNode: (nodeId: string) => void;
-  deleteEdge: (edgeId: string) => void;
-  addRunResult: (runResult: NodeRunResult) => void;
-  clearRunResults: () => void;
-  getInputNodes: (nodeId: string) => AppNode[];
-};
+export type NodesActions = {};
 
 export type NodesStore = NodesState & NodesActions;
 
-const defaultNodes: AppNode[] = [
-  {
-    id: "a",
-    type: "api-connector",
-    position: { x: 0, y: 0 },
-    data: apiConnectorDefaultData,
-  },
-  {
-    id: "b",
-    type: "sec-filing",
-    position: { x: 500, y: 0 },
-    data: secFilingDefaultData,
-  },
-  {
-    id: "c",
-    type: "switch",
-    position: { x: 200, y: 750 },
-    data: switchDefaultData,
-  },
-  {
-    id: "d",
-    type: "summarizer",
-    position: { x: 900, y: 700 },
-    data: summarizerDefaultData,
-  },
-  {
-    id: "e",
-    type: "dcf-model",
-    position: { x: 0, y: 1050 },
-    data: {
-      ...dcfModelDefaultData,
-      outputs: [
-        { label: "DCF Model", dataType: "MD" },
-        { label: "DCF Model", dataType: "CSV" },
-      ],
-    },
-  },
-  {
-    id: "f",
-    type: "appender",
-    position: { x: 350, y: 1900 },
-    data: {
-      ...appenderDefaultData,
-      inputs: [
-        {
-          label: "node-1",
-          acceptedFormat: "Text",
-          acceptedTypes: textTypes,
-        },
-        {
-          label: "node-2",
-          acceptedFormat: "Text",
-          acceptedTypes: textTypes,
-        },
-        {
-          label: "node-3",
-          acceptedFormat: "Text",
-          acceptedTypes: textTypes,
-        },
-      ],
-      outputs: [{ label: "text", dataType: "MD" }],
-    },
-  },
-  {
-    id: "g",
-    type: "document-compiler",
-    position: { x: 350, y: 2500 },
-    data: documentCompilerDefaultData,
-  },
-  {
-    id: "h",
-    type: "email-sender",
-    position: { x: 350, y: 3100 },
-    data: emailSenderDefaultData,
-  },
-  {
-    id: "i",
-    type: "financial-analysis",
-    position: { x: 400, y: 1100 },
-    data: financialAnalysisDefaultData,
-  },
-];
+// const defaultNodes: AppNode[] = [
+//   {
+//     id: "a",
+//     type: "api-connector",
+//     position: { x: 0, y: 0 },
+//     data: apiConnectorDefaultData,
+//   },
+//   {
+//     id: "b",
+//     type: "sec-filing",
+//     position: { x: 500, y: 0 },
+//     data: secFilingDefaultData,
+//   },
+//   {
+//     id: "c",
+//     type: "switch",
+//     position: { x: 200, y: 750 },
+//     data: switchDefaultData,
+//   },
+//   {
+//     id: "d",
+//     type: "summarizer",
+//     position: { x: 900, y: 700 },
+//     data: summarizerDefaultData,
+//   },
+//   {
+//     id: "e",
+//     type: "dcf-model",
+//     position: { x: 0, y: 1050 },
+//     data: {
+//       ...dcfModelDefaultData,
+//       outputs: [
+//         { label: "DCF Model", dataType: "MD" },
+//         { label: "DCF Model", dataType: "CSV" },
+//       ],
+//     },
+//   },
+//   {
+//     id: "f",
+//     type: "appender",
+//     position: { x: 350, y: 1900 },
+//     data: {
+//       ...appenderDefaultData,
+//       inputs: [
+//         {
+//           label: "node-1",
+//           acceptedFormat: "Text",
+//           acceptedTypes: textTypes,
+//         },
+//         {
+//           label: "node-2",
+//           acceptedFormat: "Text",
+//           acceptedTypes: textTypes,
+//         },
+//         {
+//           label: "node-3",
+//           acceptedFormat: "Text",
+//           acceptedTypes: textTypes,
+//         },
+//       ],
+//       outputs: [{ label: "text", dataType: "MD" }],
+//     },
+//   },
+//   {
+//     id: "g",
+//     type: "document-compiler",
+//     position: { x: 350, y: 2500 },
+//     data: documentCompilerDefaultData,
+//   },
+//   {
+//     id: "h",
+//     type: "email-sender",
+//     position: { x: 350, y: 3100 },
+//     data: emailSenderDefaultData,
+//   },
+//   {
+//     id: "i",
+//     type: "financial-analysis",
+//     position: { x: 400, y: 1100 },
+//     data: financialAnalysisDefaultData,
+//   },
+// ];
 
 const defaultEdges: Edge[] = [
   {
@@ -292,8 +192,8 @@ const defaultEdges: Edge[] = [
 ];
 
 const defaultInitState: NodesState = {
-  nodes: defaultNodes,
-  edges: defaultEdges,
+  nodes: [],
+  edges: [],
   currentRunId: null,
   runResults: [],
 };
@@ -301,68 +201,68 @@ const defaultInitState: NodesState = {
 export const createNodesStore = (initState: NodesState = defaultInitState) => {
   return createStore<NodesStore>()((set, get) => ({
     ...initState,
-    onNodesChange: (changes) => {
-      set((state) => ({
-        nodes: applyNodeChanges(changes, state.nodes),
-      }));
-    },
-    onEdgesChange: (changes) => {
-      set((state) => ({
-        edges: applyEdgeChanges(changes, state.edges),
-      }));
-    },
-    onConnect: (connection) => {
-      set((state) => ({
-        edges: addEdge(
-          { ...connection, type: "button-edge", animated: true },
-          state.edges
-        ),
-      }));
-    },
-    addNode: (node) => {
-      set((state) => ({
-        nodes: [...state.nodes, node],
-      }));
-    },
-    setNodes: (nodes) => {
-      if (Array.isArray(nodes)) {
-        set({ nodes });
-      } else {
-        console.log("nodes ", nodes);
-      }
-    },
-    setEdges: (edges) => {
-      set({ edges });
-    },
-    deleteNode: (nodeId) => {
-      set((state) => ({
-        nodes: state.nodes?.filter((node) => node.id !== nodeId),
-        edges: state.edges?.filter(
-          (edge) => edge.source !== nodeId && edge.target !== nodeId
-        ),
-      }));
-    },
-    deleteEdge: (edgeId) => {
-      set((state) => ({
-        edges: state.edges?.filter((edge) => edge.id !== edgeId),
-      }));
-    },
-    addRunResult: (runResult) => {
-      set((state) => ({
-        runResults: [...state.runResults, runResult],
-      }));
-    },
-    clearRunResults: () => {
-      set({ runResults: [] });
-    },
-    getInputNodes: (nodeId: string) => {
-      const edges = get().edges;
-      const nodes = get().nodes;
-      const inputEdges = edges.filter((edge) => edge.target === nodeId);
-      const inputNodes = inputEdges.map((edge) =>
-        nodes.find((node) => node.id === edge.source)
-      );
-      return inputNodes.filter((node) => node !== undefined) as AppNode[];
-    },
+    // onNodesChange: (changes) => {
+    //   set((state) => ({
+    //     nodes: applyNodeChanges(changes, state.nodes),
+    //   }));
+    // },
+    // onEdgesChange: (changes) => {
+    //   set((state) => ({
+    //     edges: applyEdgeChanges(changes, state.edges),
+    //   }));
+    // },
+    // onConnect: (connection) => {
+    //   set((state) => ({
+    //     edges: addEdge(
+    //       { ...connection, type: "button-edge", animated: true },
+    //       state.edges
+    //     ),
+    //   }));
+    // },
+    // addNode: (node) => {
+    //   set((state) => ({
+    //     nodes: [...state.nodes, node],
+    //   }));
+    // },
+    // setNodes: (nodes) => {
+    //   if (Array.isArray(nodes)) {
+    //     set({ nodes });
+    //   } else {
+    //     console.log("nodes ", nodes);
+    //   }
+    // },
+    // setEdges: (edges) => {
+    //   set({ edges });
+    // },
+    // deleteNode: (nodeId) => {
+    //   set((state) => ({
+    //     nodes: state.nodes?.filter((node) => node.id !== nodeId),
+    //     edges: state.edges?.filter(
+    //       (edge) => edge.source !== nodeId && edge.target !== nodeId
+    //     ),
+    //   }));
+    // },
+    // deleteEdge: (edgeId) => {
+    //   set((state) => ({
+    //     edges: state.edges?.filter((edge) => edge.id !== edgeId),
+    //   }));
+    // },
+    // addRunResult: (runResult) => {
+    //   set((state) => ({
+    //     runResults: [...state.runResults, runResult],
+    //   }));
+    // },
+    // clearRunResults: () => {
+    //   set({ runResults: [] });
+    // },
+    // getInputNodes: (nodeId: string) => {
+    //   const edges = get().edges;
+    //   const nodes = get().nodes;
+    //   const inputEdges = edges.filter((edge) => edge.target === nodeId);
+    //   const inputNodes = inputEdges.map((edge) =>
+    //     nodes.find((node) => node.id === edge.source)
+    //   );
+    //   return inputNodes.filter((node) => node !== undefined) as AppNode[];
+    // },
   }));
 };

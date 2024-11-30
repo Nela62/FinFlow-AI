@@ -1,8 +1,7 @@
 import { useMemo } from "react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
-import { DataType, dataTypesList, NodeOutput } from "@/types/node";
-import { useUpdateNodeInternals } from "@xyflow/react";
+import { dataTypesList, NodeOutput } from "@/types/node";
 
 export const Outputs = ({
   nodeId,
@@ -21,7 +20,7 @@ export const Outputs = ({
 
   const outputsList = useMemo(() => {
     return dataTypesList.filter((dataType) =>
-      outputsDataTypes.includes(dataType.name)
+      outputsDataTypes.includes(dataType.type)
     );
   }, [outputsDataTypes]);
 
@@ -35,21 +34,21 @@ export const Outputs = ({
       <div className="flex gap-4">
         {outputsList.map((output) => (
           <div
-            key={output.name}
+            key={output.type}
             className={cn(
               "rounded-md p-1 space-y-1 border-2 cursor-pointer ",
-              selectedOutputsDataTypes.includes(output.name)
+              selectedOutputsDataTypes.includes(output.type)
                 ? "bg-steel-blue-200 border-steel-blue-500"
                 : "bg-muted border-transparent"
             )}
             onClick={() => {
-              const newOutput = outputs.find((o) => o.dataType === output.name);
+              const newOutput = outputs.find((o) => o.dataType === output.type);
               if (!newOutput) return;
 
               const newSelectedOutputs = selectedOutputsDataTypes.includes(
-                output.name
+                output.type
               )
-                ? selectedOutputs.filter((o) => o.dataType !== output.name)
+                ? selectedOutputs.filter((o) => o.dataType !== output.type)
                 : [...selectedOutputs, newOutput];
               setSelectedOutputs(newSelectedOutputs);
             }}
@@ -57,12 +56,12 @@ export const Outputs = ({
             <div className="flex items-center justify-center bg-background rounded-md p-1">
               <Image
                 src={output.imageLink}
-                alt={output.name}
+                alt={output.type}
                 width={40}
                 height={40}
               />
             </div>
-            <p className="text-xs px-1">{output.name}</p>
+            <p className="text-xs px-1">{output.type}</p>
           </div>
         ))}
       </div>

@@ -314,33 +314,42 @@ export type Database = {
       }
       nodes: {
         Row: {
+          absolute_position: Json | null
           created_at: string
           data: Json
+          dragging: boolean | null
           id: string
           name: string
           position: Json
+          selected: boolean | null
           type: string
           updated_at: string
           user_id: string
           workflow_id: string
         }
         Insert: {
+          absolute_position?: Json | null
           created_at?: string
           data: Json
+          dragging?: boolean | null
           id?: string
           name: string
           position: Json
+          selected?: boolean | null
           type: string
           updated_at?: string
           user_id: string
           workflow_id: string
         }
         Update: {
+          absolute_position?: Json | null
           created_at?: string
           data?: Json
+          dragging?: boolean | null
           id?: string
           name?: string
           position?: Json
+          selected?: boolean | null
           type?: string
           updated_at?: string
           user_id?: string
@@ -490,6 +499,7 @@ export type Database = {
           action_id: string
           completed_at: string | null
           created_at: string
+          execution_id: string
           id: string
           name: string
           started_at: string
@@ -501,6 +511,7 @@ export type Database = {
           action_id: string
           completed_at?: string | null
           created_at?: string
+          execution_id: string
           id?: string
           name: string
           started_at?: string
@@ -512,6 +523,7 @@ export type Database = {
           action_id?: string
           completed_at?: string | null
           created_at?: string
+          execution_id?: string
           id?: string
           name?: string
           started_at?: string
@@ -525,6 +537,13 @@ export type Database = {
             columns: ["action_id"]
             isOneToOne: false
             referencedRelation: "actions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "subactions_execution_id_fkey"
+            columns: ["execution_id"]
+            isOneToOne: false
+            referencedRelation: "executions"
             referencedColumns: ["id"]
           },
           {

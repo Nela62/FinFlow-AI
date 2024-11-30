@@ -176,3 +176,27 @@ export function fetchAllSubactionsByExecutionId(
     .eq("execution_id", executionId)
     .throwOnError();
 }
+
+export function fetchNodesByWorkflowId(
+  client: TypedSupabaseClient,
+  workflowId: string
+) {
+  return client
+    .from("nodes")
+    .select("id, workflow_id, name, type, data, position")
+    .eq("workflow_id", workflowId)
+    .throwOnError();
+}
+
+export function fetchEdgesByWorkflowId(
+  client: TypedSupabaseClient,
+  workflowId: string
+) {
+  return client
+    .from("edges")
+    .select(
+      "id, workflow_id, source, target, source_handle, target_handle, type, animated"
+    )
+    .eq("workflow_id", workflowId)
+    .throwOnError();
+}

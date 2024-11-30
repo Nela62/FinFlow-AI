@@ -1,113 +1,135 @@
-export type DataTypeFormat =
-  | "Text"
-  | "Tabular"
-  | "PDF"
-  | "JSON"
-  | "DOCX"
-  | "File"
-  | "Any";
+import { EdgeTypes, BuiltInEdge, NodeTypes } from "@xyflow/react";
+import ButtonEdge, {
+  type ButtonEdge as ButtonEdgeType,
+} from "@/components/flow/edges/button-edge";
+import {
+  SecFilingNode,
+  type SecFilingNodeType,
+} from "@/components/flow/nodes/sec-filing";
+import {
+  SummarizerNode,
+  type SummarizerNodeType,
+} from "@/components/flow/nodes/summarizer";
 
-export type DataType =
-  | "JSON"
-  | "CSV"
-  | "XLSX"
-  | "TXT"
-  | "MD"
-  | "PDF"
-  | "HTML"
-  | "XML"
-  | "DOCX"
-  | "ANY";
+export const enum DataCategoryEnum {
+  Text = "Text",
+  Json = "Json",
+
+  // Tabular = "Tabular",
+  // File = "File",
+  // Any = "Any",
+}
+
+export const enum FileFormat {
+  JSON = "JSON",
+  // CSV = "CSV",
+  // XLSX = "XLSX",
+  TXT = "TXT",
+  MD = "MD",
+  // PDF = "PDF",
+  // HTML = "HTML",
+  // XML = "XML",
+  // DOCX = "DOCX",
+  // ANY = "ANY",
+}
 
 export type DataTypeListItem = {
-  name: DataType;
+  type: FileFormat;
   extension: string;
-  formats: DataTypeFormat[];
+  contentType: string;
+  dataCategory: DataCategoryEnum;
   imageLink: string;
 };
 
+// Updated list with content types
 export const dataTypesList: DataTypeListItem[] = [
   {
-    name: "JSON",
+    type: FileFormat.JSON,
     extension: ".json",
-    formats: ["JSON", "Text"],
+    contentType: "application/json",
+    dataCategory: DataCategoryEnum.Json,
     imageLink: "/output/JSON-file.png",
   },
+  // {
+  //   name: FileFormat.CSV,
+  //   extension: ".csv",
+  //   contentType: "text/csv",
+  //   formats: [DataCategory.Tabular, DataCategory.Text],
+  //   imageLink: "/output/csv-file.png",
+  // },
+  // {
+  //   name: FileFormat.XLSX,
+  //   extension: ".xlsx",
+  //   contentType:
+  //     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  //   formats: [DataCategory.Tabular],
+  //   imageLink: "/output/excel-file.png",
+  // },
   {
-    name: "CSV",
-    extension: ".csv",
-    formats: ["Tabular", "Text"],
-    imageLink: "/output/csv-file.png",
-  },
-  {
-    name: "XLSX",
-    extension: ".xlsx",
-    formats: ["Tabular"],
-    imageLink: "/output/excel-file.png",
-  },
-  {
-    name: "TXT",
+    type: FileFormat.TXT,
     extension: ".txt",
-    formats: ["Text"],
+    contentType: "text/plain",
+    dataCategory: DataCategoryEnum.Text,
     imageLink: "/output/txt-file.png",
   },
   {
-    name: "MD",
+    type: FileFormat.MD,
     extension: ".md",
-    formats: ["Text"],
+    contentType: "text/markdown",
+    dataCategory: DataCategoryEnum.Text,
     imageLink: "/output/markdown-file.png",
   },
-  {
-    name: "PDF",
-    extension: ".pdf",
-    formats: ["PDF"],
-    imageLink: "/output/pdf-file.png",
-  },
-  {
-    name: "HTML",
-    extension: ".html",
-    formats: ["Text"],
-    imageLink: "/output/html-file.png",
-  },
-  {
-    name: "XML",
-    extension: ".xml",
-    formats: ["Text"],
-    imageLink: "/output/xml-file.png",
-  },
-  {
-    name: "DOCX",
-    extension: ".docx",
-    formats: ["DOCX"],
-    imageLink: "/output/docx-file.png",
-  },
+  // {
+  //   name: FileFormat.PDF,
+  //   extension: ".pdf",
+  //   contentType: "application/pdf",
+  //   formats: [DataCategory.PDF],
+  //   imageLink: "/output/pdf-file.png",
+  // },
+  // {
+  //   name: FileFormat.HTML,
+  //   extension: ".html",
+  //   contentType: "text/html",
+  //   formats: [DataCategory.Text],
+  //   imageLink: "/output/html-file.png",
+  // },
+  // {
+  //   name: FileFormat.XML,
+  //   extension: ".xml",
+  //   contentType: "application/xml",
+  //   formats: [DataCategory.Text],
+  //   imageLink: "/output/xml-file.png",
+  // },
+  // {
+  //   name: FileFormat.DOCX,
+  //   extension: ".docx",
+  //   contentType:
+  //     "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  //   formats: [DataCategory.DOCX],
+  //   imageLink: "/output/docx-file.png",
+  // },
 ];
 
 export type NodeInput = {
   label: string;
-  acceptedFormat: DataTypeFormat;
-  acceptedTypes: DataType[];
+  acceptedDataCategory: DataCategoryEnum;
+  acceptedFileFormats: FileFormat[];
 };
 
 export type NodeOutput = {
   label: string;
-  dataType: DataType;
+  dataType: FileFormat;
 };
 
-export type NodeRunResult = {
-  id: string;
-  inputData: Record<string, any>;
-  params: Record<string, any>;
-  outputData: Record<string, any>;
-  // logs: string[];
-};
+export const nodeTypes = {
+  "sec-filing": SecFilingNode,
+  summarizer: SummarizerNode,
+} satisfies NodeTypes;
 
-export type NodeData = {
-  label: string;
-  inputs: NodeInput[];
-  params: Record<string, any>;
-  outputs: NodeOutput[];
-  runFn: (params: Record<string, any>) => Promise<NodeRunResult>;
-};
+export type AppNode = SecFilingNodeType | SummarizerNodeType;
 
-export type RunResults = NodeRunResult[];
+export const edgeTypes = {
+  "button-edge": ButtonEdge,
+} satisfies EdgeTypes;
+
+export type CustomEdgeType = BuiltInEdge | ButtonEdgeType;
