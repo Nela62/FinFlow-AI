@@ -94,9 +94,6 @@ CREATE TABLE IF NOT EXISTS nodes(
   name text NOT NULL,
   type text NOT NULL,
   position jsonb NOT NULL,
-  absolute_position jsonb,
-  dragging boolean,
-  selected boolean,
   data jsonb NOT NULL,
   created_at timestamp with time zone DEFAULT now() NOT NULL,
   updated_at timestamp with time zone DEFAULT now() NOT NULL

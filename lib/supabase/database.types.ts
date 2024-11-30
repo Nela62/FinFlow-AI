@@ -317,6 +317,7 @@ export type Database = {
           absolute_position: Json | null
           created_at: string
           data: Json
+          dimensions: Json | null
           dragging: boolean | null
           id: string
           name: string
@@ -331,6 +332,7 @@ export type Database = {
           absolute_position?: Json | null
           created_at?: string
           data: Json
+          dimensions?: Json | null
           dragging?: boolean | null
           id?: string
           name: string
@@ -345,6 +347,7 @@ export type Database = {
           absolute_position?: Json | null
           created_at?: string
           data?: Json
+          dimensions?: Json | null
           dragging?: boolean | null
           id?: string
           name?: string

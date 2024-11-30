@@ -44,7 +44,7 @@ const inputs: NodeInput[] = [
 
 type Config = {
   ticker: string;
-  filingType: string;
+  filing_type: string;
   // sections: string[];
 };
 
@@ -66,7 +66,8 @@ export type SecFilingNodeType = Node<SecFilingNodeData, "sec-filing">;
 
 const defaultConfig: Config = {
   ticker: "AAPL",
-  filingType: "10-K",
+  filing_type: "10-K",
+
   // sections:
   //   SEC_FILING_TYPES.find((f) => f.type === "10-K")?.sections.flatMap((s) =>
   //     s.subSections.map((ss) => ss.name)
@@ -84,6 +85,8 @@ function SecFilingNodeComponent({ id, data }: NodeProps<SecFilingNodeType>) {
   const updateNodeInternals = useUpdateNodeInternals();
   const [config, setConfig] = useState<Record<string, any>>(data.config);
   const [stockId, setStockId] = useState<string | null>(null);
+
+  console.log(config.filing_type);
 
   const { updateNodeData } = useReactFlow();
 
@@ -103,21 +106,21 @@ function SecFilingNodeComponent({ id, data }: NodeProps<SecFilingNodeType>) {
   }, [stock]);
 
   useEffect(() => {
-    // updateNodeData(id, { config });
+    updateNodeData(id, { config });
   }, [config]);
 
   useEffect(() => {
-    // updateNodeInternals(id);
-    // updateNodeData(id, { outputs: selectedOutputs });
+    updateNodeInternals(id);
+    updateNodeData(id, { outputs: selectedOutputs });
   }, [selectedOutputs]);
 
   const sections = useMemo(() => {
     return (
       SEC_FILING_TYPES.find(
-        (filingType) => filingType.type === config.filingType
+        (filingType) => filingType.type === config.filing_type
       )?.sections ?? []
     );
-  }, [config.filingType]);
+  }, [config.filing_type]);
 
   return (
     // We add this class to use the same styles as React Flow's default nodes.
@@ -149,12 +152,12 @@ function SecFilingNodeComponent({ id, data }: NodeProps<SecFilingNodeType>) {
               key={filingType.type}
               className={cn(
                 "rounded-md p-1 space-y-1 border-2 cursor-pointer",
-                config.filingType === filingType.type
+                config.filing_type === filingType.type
                   ? "bg-steel-blue-200 border-steel-blue-500"
                   : "bg-muted border-transparent"
               )}
               onClick={() => {
-                setConfig({ ...config, filingType: filingType.type });
+                setConfig({ ...config, filing_type: filingType.type });
               }}
             >
               <div className="flex items-center justify-center bg-background rounded-md p-1">
@@ -165,7 +168,7 @@ function SecFilingNodeComponent({ id, data }: NodeProps<SecFilingNodeType>) {
           ))}
         </div>
         <Separator orientation="horizontal" />
-        <div className="space-y-2">
+        {/* <div className="space-y-2">
           <p className="text-sm font-semibold">Sections</p>
           <NodeTabs defaultValue={sections[0]?.name}>
             <NodeTabsList>
@@ -214,7 +217,7 @@ function SecFilingNodeComponent({ id, data }: NodeProps<SecFilingNodeType>) {
             ))}
           </NodeTabs>
         </div>
-        <Separator orientation="horizontal" />
+        <Separator orientation="horizontal" /> */}
         <Outputs
           nodeId={id}
           outputs={outputs}
