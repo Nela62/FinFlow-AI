@@ -1,3 +1,4 @@
+import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
 import {
   BaseEdge,
@@ -11,7 +12,7 @@ import {
   useUpdateNodeInternals,
 } from "@xyflow/react";
 import { X } from "lucide-react";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 type ButtonEdgeData = { isHovered: boolean };
 
@@ -31,7 +32,7 @@ export default function ButtonEdge({
 }: EdgeProps<ButtonEdge>) {
   const updateNodeInternals = useUpdateNodeInternals();
   const { setEdges } = useReactFlow();
-  const [isVisible, setIsVisible] = useState(false);
+  const supabase = createClient();
   const [edgePath, labelX, labelY] = getSmoothStepPath({
     sourceX,
     sourceY,
@@ -41,10 +42,14 @@ export default function ButtonEdge({
     // targetPosition,
   });
 
-  const onEdgeClick = () => {
+  const onEdgeClick = useCallback(async () => {
     setEdges((edges) => edges.filter((edge) => edge.id !== id));
     updateNodeInternals(id);
-  };
+    const { error } = await supabase.from("edges").delete().eq("id", id);
+    if (error) {
+      console.error(error);
+    }
+  }, [supabase, id]);
 
   return (
     <>
