@@ -209,7 +209,7 @@ const DnDFlow = ({
             className="h-[calc(100vh-18px)] w-[calc(100vw-70px)] relative"
             ref={reactFlowWrapper}
           >
-            <Toolbar />
+            <Toolbar workflowId={workflowId} />
             <ReactFlow
               nodes={nodes}
               nodeTypes={nodeTypes}

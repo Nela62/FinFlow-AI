@@ -4,7 +4,7 @@ import { NodeInput, NodeOutput } from "@/types/node";
 import { Position } from "@xyflow/react";
 import { InputHandle } from "./input-handle";
 import { OutputHandle } from "./output-handle";
-import { NodeHeader, NodeHeaderProps } from "./header";
+import { NodeHeader, NodeHeaderProps } from "./node-header";
 
 type NodeWrapperProps = {
   nodeId: string;
@@ -25,7 +25,7 @@ export const NodeWrapper = ({
 }: NodeWrapperProps) => {
   return (
     <div className="">
-      <div className="">
+      <div>
         {inputs.map((input, index) => (
           <InputHandle
             key={input.label}
@@ -35,7 +35,7 @@ export const NodeWrapper = ({
           />
         ))}
       </div>
-      <div className="">
+      <div>
         {outputs.map((output, index) => (
           <OutputHandle
             key={output.dataType}

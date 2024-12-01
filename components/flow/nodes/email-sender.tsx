@@ -1,7 +1,7 @@
 import type { Node, NodeProps } from "@xyflow/react";
 import { Handle, Position, useReactFlow } from "@xyflow/react";
 import { SVGProps, useEffect, useState } from "react";
-import { NodeHeader } from "./utils/header";
+import { NodeHeader } from "./utils/node-header";
 import { Input } from "@/components/ui/input";
 import React from "react";
 import { Menu } from "./utils/menu";

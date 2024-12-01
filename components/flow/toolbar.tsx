@@ -7,6 +7,7 @@ import { DialogTrigger } from "../ui/dialog";
 import { TriggerContent } from "./triggers/trigger-content";
 import { useQuery } from "@supabase-cache-helpers/postgrest-react-query";
 import { fetchNodesByWorkflowId } from "@/lib/queries";
+import { createClient } from "@/lib/supabase/client";
 
 export type Trigger = {
   id: string;
@@ -14,13 +15,39 @@ export type Trigger = {
   config: Record<string, any>;
 };
 
-export const Toolbar = () => {
+export const Toolbar = ({ workflowId }: { workflowId: string }) => {
   const [isRunning, setIsRunning] = useState(false);
   const [triggers, setTriggers] = useState<Trigger[]>([]);
+  const supabase = createClient();
 
   const addTrigger = useCallback((trigger: Trigger) => {
     setTriggers((prev) => [...prev, trigger]);
   }, []);
+
+  const runWorkflow = useCallback(async () => {
+    setIsRunning(true);
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+    if (!session) throw new Error("No session found");
+
+    const res = await fetch(
+      process.env.NEXT_PUBLIC_API_URL + `/workflows/${workflowId}/executions`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session.access_token}`,
+        },
+      }
+    );
+    setIsRunning(false);
+    if (res.ok) {
+      const { execution_id: executionId } = await res.json();
+      console.log(executionId);
+      // setIsRunning(false);
+    }
+  }, [workflowId]);
 
   return (
     <div className="flex items-center justify-between gap-2 p-2 bg-transparent backdrop-blur-md absolute top-2 left-1/2 -translate-x-1/2 z-20 shadow-sm border rounded-lg">
@@ -60,6 +87,7 @@ export const Toolbar = () => {
       </PopoverContent>
       <Button
         className="bg-steel-blue-600 hover:bg-steel-blue-700"
+        onClick={runWorkflow}
         disabled={isRunning}
       >
         {isRunning ? (

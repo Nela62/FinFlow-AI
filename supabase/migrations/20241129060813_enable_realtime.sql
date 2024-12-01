@@ -1,14 +1,14 @@
--- Enable realtime only for actions and subactions tables
+-- Enable realtime only for tasks and subtasks tables
 ALTER PUBLICATION supabase_realtime
-  ADD TABLE public.actions;
+  ADD TABLE public.tasks;
 
 ALTER PUBLICATION supabase_realtime
-  ADD TABLE public.subactions;
+  ADD TABLE public.subtasks;
 
 -- Enable replica identity for these specific tables
-ALTER TABLE public.actions REPLICA IDENTITY
+ALTER TABLE public.tasks REPLICA IDENTITY
   FULL;
 
-ALTER TABLE public.subactions REPLICA IDENTITY
+ALTER TABLE public.subtasks REPLICA IDENTITY
   FULL;
 

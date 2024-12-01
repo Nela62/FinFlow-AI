@@ -14,7 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import React from "react";
-import { Outputs } from "./utils/outputs";
+import { Outputs } from "./utils/output-selection";
 import { NodeWrapper } from "./utils/node-wrapper";
 import { createClient } from "@/lib/supabase/client";
 import { fetchStockById } from "@/lib/queries";
@@ -31,22 +31,28 @@ import { NodeInput, NodeOutput } from "@/types/node";
 const inputs: NodeInput[] = [
   {
     label: "ticker",
-    acceptedDataCategory: DataCategoryEnum.Text,
-    acceptedFileFormats: [FileFormat.TXT],
+    definition: {
+      acceptedDataCategory: DataCategoryEnum.Text,
+      acceptedFileFormats: [FileFormat.TXT],
+    },
+    value: {
+      value: "AAPL",
+      dynamic: false,
+    },
   },
   {
-    label: "filingType",
-    acceptedDataCategory: DataCategoryEnum.Text,
-    acceptedFileFormats: [FileFormat.TXT],
+    label: "filing_type",
+    definition: {
+      acceptedDataCategory: DataCategoryEnum.Text,
+      acceptedFileFormats: [FileFormat.TXT],
+    },
+    value: {
+      value: "10-K",
+      dynamic: false,
+    },
   },
-  // add time period
+  // TODO: add time period
 ];
-
-type Config = {
-  ticker: string;
-  filing_type: string;
-  // sections: string[];
-};
 
 const outputs: NodeOutput[] = [
   { label: "filing", dataType: FileFormat.JSON },
@@ -55,35 +61,17 @@ const outputs: NodeOutput[] = [
   // { label: "tables", dataType: FileFormat.XLSX },
 ];
 
-export type SecFilingNodeData = {
-  label: string;
-  config: Config;
-  inputs: NodeInput[];
-  outputs: NodeOutput[];
-};
-
 export type SecFilingNodeType = Node<SecFilingNodeData, "sec-filing">;
-
-const defaultConfig: Config = {
-  ticker: "AAPL",
-  filing_type: "10-K",
-
-  // sections:
-  //   SEC_FILING_TYPES.find((f) => f.type === "10-K")?.sections.flatMap((s) =>
-  //     s.subSections.map((ss) => ss.name)
-  //   ) || [],
-};
 
 export const SEC_FILING_NODE_DEFAULT_DATA: SecFilingNodeData = {
   label: "SEC Filing Parser",
-  config: defaultConfig,
   inputs,
-  outputs: [{ label: "filing", dataType: FileFormat.MD }],
+  selectedOutputs: [{ label: "filing", dataType: FileFormat.MD }],
 };
 
 function SecFilingNodeComponent({ id, data }: NodeProps<SecFilingNodeType>) {
   const updateNodeInternals = useUpdateNodeInternals();
-  const [config, setConfig] = useState<Record<string, any>>(data.config);
+  const [config, setConfig] = useState<Record<string, any>>(data.inputs);
   const [stockId, setStockId] = useState<string | null>(null);
 
   const { updateNodeData } = useReactFlow();

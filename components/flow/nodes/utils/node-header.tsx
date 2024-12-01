@@ -2,24 +2,14 @@ import React from "react";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import { SVGProps } from "react";
-
-export type NodeHeaderProps = {
-  title: string;
-  bgColor: string;
-  iconBgColor?: string;
-  textColor: string;
-  iconFn?: (props: SVGProps<SVGSVGElement>) => React.JSX.Element;
-  image?: string;
-};
+import { NodeHeaderStyle } from "@/types/node";
 
 export const NodeHeader = ({
   title,
   bgColor,
-  iconBgColor,
   textColor,
-  iconFn,
-  image,
-}: NodeHeaderProps) => {
+  visual,
+}: NodeHeaderStyle) => {
   return (
     <div className="relative">
       <div
@@ -29,26 +19,23 @@ export const NodeHeader = ({
           textColor
         )}
       >
-        {image ? (
+        {visual.type === "image" ? (
           <Image
-            src="/nodes/sec-filing.png"
+            src={visual.image}
             alt="Node Image"
             className="rounded-md"
             width={60}
             height={60}
           />
         ) : (
-          iconFn &&
-          iconBgColor && (
-            <div
-              className={cn(
-                "rounded-md p-3 w-[60px] h-[60px] shadow-sm",
-                iconBgColor
-              )}
-            >
-              {iconFn({ className: "w-full h-full text-white" })}
-            </div>
-          )
+          <div
+            className={cn(
+              "rounded-md p-3 w-[60px] h-[60px] shadow-sm",
+              visual.bgColor
+            )}
+          >
+            <visual.Icon className="w-full h-full text-white" />
+          </div>
         )}
         <p className="font-semibold text-lg">{title}</p>
       </div>

@@ -1,10 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/client";
-import { useNodesStore } from "@/providers/nodesProvider";
 import { useReactFlow } from "@xyflow/react";
 import { Copy, PenLine, Trash2 } from "lucide-react";
 
-export const Menu = ({ nodeId }: { nodeId: string }) => {
+export const NodeMenu = ({ nodeId }: { nodeId: string }) => {
   const { deleteElements } = useReactFlow();
   const supabase = createClient();
 
