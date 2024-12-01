@@ -1,7 +1,7 @@
 import { memo } from "react";
 import type { Node, NodeProps } from "@xyflow/react";
 
-import { NodeData } from "@/types/node";
+import { NodeType } from "@/types/node";
 import { CONTENT_MAP, STYLE_MAP } from "./constants/node-map";
 import { Inputs } from "./utils/inputs";
 import { Outputs } from "./utils/outputs";
@@ -9,12 +9,16 @@ import { NodeMenu } from "./utils/menu";
 import { NodeHeader } from "./utils/node-header";
 import { OutputsSelection } from "./utils/outputs-selection";
 import { Separator } from "@/components/ui/separator";
+import { NodeData } from "@/types/react-flow";
 
 export type AppNodeType = Node<NodeData, "app-node">;
 
 export const AppNode = memo(({ id, data }: NodeProps<AppNodeType>) => {
-  const Content = CONTENT_MAP[data.type];
-  const headerProps = STYLE_MAP[data.type];
+  if (!Object.values(NodeType).includes(data.type as NodeType)) {
+    throw new Error(`Invalid node type: ${data.type}`);
+  }
+  const Content = CONTENT_MAP[data.type as NodeType];
+  const headerProps = STYLE_MAP[data.type as NodeType];
 
   return (
     <div>

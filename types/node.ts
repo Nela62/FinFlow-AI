@@ -26,14 +26,15 @@ export type NodeInput = {
   value?: any;
 };
 
+export type SupportedFileFormat = {
+  fileFormat: FileFormat;
+  value: { selected: boolean };
+};
+
 export type NodeOutput = {
   label: string;
-  definition: {
-    fileFormats: FileFormat[];
-  };
-  value: {
-    selected: boolean;
-  };
+  allowMultiple: boolean;
+  supportedFileFormats: SupportedFileFormat[];
 };
 
 export type NodeContent = React.ReactNode;

@@ -60,8 +60,10 @@ const inputs: NodeInput[] = [
 const outputs: NodeOutput[] = [
   {
     label: "summary",
-    definition: { fileFormats: [FileFormat.MD] },
-    value: { selected: true },
+    allowMultiple: false,
+    supportedFileFormats: [
+      { fileFormat: FileFormat.MD, value: { selected: true } },
+    ],
   },
 ];
 

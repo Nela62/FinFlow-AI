@@ -30,32 +30,33 @@ export const OutputsSelection = ({
           <div key={output.label}>
             <p>{output.label}</p>
             <div className="flex gap-4">
-              {output.definition.fileFormats.map((format) => (
+              {output.supportedFileFormats.map((format) => (
                 <div
-                  key={format}
+                  key={format.fileFormat}
                   className={cn(
                     "rounded-md p-1 space-y-1 border-2 cursor-pointer ",
-                    output.value.selected
+                    format.value.selected
                       ? "bg-steel-blue-200 border-steel-blue-500"
                       : "bg-muted border-transparent"
                   )}
                   onClick={() => {
-                    const newOutput = {
-                      ...output,
-                      value: { selected: !output.value.selected },
-                    };
-                    setOutputs([...outputs, newOutput]);
+                    // TODO: Add onFileFormatSelect v2
+                    // const newOutput = {
+                    //   ...output,
+                    //   value: { selected: !format.value.selected },
+                    // };
+                    // setOutputs([...outputs, newOutput]);
                   }}
                 >
                   <div className="flex items-center justify-center bg-background rounded-md p-1">
                     <Image
-                      src={FILE_FORMAT_MAP[format].imageLink}
-                      alt={format}
+                      src={FILE_FORMAT_MAP[format.fileFormat].imageLink}
+                      alt={format.fileFormat}
                       width={40}
                       height={40}
                     />
                   </div>
-                  <p className="text-xs px-1">{format}</p>
+                  <p className="text-xs px-1">{format.fileFormat}</p>
                 </div>
               ))}
             </div>
