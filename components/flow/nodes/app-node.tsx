@@ -23,8 +23,8 @@ export const AppNode = memo(({ id, data }: NodeProps<AppNodeType>) => {
       <div className="group relative rounded-md bg-background border p-2 pb-3 shadow-md w-[450px]">
         <NodeMenu nodeId={id} />
         <NodeHeader {...headerProps} title={data.title} />
-        <Content />
-        {data.outputs.length > 0 && (
+        <Content id={id} data={data} />
+        {data.outputs.length > 1 && (
           <>
             <Separator orientation="horizontal" />
             <OutputsSelection nodeId={id} outputs={data.outputs} />

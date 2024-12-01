@@ -14,44 +14,49 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { DataCategory, FileFormat } from "@/types/dataFormat";
 
-// Management
-// Risks
-// Revenue
-// Financials
-// Market Trends
-// Compliance
-
-wordCount: [number, number];
-  keywords: string[];
-  relevanceThreshold: number;
-
 const inputs: NodeInput[] = [
   {
-    label: "word_count",
-    handle: {hasHandle: "false"},
-    value: {
-      value: [100, 500],
-      dynamic: false,
+    label: "context",
+    handle: {
+      hasHandle: "true",
+      dataCategory: DataCategory.Text,
+      fileFormats: [FileFormat.TXT],
+      dynamic: true,
     },
+    value: "",
+  },
+  {
+    label: "word_count",
+    handle: { hasHandle: "false" },
+    value: [100, 500],
   },
   {
     label: "keywords",
-   handle: {hasHandle: "false"},
-    value: {
-      value: [],
-      dynamic: false,
-    },
+    handle: { hasHandle: "false" },
+    value: [
+      "management",
+      "risks",
+      "revenue",
+      "financials",
+      "market trends",
+      "compliance",
+    ],
   },
   {
     label: "relevance_threshold",
     handle: { hasHandle: "false" },
-   value: 0.8
+    value: 0.8,
+  },
+  {
+    label: "custom_instructions",
+    handle: { hasHandle: "false" },
+    value: "",
   },
 ];
 
 const outputs: NodeOutput[] = [
   {
-    label: "filing",
+    label: "summary",
     definition: { fileFormats: [FileFormat.MD] },
     value: { selected: true },
   },
@@ -71,6 +76,10 @@ export const SummarizerContent = memo(
 
     const { updateNodeData } = useReactFlow();
 
+    const updateConfigValue = (key: string, value: any) => {
+      setConfig({ ...config, [key]: { ...config[key], value } });
+    };
+
     useEffect(() => {
       updateNodeData(id, { inputs: config });
     }, [config]);
@@ -86,10 +95,7 @@ export const SummarizerContent = memo(
             step={50}
             defaultValue={config.wordCount}
             onValueChange={(vals) => {
-              setConfig({
-                ...config,
-                wordCount: vals as [number, number],
-              });
+              updateConfigValue("wordCount", vals);
             }}
           />
 
@@ -110,12 +116,10 @@ export const SummarizerContent = memo(
                   {keyword}
                   <button
                     onClick={() => {
-                      setConfig({
-                        ...config,
-                        keywords: config.keywords.filter(
-                          (k: string) => k !== keyword
-                        ),
-                      });
+                      updateConfigValue(
+                        "keywords",
+                        config.keywords.filter((k: string) => k !== keyword)
+                      );
                     }}
                   >
                     <X className="w-4 h-4" />
@@ -138,12 +142,10 @@ export const SummarizerContent = memo(
                     .split(",")
                     .map((k) => k.trim())
                     .filter((k) => k.length > 0);
-                  setConfig({
-                    ...config,
-                    keywords: Array.from(
-                      new Set([...config.keywords, ...newKeywords])
-                    ),
-                  });
+                  updateConfigValue(
+                    "keywords",
+                    Array.from(new Set([...config.keywords, ...newKeywords]))
+                  );
                   e.currentTarget.value = "";
                 }
               }}
@@ -156,12 +158,10 @@ export const SummarizerContent = memo(
                   .split(",")
                   .map((k) => k.trim())
                   .filter((k) => k.length > 0);
-                setConfig({
-                  ...config,
-                  keywords: Array.from(
-                    new Set([...config.keywords, ...newKeywords])
-                  ),
-                });
+                updateConfigValue(
+                  "keywords",
+                  Array.from(new Set([...config.keywords, ...newKeywords]))
+                );
                 setInputKeywords("");
               }}
             >
@@ -176,10 +176,7 @@ export const SummarizerContent = memo(
               step={0.1}
               value={[config.relevanceThreshold]}
               onValueChange={(vals) => {
-                setConfig({
-                  ...config,
-                  relevanceThreshold: vals[0],
-                });
+                updateConfigValue("relevanceThreshold", vals[0]);
               }}
             />
             <p
@@ -195,7 +192,13 @@ export const SummarizerContent = memo(
         {/* Custom Instructions */}
         <div className="space-y-2">
           <p className="text-sm font-semibold">Custom Instructions</p>
-          <Textarea placeholder="Enter custom instructions" />
+          <Textarea
+            placeholder="Enter custom instructions"
+            value={config.customInstructions}
+            onChange={(e) => {
+              updateConfigValue("customInstructions", e.target.value);
+            }}
+          />
           <div className="flex gap-2">
             <Switch
               defaultChecked={false}

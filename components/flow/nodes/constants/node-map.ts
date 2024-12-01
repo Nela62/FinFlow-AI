@@ -4,6 +4,10 @@ import {
   SecFilingContent,
 } from "../contents/sec-filing-content";
 import { Fa6SolidArrowDownWideShort } from "./icons";
+import {
+  SUMMARIZER_NODE_DEFAULT_DATA,
+  SummarizerContent,
+} from "../contents/summarizer-content";
 
 export const CONTENT_MAP: Record<
   NodeType,
@@ -28,7 +32,14 @@ export const STYLE_MAP: Record<NodeType, NodeHeaderStyle> = {
     visual: { type: "image", image: "/nodes/sec-filing.png" },
   },
   summarizer: {
-    visual: { type: "icon", Icon: Fa6SolidArrowDownWideShort },
+    title: "Summarizer",
+    bgColor: "bg-orange-200",
+    textColor: "text-orange-900",
+    visual: {
+      type: "icon",
+      Icon: Fa6SolidArrowDownWideShort,
+      bgColor: "bg-orange-500",
+    },
   },
   "email-sender": "bg-steel-blue-200",
 } as const;
