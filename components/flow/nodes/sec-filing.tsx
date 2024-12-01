@@ -109,7 +109,6 @@ function SecFilingNodeComponent({ id, data }: NodeProps<SecFilingNodeType>) {
   }, [config.filing_type]);
 
   return (
-    // We add this class to use the same styles as React Flow's default nodes.
     <NodeWrapper
       nodeId={id}
       width="w-[450px]"
@@ -153,63 +152,6 @@ function SecFilingNodeComponent({ id, data }: NodeProps<SecFilingNodeType>) {
             </div>
           ))}
         </div>
-        <Separator orientation="horizontal" />
-        {/* <div className="space-y-2">
-          <p className="text-sm font-semibold">Sections</p>
-          <NodeTabs defaultValue={sections[0]?.name}>
-            <NodeTabsList>
-              {sections.map((section) => (
-                <NodeTabsTrigger key={section.name} value={section.name}>
-                  {section.name}
-                </NodeTabsTrigger>
-              ))}
-            </NodeTabsList>
-            {sections.map((section) => (
-              <NodeTabsContent
-                key={section.name}
-                value={section.name}
-                className="flex flex-wrap gap-2"
-              >
-                {section.subSections.map((subSection) => (
-                  <Badge
-                    key={subSection.name}
-                    className={cn(
-                      "cursor-pointer",
-                      config.sections.includes(subSection.name)
-                        ? "bg-steel-blue-200 hover:bg-steel-blue-200"
-                        : "hover:bg-muted"
-                    )}
-                    variant="secondary"
-                    onClick={() => {
-                      if (config.sections.includes(subSection.name)) {
-                        setConfig({
-                          ...config,
-                          sections: config.sections.filter(
-                            (s: string) => s !== subSection.name
-                          ),
-                        });
-                      } else {
-                        setConfig({
-                          ...config,
-                          sections: [...config.sections, subSection.name],
-                        });
-                      }
-                    }}
-                  >
-                    {subSection.name} {subSection.description}
-                  </Badge>
-                ))}
-              </NodeTabsContent>
-            ))}
-          </NodeTabs>
-        </div>
-        <Separator orientation="horizontal" /> */}
-        <Outputs
-          nodeId={id}
-          outputs={outputs}
-          selectedOutputs={selectedOutputs}
-          setSelectedOutputs={setSelectedOutputs}
-        />
         <Separator orientation="horizontal" />
         <div className="flex justify-between">
           <p className="text-xs">Cache output</p>

@@ -8,6 +8,7 @@ import { Outputs } from "./utils/outputs";
 import { NodeMenu } from "./utils/menu";
 import { NodeHeader } from "./utils/node-header";
 import { OutputsSelection } from "./utils/outputs-selection";
+import { Separator } from "@/components/ui/separator";
 
 export type AppNodeType = Node<NodeData, "app-node">;
 
@@ -23,7 +24,12 @@ export const AppNode = memo(({ id, data }: NodeProps<AppNodeType>) => {
         <NodeMenu nodeId={id} />
         <NodeHeader {...headerProps} title={data.title} />
         <Content />
-        <OutputsSelection nodeId={id} outputs={data.outputs} />
+        {data.outputs.length > 0 && (
+          <>
+            <Separator orientation="horizontal" />
+            <OutputsSelection nodeId={id} outputs={data.outputs} />
+          </>
+        )}
       </div>
     </div>
   );
