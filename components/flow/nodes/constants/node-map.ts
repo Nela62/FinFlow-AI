@@ -1,13 +1,13 @@
 import { NodeHeaderStyle, NodeType } from "@/types/node";
 import { SecFilingContent } from "../contents/sec-filing-content";
 
-export const contentMap: Record<NodeType, React.ComponentType> = {
+export const CONTENT_MAP: Record<NodeType, React.ComponentType> = {
   "sec-filing": SecFilingContent,
   summarizer: SummarizerContent,
   "email-sender": EmailSenderContent,
 } as const;
 
-export const styleMap: Record<NodeType, NodeHeaderStyle> = {
+export const STYLE_MAP: Record<NodeType, NodeHeaderStyle> = {
   "sec-filing": {
     title: "SEC Filing Parser",
     bgColor: "bg-steel-blue-200",

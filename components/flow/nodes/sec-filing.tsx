@@ -14,7 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import React from "react";
-import { Outputs } from "./utils/output-selection";
+import { Outputs } from "./utils/outputs-selection";
 import { NodeWrapper } from "./utils/node-wrapper";
 import { createClient } from "@/lib/supabase/client";
 import { fetchStockById } from "@/lib/queries";

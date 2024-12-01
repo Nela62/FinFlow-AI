@@ -22,7 +22,7 @@ import {
 import { dataTypesList, NodeInput, NodeOutput } from "@/types/node";
 import { useDebouncedCallback } from "use-debounce";
 import { NodeWrapper } from "./utils/node-wrapper";
-import { Outputs } from "./utils/output-selection";
+import { Outputs } from "./utils/outputs-selection";
 import { res } from "./temp/report";
 
 function BxFile(props: SVGProps<SVGSVGElement>) {

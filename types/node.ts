@@ -3,7 +3,7 @@ import ButtonEdge, {
   type ButtonEdge as ButtonEdgeType,
 } from "@/components/flow/edges/button-edge";
 import { AppNode, AppNodeType } from "@/components/flow/nodes/app-node";
-import { DataCategoryEnum, FileFormat } from "./dataFormat";
+import { DataCategory, FileFormat } from "./dataFormat";
 import { SVGProps } from "react";
 
 export enum NodeType {
@@ -13,7 +13,7 @@ export enum NodeType {
 }
 
 export type NodeInputDefinition = {
-  dataCategory: DataCategoryEnum;
+  dataCategory: DataCategory;
   fileFormats: FileFormat[];
 };
 

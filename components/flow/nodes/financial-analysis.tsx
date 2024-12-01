@@ -19,7 +19,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { NodeInput, NodeOutput } from "@/types/node";
 import { useDebouncedCallback } from "use-debounce";
 import { NodeWrapper } from "./utils/node-wrapper";
-import { Outputs } from "./utils/output-selection";
+import { Outputs } from "./utils/outputs-selection";
 import { csv } from "./temp/dcf";
 import { res } from "./temp/fin-analysis";
 import { useNodesStore } from "@/providers/nodesProvider";

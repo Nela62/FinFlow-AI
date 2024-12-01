@@ -16,7 +16,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { NodeInput, NodeOutput } from "@/types/node";
 import { NodeWrapper } from "./utils/node-wrapper";
 import { useDebouncedCallback } from "use-debounce";
-import { Outputs } from "./utils/output-selection";
+import { Outputs } from "./utils/outputs-selection";
 import {
   DataCategoryEnum,
   dataTypesList,

@@ -10,7 +10,7 @@ import { useNodesStore } from "@/providers/nodesProvider";
 import SortableList from "./utils/sortableList";
 import { dataTypesList, NodeInput, NodeOutput } from "@/types/node";
 import { NodeWrapper } from "./utils/node-wrapper";
-import { Outputs } from "./utils/output-selection";
+import { Outputs } from "./utils/outputs-selection";
 import { Separator } from "@/components/ui/separator";
 import { res as summaryRes } from "./temp/summary";
 import { md } from "./temp/dcf";
