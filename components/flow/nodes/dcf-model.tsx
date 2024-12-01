@@ -5,13 +5,13 @@ import { useReactFlow, useUpdateNodeInternals } from "@xyflow/react";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { NodeHeader } from "./utils/node-header";
+import { NodeHeader } from "./components/node-header";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { dataTypesList, NodeInput, NodeOutput } from "@/types/node";
 import { useDebouncedCallback } from "use-debounce";
-import { NodeWrapper } from "./utils/node-wrapper";
-import { Outputs } from "./utils/outputs-selection";
+import { NodeWrapper } from "./components/node-wrapper";
+import { Outputs } from "./components/outputs-selection";
 import { res } from "./temp/api";
 import { csv, md } from "./temp/dcf";
 

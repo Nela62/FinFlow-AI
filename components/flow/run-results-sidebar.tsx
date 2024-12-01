@@ -3,9 +3,9 @@
 import { cn } from "@/lib/utils";
 import { useNodesStore } from "@/providers/nodesProvider";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
-import { ResultContent } from "./nodes/utils/result-content";
+import { ResultContent } from "./nodes/components/result-content";
 import { useMemo } from "react";
-import { ResultLogs } from "./nodes/utils/result-logs";
+import { ResultLogs } from "./nodes/components/result-logs";
 
 export const RunResultsSidebar = () => {
   const { nodes, runResults, edges } = useNodesStore((state) => state);

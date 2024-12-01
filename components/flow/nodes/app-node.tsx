@@ -3,11 +3,11 @@ import type { Node, NodeProps } from "@xyflow/react";
 
 import { NodeType } from "@/types/node";
 import { CONTENT_MAP, STYLE_MAP } from "./constants/node-map";
-import { Inputs } from "./utils/inputs";
-import { Outputs } from "./utils/outputs";
-import { NodeMenu } from "./utils/menu";
-import { NodeHeader } from "./utils/node-header";
-import { OutputsSelection } from "./utils/outputs-selection";
+import { Inputs } from "./components/inputs";
+import { Outputs } from "./components/outputs";
+import { NodeMenu } from "./components/menu";
+import { NodeHeader } from "./components/node-header";
+import { OutputsSelection } from "./components/outputs-selection";
 import { Separator } from "@/components/ui/separator";
 import { NodeData } from "@/types/react-flow";
 

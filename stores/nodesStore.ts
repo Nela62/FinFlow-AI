@@ -1,25 +1,15 @@
 import { createStore } from "zustand/vanilla";
 
-import {
-  addEdge,
-  applyNodeChanges,
-  applyEdgeChanges,
-  NodeTypes,
-  BuiltInNode,
-  BuiltInEdge,
-  EdgeTypes,
-} from "@xyflow/react";
-import {
-  type Edge,
-  type OnNodesChange,
-  type OnEdgesChange,
-  type OnConnect,
-} from "@xyflow/react";
-import { AppNode } from "@/types/node";
+export type NodesState = {
+  selectedRunId: string | null;
+  selectedTab: "logs" | "outputs";
+};
 
-export type NodesState = {};
-
-export type NodesActions = {};
+export type NodesActions = {
+  setSelectedRunId: (runId: string) => void;
+  setSelectedTab: (tab: "logs" | "outputs") => void;
+  resetSelectedRunId: () => void;
+};
 
 export type NodesStore = NodesState & NodesActions;
 
@@ -106,101 +96,102 @@ export type NodesStore = NodesState & NodesActions;
 //   },
 // ];
 
-const defaultEdges: Edge[] = [
-  {
-    id: "a->c",
-    source: "a",
-    target: "c",
-    targetHandle: "handle-node-1",
-    sourceHandle: "handle-JSON",
-    type: "button-edge",
-    animated: true,
-  },
-  {
-    id: "b->c",
-    source: "b",
-    target: "c",
-    targetHandle: "handle-node-2",
-    type: "button-edge",
-    animated: true,
-  },
-  {
-    id: "b->d",
-    source: "b",
-    target: "d",
-    type: "button-edge",
-    animated: true,
-    targetHandle: "handle-text",
-  },
-  {
-    id: "d->f",
-    source: "d",
-    target: "f",
-    type: "button-edge",
-    sourceHandle: "handle-MD",
-    targetHandle: "handle-node-3",
-    animated: true,
-  },
-  {
-    id: "c->e",
-    source: "c",
-    target: "e",
-    type: "button-edge",
-    targetHandle: "handle-financial-data",
-    animated: true,
-  },
-  {
-    id: "e->f",
-    source: "e",
-    target: "f",
-    type: "button-edge",
-    sourceHandle: "handle-MD",
-    targetHandle: "handle-node-1",
-    animated: true,
-  },
-  {
-    id: "f->g",
-    source: "f",
-    target: "g",
-    type: "button-edge",
-    animated: true,
-    sourceHandle: "handle-MD",
-  },
-  {
-    id: "g->h",
-    source: "g",
-    target: "h",
-    type: "button-edge",
-    animated: true,
-  },
-  {
-    id: "e->i",
-    source: "e",
-    target: "i",
-    type: "button-edge",
-    sourceHandle: "handle-CSV",
-    animated: true,
-  },
-  {
-    id: "i->f",
-    source: "i",
-    target: "f",
-    type: "button-edge",
-    targetHandle: "handle-node-2",
-    animated: true,
-  },
-];
+// const defaultEdges: Edge[] = [
+//   {
+//     id: "a->c",
+//     source: "a",
+//     target: "c",
+//     targetHandle: "handle-node-1",
+//     sourceHandle: "handle-JSON",
+//     type: "button-edge",
+//     animated: true,
+//   },
+//   {
+//     id: "b->c",
+//     source: "b",
+//     target: "c",
+//     targetHandle: "handle-node-2",
+//     type: "button-edge",
+//     animated: true,
+//   },
+//   {
+//     id: "b->d",
+//     source: "b",
+//     target: "d",
+//     type: "button-edge",
+//     animated: true,
+//     targetHandle: "handle-text",
+//   },
+//   {
+//     id: "d->f",
+//     source: "d",
+//     target: "f",
+//     type: "button-edge",
+//     sourceHandle: "handle-MD",
+//     targetHandle: "handle-node-3",
+//     animated: true,
+//   },
+//   {
+//     id: "c->e",
+//     source: "c",
+//     target: "e",
+//     type: "button-edge",
+//     targetHandle: "handle-financial-data",
+//     animated: true,
+//   },
+//   {
+//     id: "e->f",
+//     source: "e",
+//     target: "f",
+//     type: "button-edge",
+//     sourceHandle: "handle-MD",
+//     targetHandle: "handle-node-1",
+//     animated: true,
+//   },
+//   {
+//     id: "f->g",
+//     source: "f",
+//     target: "g",
+//     type: "button-edge",
+//     animated: true,
+//     sourceHandle: "handle-MD",
+//   },
+//   {
+//     id: "g->h",
+//     source: "g",
+//     target: "h",
+//     type: "button-edge",
+//     animated: true,
+//   },
+//   {
+//     id: "e->i",
+//     source: "e",
+//     target: "i",
+//     type: "button-edge",
+//     sourceHandle: "handle-CSV",
+//     animated: true,
+//   },
+//   {
+//     id: "i->f",
+//     source: "i",
+//     target: "f",
+//     type: "button-edge",
+//     targetHandle: "handle-node-2",
+//     animated: true,
+//   },
+// ];
 
 const defaultInitState: NodesState = {
-  nodes: [],
-  edges: [],
-  currentRunId: null,
-  runResults: [],
+  selectedRunId: null,
+  selectedTab: "logs",
 };
 
 export const createNodesStore = (initState: NodesState = defaultInitState) => {
   return createStore<NodesStore>()((set, get) => ({
     ...initState,
+    setSelectedRunId: (runId) => set({ selectedRunId: runId }),
+    resetSelectedRunId: () => set({ selectedRunId: null }),
+    setSelectedTab: (tab) => set({ selectedTab: tab }),
     // onNodesChange: (changes) => {
     //   set((state) => ({
     //     nodes: applyNodeChanges(changes, state.nodes),

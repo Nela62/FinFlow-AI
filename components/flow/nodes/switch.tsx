@@ -7,10 +7,10 @@ import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useNodesStore } from "@/providers/nodesProvider";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { NodeHeader } from "./utils/node-header";
+import { NodeHeader } from "./components/node-header";
 import { Label } from "@/components/ui/label";
 import { dataTypesList, NodeInput, NodeOutput } from "@/types/node";
-import { NodeWrapper } from "./utils/node-wrapper";
+import { NodeWrapper } from "./components/node-wrapper";
 import { Badge } from "@/components/ui/badge";
 import { XIcon } from "lucide-react";
 
