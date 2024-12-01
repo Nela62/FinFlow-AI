@@ -1,4 +1,4 @@
-import { memo, useEffect, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { useReactFlow } from "@xyflow/react";
 import { useQuery } from "@supabase-cache-helpers/postgrest-react-query";
 import { Separator } from "@/components/ui/separator";
@@ -7,8 +7,10 @@ import { createClient } from "@/lib/supabase/client";
 import { fetchStockById } from "@/lib/queries";
 import { SEC_FILING_TYPES } from "@/lib/sec-filings";
 import { cn } from "@/lib/utils";
-import { NodeData, NodeInput, NodeOutput, NodeType } from "@/types/node";
+import { NodeInput, NodeOutput, NodeType } from "@/types/node";
 import { DataCategory, FileFormat } from "@/types/dataFormat";
+import { NodeData } from "@/types/react-flow";
+import { createUpdateConfigValue } from "@/lib/update-config-value";
 
 // TODO: Add selection of sections
 // TODO: Add support for multiple inputs
@@ -55,8 +57,20 @@ export const SEC_FILING_NODE_DEFAULT_DATA: NodeData = {
 
 export const SecFilingContent = memo(
   ({ id, data }: { id: string; data: NodeData }) => {
-    const [config, setConfig] = useState<Record<string, any>>(data.inputs);
+    const [config, setConfig] = useState<NodeInput[]>(data.inputs);
     const [stockId, setStockId] = useState<string | null>(null);
+
+    const updateConfigValue = createUpdateConfigValue(setConfig);
+
+    const chosenTicker = useMemo(
+      () => config.find((input: NodeInput) => input.label === "ticker")?.value,
+      [config]
+    );
+    const chosenFilingType = useMemo(
+      () =>
+        config.find((input: NodeInput) => input.label === "filing_type")?.value,
+      [config]
+    );
 
     const { updateNodeData } = useReactFlow();
 
@@ -67,15 +81,12 @@ export const SecFilingContent = memo(
 
     useEffect(() => {
       if (stock) {
-        setConfig({
-          ...config,
-          ticker: { ...config.ticker, value: stock.symbol },
-        });
+        updateConfigValue("ticker", stock.symbol);
       }
     }, [stock]);
 
     useEffect(() => {
-      updateNodeData(id, { config });
+      updateNodeData(id, { inputs: config });
     }, [config]);
 
     return (
@@ -83,7 +94,7 @@ export const SecFilingContent = memo(
         <div className="space-y-2 px-2">
           <p className="text-sm font-semibold">Company</p>
           <StockPicker
-            currentStockTicker={config.ticker}
+            currentStockTicker={chosenTicker}
             onStockClick={(stockId) => {
               setStockId(stockId);
             }}
@@ -96,18 +107,12 @@ export const SecFilingContent = memo(
                 key={filingType.type}
                 className={cn(
                   "rounded-md p-1 space-y-1 border-2 cursor-pointer",
-                  config.filing_type === filingType.type
+                  chosenFilingType === filingType.type
                     ? "bg-steel-blue-200 border-steel-blue-500"
                     : "bg-muted border-transparent"
                 )}
                 onClick={() => {
-                  setConfig({
-                    ...config,
-                    filing_type: {
-                      ...config.filing_type,
-                      value: filingType.type,
-                    },
-                  });
+                  updateConfigValue("filing_type", filingType.type);
                 }}
               >
                 <div className="flex items-center justify-center bg-background rounded-md p-1">

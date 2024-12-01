@@ -1,13 +1,18 @@
-import { NodeData, NodeHeaderStyle, NodeType } from "@/types/node";
+import { NodeHeaderStyle, NodeType } from "@/types/node";
 import {
   SEC_FILING_NODE_DEFAULT_DATA,
   SecFilingContent,
 } from "../contents/sec-filing-content";
-import { Fa6SolidArrowDownWideShort } from "./icons";
+import { Fa6SolidArrowDownWideShort, IconParkOutlineSendEmail } from "./icons";
 import {
   SUMMARIZER_NODE_DEFAULT_DATA,
   SummarizerContent,
 } from "../contents/summarizer-content";
+import {
+  EMAIL_SENDER_NODE_DEFAULT_DATA,
+  EmailSenderContent,
+} from "../contents/email-sender-content";
+import { NodeData } from "@/types/react-flow";
 
 export const CONTENT_MAP: Record<
   NodeType,
@@ -41,5 +46,14 @@ export const STYLE_MAP: Record<NodeType, NodeHeaderStyle> = {
       bgColor: "bg-orange-500",
     },
   },
-  "email-sender": "bg-steel-blue-200",
+  "email-sender": {
+    title: "Email Sender",
+    bgColor: "bg-lime-200",
+    textColor: "text-lime-900",
+    visual: {
+      type: "icon",
+      Icon: IconParkOutlineSendEmail,
+      bgColor: "bg-lime-500",
+    },
+  },
 } as const;

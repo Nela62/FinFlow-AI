@@ -1,8 +1,3 @@
-import { EdgeTypes, BuiltInEdge, NodeTypes } from "@xyflow/react";
-import ButtonEdge, {
-  type ButtonEdge as ButtonEdgeType,
-} from "@/components/flow/edges/button-edge";
-import { AppNode, AppNodeType } from "@/components/flow/nodes/app-node";
 import { DataCategory, FileFormat } from "./dataFormat";
 import { SVGProps } from "react";
 
@@ -40,25 +35,6 @@ export type NodeOutput = {
     selected: boolean;
   };
 };
-
-export type NodeData = {
-  title: string;
-  type: NodeType;
-  inputs: NodeInput[];
-  outputs: NodeOutput[];
-};
-
-export const nodeTypes = {
-  "app-node": AppNode,
-} satisfies NodeTypes;
-
-export type AppNode = AppNodeType;
-
-export const edgeTypes = {
-  "button-edge": ButtonEdge,
-} satisfies EdgeTypes;
-
-export type CustomEdgeType = BuiltInEdge | ButtonEdgeType;
 
 export type NodeContent = React.ReactNode;
 

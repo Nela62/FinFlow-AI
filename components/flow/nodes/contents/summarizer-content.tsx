@@ -1,11 +1,11 @@
-import { memo, useEffect, useState } from "react";
+import { memo, useCallback, useEffect, useState } from "react";
 import { useReactFlow } from "@xyflow/react";
 import { X } from "lucide-react";
 
 import { Slider as DoubleSlider } from "@/components/ui/double-slider";
 import { Separator } from "@/components/ui/separator";
 import { Slider } from "@/components/ui/slider";
-import { NodeData, NodeInput, NodeOutput, NodeType } from "@/types/node";
+import { NodeInput, NodeOutput, NodeType } from "@/types/node";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -13,6 +13,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { DataCategory, FileFormat } from "@/types/dataFormat";
+import { NodeData } from "@/types/react-flow";
 
 const inputs: NodeInput[] = [
   {
@@ -76,9 +77,12 @@ export const SummarizerContent = memo(
 
     const { updateNodeData } = useReactFlow();
 
-    const updateConfigValue = (key: string, value: any) => {
-      setConfig({ ...config, [key]: { ...config[key], value } });
-    };
+    const updateConfigValue = useCallback(
+      (key: string, value: any) => {
+        setConfig({ ...config, [key]: { ...config[key], value } });
+      },
+      [config, setConfig]
+    );
 
     useEffect(() => {
       updateNodeData(id, { inputs: config });

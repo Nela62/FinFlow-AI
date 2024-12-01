@@ -16,3 +16,26 @@ export const Fa6SolidArrowDownWideShort: React.FC<SVGProps<SVGSVGElement>> = (
     />
   </svg>
 );
+
+export const IconParkOutlineSendEmail: React.FC<SVGProps<SVGSVGElement>> = (
+  props
+) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="1em"
+    height="1em"
+    viewBox="0 0 48 48"
+    {...props}
+  >
+    <g
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={4}
+    >
+      <path d="M44 24V9H4v30h20m20-5H30m9-5l5 5l-5 5"></path>
+      <path d="m4 9l20 15L44 9"></path>
+    </g>
+  </svg>
+);

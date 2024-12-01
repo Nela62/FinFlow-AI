@@ -25,14 +25,20 @@ import "@xyflow/react/dist/style.css";
 import { DnDProvider, useDnD } from "./dnd-context";
 import Sidebar from "./node-library-sidebar";
 import { RunResultsSidebar } from "./run-results-sidebar";
-import { defaultDataMap } from "./nodes";
 import { Toolbar } from "./toolbar";
 import { Dialog } from "../ui/dialog";
 import { Popover } from "../ui/popover";
 import { createClient } from "@/lib/supabase/client";
 import { fetchEdgesByWorkflowId, fetchNodesByWorkflowId } from "@/lib/queries";
 import { Skeleton } from "../ui/skeleton";
-import { AppNode, CustomEdgeType, edgeTypes, nodeTypes } from "@/types/node";
+import {
+  AppNode,
+  CustomEdgeType,
+  edgeTypes,
+  NodeData,
+  nodeTypes,
+} from "@/types/react-flow";
+import { DEFAULT_DATA_MAP } from "./nodes/constants/node-map";
 
 const PositionSchema = z.object({
   x: z.number(),
@@ -74,8 +80,8 @@ const DnDFlow = ({
     const { error } = await supabase.from("nodes").upsert(
       nodes.map((node) => ({
         id: node.id,
-        name: node.data.label,
-        type: node.type ?? "",
+        name: node.data.title,
+        type: "app-node",
         data: node.data,
         position: node.position,
         user_id: userId,
@@ -114,7 +120,8 @@ const DnDFlow = ({
       setNodes(
         nodesRes?.map((node) => ({
           ...node,
-          data: node.data as any,
+          type: "app-node",
+          data: node.data as NodeData,
           position: PositionSchema.parse(node.position),
         })) ?? []
       );
@@ -187,11 +194,10 @@ const DnDFlow = ({
 
       const newNode: AppNode = {
         id: uuidv4(),
-        // @ts-ignore
-        type,
+        type: "app-node",
         position,
         // @ts-ignore
-        data: defaultDataMap[type],
+        data: DEFAULT_DATA_MAP[type],
       };
 
       setNodes((nds) => [...nds, newNode]);
