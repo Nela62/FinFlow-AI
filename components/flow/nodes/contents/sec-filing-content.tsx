@@ -1,13 +1,55 @@
+import { memo, useEffect, useState } from "react";
+import { useReactFlow } from "@xyflow/react";
+import { useQuery } from "@supabase-cache-helpers/postgrest-react-query";
 import { Separator } from "@/components/ui/separator";
 import { StockPicker } from "@/components/widgets/utils/stock-picker";
+import { createClient } from "@/lib/supabase/client";
 import { fetchStockById } from "@/lib/queries";
 import { SEC_FILING_TYPES } from "@/lib/sec-filings";
-import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
-import { NodeData } from "@/types/node";
-import { useQuery } from "@supabase-cache-helpers/postgrest-react-query";
-import { useReactFlow } from "@xyflow/react";
-import { memo, useEffect, useState } from "react";
+import { NodeData, NodeInput, NodeOutput, NodeType } from "@/types/node";
+import { DataCategory, FileFormat } from "@/types/dataFormat";
+
+const inputs: NodeInput[] = [
+  {
+    label: "ticker",
+    definition: {
+      dataCategory: DataCategory.Text,
+      fileFormats: [FileFormat.TXT],
+    },
+    value: {
+      value: "AAPL",
+      dynamic: false,
+    },
+  },
+  {
+    label: "filing_type",
+    definition: {
+      dataCategory: DataCategory.Text,
+      fileFormats: [FileFormat.TXT],
+    },
+    value: {
+      value: "10-K",
+      dynamic: false,
+    },
+  },
+  // TODO: add time period
+];
+
+const outputs: NodeOutput[] = [
+  {
+    label: "filing",
+    definition: { fileFormats: [FileFormat.MD] },
+    value: { selected: true },
+  },
+];
+
+export const SEC_FILING_NODE_DEFAULT_DATA: NodeData = {
+  title: "SEC Filing Parser",
+  type: NodeType.SEC_FILING,
+  inputs,
+  outputs,
+};
 
 export const SecFilingContent = memo(
   ({ id, data }: { id: string; data: NodeData }) => {
