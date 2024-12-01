@@ -10,28 +10,30 @@ import { cn } from "@/lib/utils";
 import { NodeData, NodeInput, NodeOutput, NodeType } from "@/types/node";
 import { DataCategory, FileFormat } from "@/types/dataFormat";
 
+// TODO: Add selection of sections
+// TODO: Add support for multiple inputs
+// TODO: Bring back debounced setConfig
+
 const inputs: NodeInput[] = [
   {
     label: "ticker",
-    definition: {
+    handle: {
+      hasHandle: "true",
       dataCategory: DataCategory.Text,
       fileFormats: [FileFormat.TXT],
-    },
-    value: {
-      value: "AAPL",
       dynamic: false,
     },
+    value: "AAPL",
   },
   {
     label: "filing_type",
-    definition: {
+    handle: {
+      hasHandle: "true",
       dataCategory: DataCategory.Text,
       fileFormats: [FileFormat.TXT],
-    },
-    value: {
-      value: "10-K",
       dynamic: false,
     },
+    value: "10-K",
   },
   // TODO: add time period
 ];
@@ -65,7 +67,10 @@ export const SecFilingContent = memo(
 
     useEffect(() => {
       if (stock) {
-        setConfig({ ...config, ticker: stock.symbol });
+        setConfig({
+          ...config,
+          ticker: { ...config.ticker, value: stock.symbol },
+        });
       }
     }, [stock]);
 
@@ -96,7 +101,13 @@ export const SecFilingContent = memo(
                     : "bg-muted border-transparent"
                 )}
                 onClick={() => {
-                  setConfig({ ...config, filing_type: filingType.type });
+                  setConfig({
+                    ...config,
+                    filing_type: {
+                      ...config.filing_type,
+                      value: filingType.type,
+                    },
+                  });
                 }}
               >
                 <div className="flex items-center justify-center bg-background rounded-md p-1">

@@ -12,20 +12,23 @@ export enum NodeType {
   EMAIL_SENDER = "email-sender",
 }
 
-export type NodeInputDefinition = {
+type NodeInputHandleTrue = {
+  hasHandle: "true";
   dataCategory: DataCategory;
   fileFormats: FileFormat[];
-};
-
-export type NodeInputValue = {
-  value: any;
   dynamic: boolean;
 };
 
+type NodeInputHandleFalse = {
+  hasHandle: "false";
+};
+
+export type NodeInputHandle = NodeInputHandleTrue | NodeInputHandleFalse;
+
 export type NodeInput = {
   label: string;
-  definition: NodeInputDefinition;
-  value?: NodeInputValue;
+  handle: NodeInputHandle;
+  value?: any;
 };
 
 export type NodeOutput = {

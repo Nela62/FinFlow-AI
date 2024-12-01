@@ -3,6 +3,7 @@ import {
   SEC_FILING_NODE_DEFAULT_DATA,
   SecFilingContent,
 } from "../contents/sec-filing-content";
+import { Fa6SolidArrowDownWideShort } from "./icons";
 
 export const CONTENT_MAP: Record<
   NodeType,
@@ -26,6 +27,8 @@ export const STYLE_MAP: Record<NodeType, NodeHeaderStyle> = {
     textColor: "text-steel-blue-900",
     visual: { type: "image", image: "/nodes/sec-filing.png" },
   },
-  summarizer: "bg-steel-blue-200",
+  summarizer: {
+    visual: { type: "icon", Icon: Fa6SolidArrowDownWideShort },
+  },
   "email-sender": "bg-steel-blue-200",
 } as const;

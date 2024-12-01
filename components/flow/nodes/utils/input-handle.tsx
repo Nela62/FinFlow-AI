@@ -18,6 +18,10 @@ export const InputHandle = ({
   index: number;
   totalHandles: number;
 }) => {
+  if (input.handle.hasHandle === "false") return null;
+
+  const fileFormats = input.handle.fileFormats;
+
   const handlePosition = useMemo(
     () => `${(index + 1) * (100 / (totalHandles + 1))}%`,
     [index, totalHandles]
@@ -33,7 +37,7 @@ export const InputHandle = ({
           <TooltipTrigger>
             <div className="flex gap-1 bg-background rounded-md px-2 py-0.5 items-center">
               <p className="text-xs text-muted-foreground">
-                {input.definition.dataCategory}
+                {input.handle.dataCategory}
               </p>
               <CircleHelp className="h-2 w-2 text-muted-foreground" />
             </div>
@@ -41,10 +45,10 @@ export const InputHandle = ({
           <TooltipContent className="shadow-sm">
             <div className="flex">
               <p>Accepted formats: </p>
-              {input.definition.fileFormats.map((type, i) => (
+              {fileFormats.map((type, i) => (
                 <Fragment key={type}>
                   <p className="font-semibold pl-1">{type}</p>
-                  {i !== input.definition.fileFormats.length - 1 && <p>, </p>}
+                  {i !== fileFormats.length - 1 && <p>, </p>}
                 </Fragment>
               ))}
             </div>
