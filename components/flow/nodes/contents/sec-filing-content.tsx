@@ -11,6 +11,7 @@ import { NodeInput, NodeOutput, NodeType } from "@/types/node";
 import { DataCategory, FileFormat } from "@/types/dataFormat";
 import { NodeData } from "@/types/react-flow";
 import { createUpdateConfigValue } from "@/lib/update-config-value";
+import { useInputValue } from "@/hooks/use-input-value";
 
 // TODO: Add selection of sections
 // TODO: Add support for multiple inputs
@@ -62,15 +63,8 @@ export const SecFilingContent = memo(
 
     const updateConfigValue = createUpdateConfigValue(setConfig);
 
-    const chosenTicker = useMemo(
-      () => config.find((input: NodeInput) => input.label === "ticker")?.value,
-      [config]
-    );
-    const chosenFilingType = useMemo(
-      () =>
-        config.find((input: NodeInput) => input.label === "filing_type")?.value,
-      [config]
-    );
+    const chosenTicker = useInputValue(config, "ticker");
+    const chosenFilingType = useInputValue(config, "filing_type");
 
     const { updateNodeData } = useReactFlow();
 

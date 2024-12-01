@@ -7,6 +7,8 @@ import { createClient } from "@/lib/supabase/client";
 import { fetchSettings } from "@/lib/queries";
 import { useQuery } from "@supabase-cache-helpers/postgrest-react-query";
 import { NodeData } from "@/types/react-flow";
+import { createUpdateConfigValue } from "@/lib/update-config-value";
+import { useInputValue } from "@/hooks/use-input-value";
 
 // TODO: add template
 // TODO: add file attachments
@@ -50,19 +52,17 @@ export const EMAIL_SENDER_NODE_DEFAULT_DATA: NodeData = {
 
 export const EmailSenderContent = memo(
   ({ id, data }: { id: string; data: NodeData }) => {
-    const [config, setConfig] = useState<Record<string, any>>(data.inputs);
+    const [config, setConfig] = useState<NodeInput[]>(data.inputs);
+
+    const updateConfigValue = createUpdateConfigValue(setConfig);
+
+    const emailRecipient = useInputValue(config, "email_recipient");
+    const subject = useInputValue(config, "subject");
 
     const supabase = createClient();
     const { data: settings } = useQuery(fetchSettings(supabase));
 
     const { updateNodeData } = useReactFlow();
-
-    const updateConfigValue = useCallback(
-      (key: string, value: any) => {
-        setConfig({ ...config, [key]: { ...config[key], value } });
-      },
-      [config, setConfig]
-    );
 
     useEffect(() => {
       if (settings) {
@@ -83,7 +83,7 @@ export const EmailSenderContent = memo(
             <Input
               className="w-full"
               type="email"
-              value={config.email_recipient}
+              value={emailRecipient}
               onChange={(e) =>
                 updateConfigValue("email_recipient", e.target.value)
               }
@@ -94,7 +94,7 @@ export const EmailSenderContent = memo(
             <Input
               className="w-full"
               type="text"
-              value={config.subject}
+              value={subject}
               onChange={(e) => updateConfigValue("subject", e.target.value)}
             />
           </div>

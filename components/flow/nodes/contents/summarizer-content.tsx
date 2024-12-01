@@ -14,6 +14,8 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { DataCategory, FileFormat } from "@/types/dataFormat";
 import { NodeData } from "@/types/react-flow";
+import { createUpdateConfigValue } from "@/lib/update-config-value";
+import { useInputValue } from "@/hooks/use-input-value";
 
 const inputs: NodeInput[] = [
   {
@@ -72,17 +74,17 @@ export const SUMMARIZER_NODE_DEFAULT_DATA: NodeData = {
 
 export const SummarizerContent = memo(
   ({ id, data }: { id: string; data: NodeData }) => {
-    const [config, setConfig] = useState<Record<string, any>>(data.inputs);
-    const [inputKeywords, setInputKeywords] = useState<string>("");
+    const [config, setConfig] = useState<NodeInput[]>(data.inputs);
+    const [keywordsInput, setKeywordsInput] = useState<string>("");
+
+    const wordCount = useInputValue(config, "word_count");
+    const keywords = useInputValue(config, "keywords");
+    const relevanceThreshold = useInputValue(config, "relevance_threshold");
+    const customInstructions = useInputValue(config, "custom_instructions");
 
     const { updateNodeData } = useReactFlow();
 
-    const updateConfigValue = useCallback(
-      (key: string, value: any) => {
-        setConfig({ ...config, [key]: { ...config[key], value } });
-      },
-      [config, setConfig]
-    );
+    const updateConfigValue = createUpdateConfigValue(setConfig);
 
     useEffect(() => {
       updateNodeData(id, { inputs: config });
@@ -97,15 +99,15 @@ export const SummarizerContent = memo(
             min={100}
             max={1000}
             step={50}
-            defaultValue={config.wordCount}
+            defaultValue={wordCount}
             onValueChange={(vals) => {
               updateConfigValue("wordCount", vals);
             }}
           />
 
           <div className="flex justify-between mt-2 text-sm text-muted-foreground">
-            <span>{config.wordCount[0]} </span>
-            <span>{config.wordCount[1]} </span>
+            <span>{wordCount[0]} </span>
+            <span>{wordCount[1]} </span>
           </div>
         </div>
         <Separator orientation="horizontal" />
@@ -113,16 +115,16 @@ export const SummarizerContent = memo(
         {/* Semantic Keyword Focus */}
         <div className="space-y-4">
           <p className="text-sm font-semibold">Semantic Keyword Focus</p>
-          {config.keywords.length > 0 && (
+          {keywords.length > 0 && (
             <div className="flex flex-wrap gap-2">
-              {config.keywords.map((keyword: string) => (
+              {keywords.map((keyword: string) => (
                 <Badge key={keyword} className="flex gap-1 w-fit">
                   {keyword}
                   <button
                     onClick={() => {
                       updateConfigValue(
                         "keywords",
-                        config.keywords.filter((k: string) => k !== keyword)
+                        keywords.filter((k: string) => k !== keyword)
                       );
                     }}
                   >
@@ -136,19 +138,19 @@ export const SummarizerContent = memo(
             <Input
               placeholder="Enter keywords separated by commas"
               className="placeholder:text-xs"
-              value={inputKeywords}
+              value={keywordsInput}
               onChange={(e) => {
-                setInputKeywords(e.target.value);
+                setKeywordsInput(e.target.value);
               }}
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
-                  const newKeywords = inputKeywords
+                  const newKeywords = keywordsInput
                     .split(",")
                     .map((k) => k.trim())
                     .filter((k) => k.length > 0);
                   updateConfigValue(
                     "keywords",
-                    Array.from(new Set([...config.keywords, ...newKeywords]))
+                    Array.from(new Set([...keywords, ...newKeywords]))
                   );
                   e.currentTarget.value = "";
                 }
@@ -158,15 +160,15 @@ export const SummarizerContent = memo(
               variant="outline"
               className="px-3"
               onClick={() => {
-                const newKeywords = inputKeywords
+                const newKeywords = keywordsInput
                   .split(",")
                   .map((k) => k.trim())
                   .filter((k) => k.length > 0);
                 updateConfigValue(
                   "keywords",
-                  Array.from(new Set([...config.keywords, ...newKeywords]))
+                  Array.from(new Set([...keywords, ...newKeywords]))
                 );
-                setInputKeywords("");
+                setKeywordsInput("");
               }}
             >
               + Add
@@ -178,16 +180,16 @@ export const SummarizerContent = memo(
               className="pb-6"
               max={1}
               step={0.1}
-              value={[config.relevanceThreshold]}
+              value={[relevanceThreshold]}
               onValueChange={(vals) => {
                 updateConfigValue("relevanceThreshold", vals[0]);
               }}
             />
             <p
               className="absolute top-4 text-muted-foreground text-xs"
-              style={{ left: `${config.relevanceThreshold * 100}%` }}
+              style={{ left: `${relevanceThreshold * 100}%` }}
             >
-              {config.relevanceThreshold}
+              {relevanceThreshold}
             </p>
           </div>
         </div>
@@ -198,7 +200,7 @@ export const SummarizerContent = memo(
           <p className="text-sm font-semibold">Custom Instructions</p>
           <Textarea
             placeholder="Enter custom instructions"
-            value={config.customInstructions}
+            value={customInstructions}
             onChange={(e) => {
               updateConfigValue("customInstructions", e.target.value);
             }}
