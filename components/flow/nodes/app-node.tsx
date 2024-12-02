@@ -24,7 +24,7 @@ export const AppNode = memo(({ id, data }: NodeProps<AppNodeType>) => {
     <div>
       <Inputs inputs={data.inputs} />
       <Outputs outputs={data.outputs} />
-      <div className="group relative rounded-md bg-background border p-2 pb-3 shadow-md w-[450px]">
+      <div className="group relative rounded-md bg-background border p-2 pb-3 shadow-md w-[380px]">
         <NodeMenu nodeId={id} />
         <NodeHeader {...headerProps} title={data.title} />
         <Content id={id} data={data} />

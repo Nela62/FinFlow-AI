@@ -11,8 +11,19 @@ export const RunsList = ({ workflowId }: { workflowId: string }) => {
     isError,
   } = useQuery(fetchAllExecutionsByWorkflowId(supabase, workflowId));
 
-  if (isLoading) return <Skeleton className="h-10 w-full" />;
   if (isError) return <div>Error fetching runs</div>;
+  if (isLoading || !runs) return <Skeleton className="h-10 w-full" />;
 
-  return <div>{runs?.length}</div>;
+  return (
+    <div>
+      <p className="text-lg font-semibold">Runs</p>
+      {runs.length > 0 ? (
+        runs.map((run) => <p key={run.id}>{run.name}</p>)
+      ) : (
+        <p className="text-sm text-muted-foreground">
+          No executions yet. Click the run button to get started.
+        </p>
+      )}
+    </div>
+  );
 };

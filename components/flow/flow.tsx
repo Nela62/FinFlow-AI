@@ -15,7 +15,6 @@ import {
   applyNodeChanges,
   applyEdgeChanges,
   addEdge,
-  ReactFlowInstance,
 } from "@xyflow/react";
 
 import { useDebouncedCallback } from "use-debounce";
@@ -24,7 +23,6 @@ import "@xyflow/react/dist/style.css";
 
 import { DnDProvider, useDnD } from "./dnd-context";
 import Sidebar from "./node-library-sidebar";
-import { RunResultsSidebar } from "./run-results-sidebar";
 import { Toolbar } from "./toolbar";
 import { Dialog } from "../ui/dialog";
 import { Popover } from "../ui/popover";
@@ -39,6 +37,7 @@ import {
   nodeTypes,
 } from "@/types/react-flow";
 import { DEFAULT_DATA_MAP } from "./nodes/constants/node-map";
+import { RunsSidebar } from "./nodes/runs/runs-sidebar";
 
 const PositionSchema = z.object({
   x: z.number(),
@@ -234,14 +233,14 @@ const DnDFlow = ({
                   data: { ...oldEdge.data, isHovered: false },
                 }));
               }}
-              fitView
+              defaultViewport={{ x: 200, y: 100, zoom: 0.7 }}
             >
               <Background size={2.5} gap={34} />
               <Controls />
             </ReactFlow>
           </div>
           <Sidebar />
-          <RunResultsSidebar />
+          <RunsSidebar workflowId={workflowId} />
         </Popover>
       </Dialog>
     </div>
