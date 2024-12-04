@@ -153,26 +153,26 @@ export function fetchExecutionById(client: TypedSupabaseClient, id: string) {
     .throwOnError();
 }
 
-export function fetchAllActionsByExecutionId(
+export function fetchAllTasksByExecutionId(
   client: TypedSupabaseClient,
   executionId: string
 ) {
   return client
-    .from("actions")
+    .from("tasks")
     .select(
-      "id, name, status, inputs, outputs, config, started_at, completed_at"
+      "id, name, status, input_values, output_values, started_at, completed_at"
     )
     .eq("execution_id", executionId)
     .throwOnError();
 }
 
-export function fetchAllSubactionsByExecutionId(
+export function fetchAllSubtasksByExecutionId(
   client: TypedSupabaseClient,
   executionId: string
 ) {
   return client
-    .from("subactions")
-    .select("id, name, status, started_at, completed_at")
+    .from("subtasks")
+    .select("id, name, status, task_id, created_at, updated_at")
     .eq("execution_id", executionId)
     .throwOnError();
 }

@@ -9,76 +9,6 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      actions: {
-        Row: {
-          action_id: string
-          completed_at: string | null
-          config: Json
-          created_at: string
-          execution_id: string
-          id: string
-          inputs: Json
-          name: string
-          outputs: Json
-          started_at: string
-          status: string
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          action_id: string
-          completed_at?: string | null
-          config: Json
-          created_at?: string
-          execution_id: string
-          id?: string
-          inputs: Json
-          name: string
-          outputs: Json
-          started_at?: string
-          status: string
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          action_id?: string
-          completed_at?: string | null
-          config?: Json
-          created_at?: string
-          execution_id?: string
-          id?: string
-          inputs?: Json
-          name?: string
-          outputs?: Json
-          started_at?: string
-          status?: string
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "actions_action_id_fkey"
-            columns: ["action_id"]
-            isOneToOne: false
-            referencedRelation: "actions"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "actions_execution_id_fkey"
-            columns: ["execution_id"]
-            isOneToOne: false
-            referencedRelation: "executions"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "actions_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       celery_taskmeta: {
         Row: {
           args: string | null
@@ -314,45 +244,33 @@ export type Database = {
       }
       nodes: {
         Row: {
-          absolute_position: Json | null
           created_at: string
           data: Json
-          dimensions: Json | null
-          dragging: boolean | null
           id: string
           name: string
           position: Json
-          selected: boolean | null
           type: string
           updated_at: string
           user_id: string
           workflow_id: string
         }
         Insert: {
-          absolute_position?: Json | null
           created_at?: string
           data: Json
-          dimensions?: Json | null
-          dragging?: boolean | null
           id?: string
           name: string
           position: Json
-          selected?: boolean | null
           type: string
           updated_at?: string
           user_id: string
           workflow_id: string
         }
         Update: {
-          absolute_position?: Json | null
           created_at?: string
           data?: Json
-          dimensions?: Json | null
-          dragging?: boolean | null
           id?: string
           name?: string
           position?: Json
-          selected?: boolean | null
           type?: string
           updated_at?: string
           user_id?: string
@@ -497,38 +415,99 @@ export type Database = {
           },
         ]
       }
-      subactions: {
+      subtasks: {
         Row: {
-          action_id: string
-          completed_at: string | null
           created_at: string
           execution_id: string
           id: string
           name: string
+          status: string
+          task_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          execution_id: string
+          id?: string
+          name: string
+          status: string
+          task_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          execution_id?: string
+          id?: string
+          name?: string
+          status?: string
+          task_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subtasks_execution_id_fkey"
+            columns: ["execution_id"]
+            isOneToOne: false
+            referencedRelation: "executions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "subtasks_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "subtasks_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tasks: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          execution_id: string
+          id: string
+          input_values: Json
+          name: string
+          node_id: string
+          output_values: Json
           started_at: string
           status: string
           updated_at: string
           user_id: string
         }
         Insert: {
-          action_id: string
           completed_at?: string | null
           created_at?: string
           execution_id: string
           id?: string
+          input_values: Json
           name: string
+          node_id: string
+          output_values: Json
           started_at?: string
           status: string
           updated_at?: string
           user_id: string
         }
         Update: {
-          action_id?: string
           completed_at?: string | null
           created_at?: string
           execution_id?: string
           id?: string
+          input_values?: Json
           name?: string
+          node_id?: string
+          output_values?: Json
           started_at?: string
           status?: string
           updated_at?: string
@@ -536,21 +515,21 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "subactions_action_id_fkey"
-            columns: ["action_id"]
-            isOneToOne: false
-            referencedRelation: "actions"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "subactions_execution_id_fkey"
+            foreignKeyName: "tasks_execution_id_fkey"
             columns: ["execution_id"]
             isOneToOne: false
             referencedRelation: "executions"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "subactions_user_id_fkey"
+            foreignKeyName: "tasks_node_id_fkey"
+            columns: ["node_id"]
+            isOneToOne: false
+            referencedRelation: "nodes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tasks_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"

@@ -19,7 +19,7 @@ export type Task = {
   inputValues: IOValue[];
   outputValues: IOValue[];
   startedAt: string;
-  completedAt: string;
+  completedAt: string | null;
 };
 
 export type Subtask = {
@@ -27,4 +27,14 @@ export type Subtask = {
   taskId: string;
   name: string;
   status: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type Execution = {
+  id: string;
+  name: string;
+  status: string;
+  startedAt: string;
+  completedAt: string | null;
 };

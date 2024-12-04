@@ -1,8 +1,19 @@
 import { useEffect, useMemo, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { Subtask, Task } from "@/types/run";
+import { Execution, IOValue, Subtask, Task } from "@/types/run";
 import { useNodesStore } from "@/providers/nodesProvider";
-import { Check, CircleCheck, CircleDashed, Loader2 } from "lucide-react";
+import {
+  Check,
+  CircleCheck,
+  CircleDashed,
+  Loader2,
+  Maximize2,
+} from "lucide-react";
+import {
+  fetchAllSubtasksByExecutionId,
+  fetchExecutionById,
+} from "@/lib/queries";
+import { fetchAllTasksByExecutionId } from "@/lib/queries";
 
 const TaskStatusIcon = ({ status }: { status: Task["status"] }) => {
   console.log("status", status);
@@ -19,17 +30,59 @@ const TaskStatusIcon = ({ status }: { status: Task["status"] }) => {
 
 export const RunLogs = () => {
   const { selectedRunId } = useNodesStore((state) => state);
+  const [execution, setExecution] = useState<Execution | null>(null);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [subtasks, setSubtasks] = useState<Subtask[]>([]);
 
+  const supabase = createClient();
+
   // TODO: check if the run is still running - then listen in real time. once the run is completed, stop listening.
-  // TODO: on render, fetch all tasks and subtasks for the run.
+
   useEffect(() => {
-    setTasks([]);
-    setSubtasks([]);
+    if (!selectedRunId) return;
+
+    fetchExecutionById(supabase, selectedRunId).then((res) => {
+      if (!res.data) return;
+
+      setExecution({
+        id: res.data?.id,
+        name: res.data?.name,
+        status: res.data?.status,
+        startedAt: res.data?.started_at,
+        completedAt: res.data?.completed_at,
+      });
+    });
+  }, [selectedRunId]);
+
+  useEffect(() => {
+    if (!selectedRunId) return;
+
+    const supabase = createClient();
+    fetchAllTasksByExecutionId(supabase, selectedRunId).then((res) => {
+      setTasks(
+        res.data?.map((t) => ({
+          ...t,
+          startedAt: t.started_at,
+          completedAt: t.completed_at,
+          inputValues: t.input_values as IOValue[],
+          outputValues: t.output_values as IOValue[],
+        })) ?? []
+      );
+    });
+    fetchAllSubtasksByExecutionId(supabase, selectedRunId).then((res) => {
+      setSubtasks(
+        res.data?.map((t) => ({
+          ...t,
+          taskId: t.task_id,
+          createdAt: t.created_at,
+          updatedAt: t.updated_at,
+        })) ?? []
+      );
+    });
   }, [selectedRunId]);
 
   const taskSubtasksMap = useMemo(() => {
+    console.log("subtasks", subtasks);
     return subtasks.reduce(
       (acc, subtask) => {
         if (!acc[subtask.taskId]) {
@@ -42,10 +95,10 @@ export const RunLogs = () => {
     );
   }, [subtasks]);
 
-  const supabase = createClient();
-
   useEffect(() => {
     console.log("listening to tasks for run ", selectedRunId);
+    if (!selectedRunId) return;
+
     const tasksChannel = supabase
       .channel("tasks-changes")
       .on(
@@ -85,12 +138,18 @@ export const RunLogs = () => {
       )
       .subscribe();
 
+    if (execution?.status === "COMPLETED") {
+      supabase.removeChannel(tasksChannel);
+    }
+
     return () => {
       supabase.removeChannel(tasksChannel);
     };
-  }, [selectedRunId]);
+  }, [selectedRunId, execution?.status]);
 
   useEffect(() => {
+    if (!selectedRunId) return;
+
     const subtasksChannel = supabase
       .channel("subtasks-changes")
       .on(
@@ -112,8 +171,8 @@ export const RunLogs = () => {
               taskId: (payload.new as any).task_id,
               name: (payload.new as any).name,
               status: (payload.new as any).status,
-              startedAt: (payload.new as any).started_at,
-              completedAt: (payload.new as any).completed_at,
+              createdAt: (payload.new as any).created_at,
+              updatedAt: (payload.new as any).updated_at,
             };
 
             if (existingSubtaskIndex >= 0) {
@@ -128,10 +187,14 @@ export const RunLogs = () => {
       )
       .subscribe();
 
+    if (execution?.status === "COMPLETED") {
+      supabase.removeChannel(subtasksChannel);
+    }
+
     return () => {
       supabase.removeChannel(subtasksChannel);
     };
-  }, [selectedRunId]);
+  }, [selectedRunId, execution?.status]);
 
   return (
     <div className="space-y-2 py-2">
@@ -141,20 +204,26 @@ export const RunLogs = () => {
             new Date(a.startedAt).getTime() - new Date(b.startedAt).getTime()
         )
         .map((task) => (
-          <div key={task.id} className="space-y-2">
-            <div className="flex items-center gap-2">
-              <TaskStatusIcon status={task.status} />
-              <p className="">{task.name}</p>
+          <div key={task.id} className="space-y-1">
+            <div className="flex items-center gap-4 group cursor-pointer hover:bg-muted rounded-sm p-2">
+              <p className="font-semibold">{task.name}</p>
+              <Maximize2 className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity" />
             </div>
-            <div className="pl-6">
-              {taskSubtasksMap[task.id].map((subtask) => (
-                <div key={subtask.id} className="flex items-center gap-2">
-                  <TaskStatusIcon status={subtask.status} />
-                  <p className="text-sm text-muted-foreground">
-                    {subtask.name}
-                  </p>
-                </div>
-              ))}
+            <div className="pl-6 space-y-1">
+              {taskSubtasksMap[task.id]
+                ?.sort(
+                  (a, b) =>
+                    new Date(a.updatedAt).getTime() -
+                    new Date(b.updatedAt).getTime()
+                )
+                .map((subtask) => (
+                  <div key={subtask.id} className="flex items-center gap-2">
+                    <TaskStatusIcon status={subtask.status} />
+                    <p className="text-sm text-muted-foreground">
+                      {subtask.name}
+                    </p>
+                  </div>
+                ))}
             </div>
           </div>
         ))}
