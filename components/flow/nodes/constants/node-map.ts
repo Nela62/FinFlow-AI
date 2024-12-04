@@ -16,7 +16,11 @@ import { NodeData } from "@/types/react-flow";
 
 export const CONTENT_MAP: Record<
   NodeType,
-  React.ComponentType<{ id: string; data: NodeData }>
+  React.ComponentType<{
+    id: string;
+    data: NodeData;
+    updateNodeData: (id: string, data: Partial<NodeData>) => void;
+  }>
 > = {
   "sec-filing": SecFilingContent,
   summarizer: SummarizerContent,

@@ -31,8 +31,8 @@ export const RunHeader = () => {
         <p>{run.name}</p>
       </div>
       <div>
-        <p className="capitalize text-sm text-muted-foreground">
-          {run.status.toLowerCase()}
+        <p className="text-sm text-muted-foreground">
+          {run.status === "COMPLETED" ? "Completed" : "Running"}
         </p>
       </div>
     </div>

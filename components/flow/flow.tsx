@@ -76,6 +76,7 @@ const DnDFlow = ({
   }, [supabase, workflowId]);
 
   const updateNodes = useDebouncedCallback(async (nodes: AppNode[]) => {
+    // console.log("updating nodes in supabase to ", nodes);
     const { error } = await supabase.from("nodes").upsert(
       nodes.map((node) => ({
         id: node.id,
@@ -134,6 +135,7 @@ const DnDFlow = ({
   }, [fetchEdges, setEdges]);
 
   useEffect(() => {
+    console.log("nodes have changed to ", nodes);
     updateNodes(nodes);
   }, [nodes, updateNodes]);
 
@@ -143,6 +145,7 @@ const DnDFlow = ({
 
   const onNodesChange = useCallback(
     (changes: NodeChange[]) => {
+      console.log("changes", changes);
       setNodes((nds) => applyNodeChanges(changes, nds) as AppNode[]);
     },
     [setNodes]

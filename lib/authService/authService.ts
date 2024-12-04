@@ -28,7 +28,7 @@ const handleAuthError = (
   const errorMessages: Record<number, string> = {
     429: "We are experiencing an unusually high load. Please try again later.",
     400: "Invalid login credentials",
-    422: "Please email team@finflow-ai.com to request access",
+    422: "Please email team@finflowai.com to request access",
     403: "Your code has expired or is invalid.",
   };
 
