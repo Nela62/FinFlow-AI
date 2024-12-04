@@ -7,10 +7,11 @@ export default async function WorkflowPage({
 }: {
   params: { id: string };
 }) {
-  const supabase = createClient();
+  const {id} = await params;
+  const supabase = await createClient();
   const userId = (await supabase.auth.getUser()).data.user?.id;
 
   if (!userId) return redirect("/login");
 
-  return <WorkflowPageComponent workflowId={params.id} userId={userId} />;
+  return <WorkflowPageComponent workflowId={id} userId={userId} />;
 }

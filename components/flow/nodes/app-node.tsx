@@ -1,4 +1,4 @@
-import { memo } from "react";
+import { memo, useCallback } from "react";
 import { useReactFlow, type Node, type NodeProps } from "@xyflow/react";
 
 import { NodeType } from "@/types/node";
@@ -14,8 +14,6 @@ import { NodeData } from "@/types/react-flow";
 export type AppNodeType = Node<NodeData, "app-node">;
 
 export const AppNode = memo(({ id, data }: NodeProps<AppNodeType>) => {
-  const { updateNodeData, getNodes } = useReactFlow();
-
   if (!Object.values(NodeType).includes(data.type as NodeType)) {
     throw new Error(`Invalid node type: ${data.type}`);
   }
@@ -29,7 +27,7 @@ export const AppNode = memo(({ id, data }: NodeProps<AppNodeType>) => {
       <div className="group relative rounded-md bg-background border p-2 pb-3 shadow-md w-[380px]">
         <NodeMenu nodeId={id} />
         <NodeHeader {...headerProps} title={data.title} />
-        <Content id={id} data={data} updateNodeData={updateNodeData} />
+        <Content id={id} data={data} />
         {data.outputs.length > 1 && (
           <>
             <Separator orientation="horizontal" />

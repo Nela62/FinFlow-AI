@@ -54,11 +54,9 @@ export const EmailSenderContent = memo(
   ({
     id,
     data,
-    updateNodeData,
   }: {
     id: string;
     data: NodeData;
-    updateNodeData: (id: string, data: Partial<NodeData>) => void;
   }) => {
     const [config, setConfig] = useState<NodeInput[]>(data.inputs);
 
@@ -67,7 +65,7 @@ export const EmailSenderContent = memo(
     const emailRecipient = useInputValue(config, "email_recipient");
     const subject = useInputValue(config, "subject");
 
-    const { getNodes } = useReactFlow();
+    const { updateNodeData } = useReactFlow();
 
     const supabase = createClient();
     const { data: settings } = useQuery(fetchSettings(supabase));
@@ -79,8 +77,6 @@ export const EmailSenderContent = memo(
     }, [settings]);
 
     useEffect(() => {
-      console.log("config", config);
-      console.log(getNodes().length);
       updateNodeData(id, { inputs: config });
     }, [config]);
 

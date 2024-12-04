@@ -19,7 +19,6 @@ export const CONTENT_MAP: Record<
   React.ComponentType<{
     id: string;
     data: NodeData;
-    updateNodeData: (id: string, data: Partial<NodeData>) => void;
   }>
 > = {
   "sec-filing": SecFilingContent,
