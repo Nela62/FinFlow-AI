@@ -16,13 +16,13 @@ import {
 import { fetchAllTasksByExecutionId } from "@/lib/queries";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { TasksDetails } from "./tasks-details";
+import { Skeleton } from "@/components/ui/skeleton";
 
 // TODO: add icons before each task name
 // TODO: add separators between tasks
 // TODO: remove padding so separators are full width
 
 const TaskStatusIcon = ({ status }: { status: Task["status"] }) => {
-  console.log("status", status);
   switch (status) {
     case "COMPLETED":
       return <CircleCheck className="h-4 w-4 text-primary/80" />;
@@ -35,7 +35,7 @@ const TaskStatusIcon = ({ status }: { status: Task["status"] }) => {
 };
 
 export const RunLogs = () => {
-  const { selectedRunId } = useNodesStore((state) => state);
+  const { selectedRunId, setIsRunning } = useNodesStore((state) => state);
   const [execution, setExecution] = useState<Execution | null>(null);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [subtasks, setSubtasks] = useState<Subtask[]>([]);
@@ -59,6 +59,13 @@ export const RunLogs = () => {
       });
     });
   }, [selectedRunId]);
+
+  useEffect(() => {
+    if (!execution) return;
+    if (execution.status === "COMPLETED") {
+      setIsRunning(false);
+    }
+  }, [execution]);
 
   useEffect(() => {
     if (!selectedRunId) return;
@@ -102,7 +109,44 @@ export const RunLogs = () => {
   }, [subtasks]);
 
   useEffect(() => {
-    console.log("listening to tasks for run ", selectedRunId);
+    if (!selectedRunId) return;
+
+    const executionChannel = supabase
+      .channel("execution-changes")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "executions",
+          filter: `id=eq.${selectedRunId}`,
+        },
+        (payload) => {
+          setExecution((prev) => {
+            const newExecution = {
+              id: (payload.new as any).id,
+              name: (payload.new as any).name,
+              status: (payload.new as any).status,
+              startedAt: (payload.new as any).started_at,
+              completedAt: (payload.new as any).completed_at,
+            };
+
+            return newExecution;
+          });
+        }
+      )
+      .subscribe();
+
+    if (execution?.status === "COMPLETED") {
+      supabase.removeChannel(executionChannel);
+    }
+
+    return () => {
+      supabase.removeChannel(executionChannel);
+    };
+  }, [selectedRunId, execution?.status]);
+
+  useEffect(() => {
     if (!selectedRunId) return;
 
     const tasksChannel = supabase
@@ -203,39 +247,50 @@ export const RunLogs = () => {
 
   return (
     <div className="space-y-2 py-2 px-4">
-      {tasks
-        .sort(
-          (a, b) =>
-            new Date(a.startedAt).getTime() - new Date(b.startedAt).getTime()
-        )
-        .map((task) => (
-          <div key={task.id} className="space-y-1">
-            <Dialog>
-              <DialogTrigger className="w-full">
-                <div className="flex items-center justify-between w-full gap-4 group cursor-pointer hover:bg-muted rounded-sm p-2">
-                  <p className="font-semibold">{task.name}</p>
-                  <Maximize2 className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity" />
-                </div>
-              </DialogTrigger>
-              <TasksDetails taskId={task.id} tasks={tasks} />
-            </Dialog>
-
-            <div className="pl-4 space-y-1">
-              {taskSubtasksMap[task.id]
-                ?.sort(
-                  (a, b) =>
-                    new Date(a.updatedAt).getTime() -
-                    new Date(b.updatedAt).getTime()
-                )
-                .map((subtask) => (
-                  <div key={subtask.id} className="flex items-center gap-2">
-                    <TaskStatusIcon status={subtask.status} />
-                    <p className="text-sm text-primary/80">{subtask.name}</p>
+      {tasks && tasks.length > 0 ? (
+        tasks
+          .sort(
+            (a, b) =>
+              new Date(a.startedAt).getTime() - new Date(b.startedAt).getTime()
+          )
+          .map((task) => (
+            <div key={task.id} className="space-y-1">
+              <Dialog>
+                <DialogTrigger className="w-full">
+                  <div className="flex items-center justify-between w-full gap-4 group cursor-pointer hover:bg-muted rounded-sm p-2">
+                    <p className="font-semibold">{task.name}</p>
+                    <Maximize2 className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity" />
                   </div>
-                ))}
+                </DialogTrigger>
+                <TasksDetails taskId={task.id} tasks={tasks} />
+              </Dialog>
+
+              <div className="pl-4 space-y-1">
+                {taskSubtasksMap[task.id] &&
+                taskSubtasksMap[task.id].length > 0 ? (
+                  taskSubtasksMap[task.id]
+                    .sort(
+                      (a, b) =>
+                        new Date(a.updatedAt).getTime() -
+                        new Date(b.updatedAt).getTime()
+                    )
+                    .map((subtask) => (
+                      <div key={subtask.id} className="flex items-center gap-2">
+                        <TaskStatusIcon status={subtask.status} />
+                        <p className="text-sm text-primary/80">
+                          {subtask.name}
+                        </p>
+                      </div>
+                    ))
+                ) : (
+                  <Skeleton className="h-4 w-full" />
+                )}
+              </div>
             </div>
-          </div>
-        ))}
+          ))
+      ) : (
+        <Skeleton className="h-4 w-full" />
+      )}
     </div>
   );
 };

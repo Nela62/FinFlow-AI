@@ -11,7 +11,9 @@ import { ArrowLeftIcon } from "lucide-react";
 // TODO: Improve the design of this component: add completion time
 
 export const RunHeader = () => {
-  const { selectedRunId, resetSelectedRunId } = useNodesStore((state) => state);
+  const { selectedRunId, resetSelectedRunId, isRunning } = useNodesStore(
+    (state) => state
+  );
 
   const supabase = createClient();
   const { data: run } = useQuery(
@@ -38,13 +40,16 @@ export const RunHeader = () => {
             <p
               className={cn(
                 "text-xs text-muted-foreground capitalize",
-                run.status === "COMPLETED" && "text-green-600",
-                run.status === "FAILED" && "text-red-600",
-                run.status === "STARTED" && "text-yellow-600",
-                run.status === "PENDING" && "text-gray-600"
+                isRunning && "text-yellow-600",
+                !isRunning && "text-green-600"
+                // run.status === "COMPLETED" && "text-green-600",
+                // run.status === "FAILED" && "text-red-600",
+                // run.status === "STARTED" && "text-yellow-600",
+                // run.status === "PENDING" && "text-gray-600"
               )}
             >
-              {run.status.toLowerCase()}
+              {/* {run.status.toLowerCase()} */}
+              {isRunning ? "Started" : "Completed"}
             </p>
           </div>
         </div>

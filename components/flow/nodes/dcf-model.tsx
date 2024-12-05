@@ -8,10 +8,8 @@ import { Label } from "@/components/ui/label";
 import { NodeHeader } from "./components/node-header";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { dataTypesList, NodeInput, NodeOutput } from "@/types/node";
+import { NodeInput, NodeOutput } from "@/types/node";
 import { useDebouncedCallback } from "use-debounce";
-import { NodeWrapper } from "./components/node-wrapper";
-import { Outputs } from "./components/outputs-selection";
 import { res } from "./temp/api";
 import { csv, md } from "./temp/dcf";
 
@@ -34,13 +32,13 @@ function MaterialSymbolsTableOutline(props: SVGProps<SVGSVGElement>) {
 
 // TODO: Improve this - json or tabular or both?
 const inputs: NodeInput[] = [
-  {
-    label: "financial-data",
-    acceptedFormat: "Tabular",
-    acceptedTypes: dataTypesList
-      .filter((item) => item.formats.includes("Tabular"))
-      ?.map((item) => item.name),
-  },
+  // {
+  //   label: "financial-data",
+  //   acceptedFormat: "Tabular",
+  //   acceptedTypes: dataTypesList
+  //     .filter((item) => item.formats.includes("Tabular"))
+  //     ?.map((item) => item.name),
+  // },
 ];
 
 type Params = {
@@ -60,10 +58,10 @@ const defaultParams: Params = {
 };
 
 const outputs: NodeOutput[] = [
-  { label: "DCF Model", dataType: "MD" },
-  { label: "DCF Model", dataType: "JSON" },
-  { label: "DCF Model", dataType: "CSV" },
-  { label: "DCF Model", dataType: "XLSX" },
+  // { label: "DCF Model", dataType: "MD" },
+  // { label: "DCF Model", dataType: "JSON" },
+  // { label: "DCF Model", dataType: "CSV" },
+  // { label: "DCF Model", dataType: "XLSX" },
 ];
 
 const runFn = async (params: Record<string, any>) => {
@@ -82,7 +80,8 @@ export const defaultData: DCFModelNodeData = {
   label: "DCF Model",
   params: defaultParams,
   inputs,
-  outputs: [{ label: "DCF Model", dataType: "MD" }],
+  outputs: [],
+  // outputs: [{ label: "DCF Model", dataType: "MD" }],
   runFn,
 };
 
@@ -113,147 +112,148 @@ function DcfModelNodeComponent({ id, data }: NodeProps<DcfModelNodeType>) {
   }, [selectedOutputs]);
 
   return (
+    <div></div>
     // We add this class to use the same styles as React Flow's default nodes.
-    <NodeWrapper
-      nodeId={id}
-      width="w-[360px]"
-      inputs={inputs}
-      outputs={selectedOutputs}
-    >
-      <NodeHeader
-        title="DCF Model"
-        bgColor="bg-green-200"
-        textColor="text-green-900"
-        iconFn={MaterialSymbolsTableOutline}
-        iconBgColor="bg-green-500"
-      />
+    // <NodeWrapper
+    //   nodeId={id}
+    //   width="w-[360px]"
+    //   inputs={inputs}
+    //   outputs={selectedOutputs}
+    // >
+    //   <NodeHeader
+    //     title="DCF Model"
+    //     bgColor="bg-green-200"
+    //     textColor="text-green-900"
+    //     iconFn={MaterialSymbolsTableOutline}
+    //     iconBgColor="bg-green-500"
+    //   />
 
-      {/* TODO: Update params */}
-      <div className="space-y-2 px-2">
-        <div className="space-y-4 nodrag">
-          <p className="text-sm font-semibold">Parameters & Assumptions</p>
-          <div className="flex gap-4">
-            <div className="space-y-1">
-              <p className="text-xs">Discount Rate (%)</p>
-              <Input
-                type="number"
-                value={params.discountRate}
-                onChange={(e) =>
-                  setParams({ ...params, discountRate: e.target.value })
-                }
-              />
-            </div>
-            <div className="space-y-1">
-              <p className="text-xs">Time Horizon (Years)</p>
-              <Input
-                type="number"
-                value={params.timeHorizon}
-                onChange={(e) =>
-                  setParams({ ...params, timeHorizon: e.target.value })
-                }
-              />
-            </div>
-          </div>
-          <p className="text-sm font-semibold">Terminal Value</p>
-          <Tabs
-            className="w-full"
-            value={params.terminalValue}
-            onValueChange={(value) =>
-              setParams({ ...params, terminalValue: value })
-            }
-          >
-            <TabsList className="w-full">
-              <TabsTrigger value="exit-multiple" className="w-1/2 text-xs">
-                Exit Multiple
-              </TabsTrigger>
-              <TabsTrigger
-                value="gordon-growth-model"
-                className="w-1/2 text-xs"
-              >
-                Gordon Growth Model
-              </TabsTrigger>
-            </TabsList>
-            <TabsContent value="exit-multiple">
-              <div className="flex gap-4">
-                <div className="space-y-1">
-                  <p className="text-xs">Growth Rate (%)</p>
-                  <Input
-                    type="number"
-                    value={params.growthRate}
-                    onChange={(e) =>
-                      setParams({
-                        ...params,
-                        growthRate: e.target.value,
-                      })
-                    }
-                  />
-                </div>
-                <div className="space-y-1">
-                  <p className="text-xs">Exit Multiple</p>
-                  <Input
-                    type="number"
-                    value={params.intrinsicValue}
-                    onChange={(e) =>
-                      setParams({
-                        ...params,
-                        intrinsicValue: e.target.value,
-                      })
-                    }
-                  />
-                </div>
-              </div>
-            </TabsContent>
-            <TabsContent value="gordon-growth-model">
-              <div className="flex gap-4">
-                <div className="space-y-1">
-                  <p className="text-xs">Growth Rate (%)</p>
-                  <Input
-                    type="number"
-                    value={params.growthRate}
-                    onChange={(e) =>
-                      setParams({
-                        ...params,
-                        growthRate: e.target.value,
-                      })
-                    }
-                  />
-                </div>
-                <div className="space-y-1">
-                  <p className="text-xs">Average FCF ($)</p>
-                  <Input
-                    type="number"
-                    value={params.intrinsicValue}
-                    onChange={(e) =>
-                      setParams({
-                        ...params,
-                        intrinsicValue: e.target.value,
-                      })
-                    }
-                  />
-                </div>
-              </div>
-            </TabsContent>
-          </Tabs>
-        </div>
-        <Separator orientation="horizontal" />
-        <Outputs
-          nodeId={id}
-          outputs={outputs}
-          selectedOutputs={selectedOutputs}
-          setSelectedOutputs={setSelectedOutputs}
-        />
-        <Separator orientation="horizontal" />
-        <div className="flex justify-between">
-          <p className="text-xs">Cache output</p>
-          <div className="flex items-center space-x-2">
-            <Switch defaultChecked={false} id="cache-output" className="" />
-            <Label htmlFor="cache-output" className="text-xs">
-              Yes
-            </Label>
-          </div>
-        </div>
-      </div>
-    </NodeWrapper>
+    //   {/* TODO: Update params */}
+    //   <div className="space-y-2 px-2">
+    //     <div className="space-y-4 nodrag">
+    //       <p className="text-sm font-semibold">Parameters & Assumptions</p>
+    //       <div className="flex gap-4">
+    //         <div className="space-y-1">
+    //           <p className="text-xs">Discount Rate (%)</p>
+    //           <Input
+    //             type="number"
+    //             value={params.discountRate}
+    //             onChange={(e) =>
+    //               setParams({ ...params, discountRate: e.target.value })
+    //             }
+    //           />
+    //         </div>
+    //         <div className="space-y-1">
+    //           <p className="text-xs">Time Horizon (Years)</p>
+    //           <Input
+    //             type="number"
+    //             value={params.timeHorizon}
+    //             onChange={(e) =>
+    //               setParams({ ...params, timeHorizon: e.target.value })
+    //             }
+    //           />
+    //         </div>
+    //       </div>
+    //       <p className="text-sm font-semibold">Terminal Value</p>
+    //       <Tabs
+    //         className="w-full"
+    //         value={params.terminalValue}
+    //         onValueChange={(value) =>
+    //           setParams({ ...params, terminalValue: value })
+    //         }
+    //       >
+    //         <TabsList className="w-full">
+    //           <TabsTrigger value="exit-multiple" className="w-1/2 text-xs">
+    //             Exit Multiple
+    //           </TabsTrigger>
+    //           <TabsTrigger
+    //             value="gordon-growth-model"
+    //             className="w-1/2 text-xs"
+    //           >
+    //             Gordon Growth Model
+    //           </TabsTrigger>
+    //         </TabsList>
+    //         <TabsContent value="exit-multiple">
+    //           <div className="flex gap-4">
+    //             <div className="space-y-1">
+    //               <p className="text-xs">Growth Rate (%)</p>
+    //               <Input
+    //                 type="number"
+    //                 value={params.growthRate}
+    //                 onChange={(e) =>
+    //                   setParams({
+    //                     ...params,
+    //                     growthRate: e.target.value,
+    //                   })
+    //                 }
+    //               />
+    //             </div>
+    //             <div className="space-y-1">
+    //               <p className="text-xs">Exit Multiple</p>
+    //               <Input
+    //                 type="number"
+    //                 value={params.intrinsicValue}
+    //                 onChange={(e) =>
+    //                   setParams({
+    //                     ...params,
+    //                     intrinsicValue: e.target.value,
+    //                   })
+    //                 }
+    //               />
+    //             </div>
+    //           </div>
+    //         </TabsContent>
+    //         <TabsContent value="gordon-growth-model">
+    //           <div className="flex gap-4">
+    //             <div className="space-y-1">
+    //               <p className="text-xs">Growth Rate (%)</p>
+    //               <Input
+    //                 type="number"
+    //                 value={params.growthRate}
+    //                 onChange={(e) =>
+    //                   setParams({
+    //                     ...params,
+    //                     growthRate: e.target.value,
+    //                   })
+    //                 }
+    //               />
+    //             </div>
+    //             <div className="space-y-1">
+    //               <p className="text-xs">Average FCF ($)</p>
+    //               <Input
+    //                 type="number"
+    //                 value={params.intrinsicValue}
+    //                 onChange={(e) =>
+    //                   setParams({
+    //                     ...params,
+    //                     intrinsicValue: e.target.value,
+    //                   })
+    //                 }
+    //               />
+    //             </div>
+    //           </div>
+    //         </TabsContent>
+    //       </Tabs>
+    //     </div>
+    //     <Separator orientation="horizontal" />
+    //     <Outputs
+    //       nodeId={id}
+    //       outputs={outputs}
+    //       selectedOutputs={selectedOutputs}
+    //       setSelectedOutputs={setSelectedOutputs}
+    //     />
+    //     <Separator orientation="horizontal" />
+    //     <div className="flex justify-between">
+    //       <p className="text-xs">Cache output</p>
+    //       <div className="flex items-center space-x-2">
+    //         <Switch defaultChecked={false} id="cache-output" className="" />
+    //         <Label htmlFor="cache-output" className="text-xs">
+    //           Yes
+    //         </Label>
+    //       </div>
+    //     </div>
+    //   </div>
+    // </NodeWrapper>
   );
 }
 

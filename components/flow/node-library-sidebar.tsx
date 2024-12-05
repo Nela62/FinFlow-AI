@@ -3,17 +3,18 @@ import { useDnD } from "./dnd-context";
 import { Card, CardContent } from "../ui/card";
 import { Button } from "../ui/button";
 import { useNodesStore } from "@/providers/nodesProvider";
+import { cn } from "@/lib/utils";
 
 const nodesList = [
-  { id: "sec-filing", name: "SEC Filing Parser" },
-  { id: "api-connector", name: "API Connector" },
-  { id: "summarizer", name: "Summarizer" },
-  { id: "switch", name: "Switch" },
-  { id: "dcf-model", name: "DCF Model" },
-  { id: "financial-analysis", name: "Financial Analysis" },
-  { id: "appender", name: "Appender" },
-  { id: "document-compiler", name: "Document Compiler" },
-  { id: "email-sender", name: "Email Sender" },
+  { id: "sec-filing", name: "SEC Filing Parser", disabled: false },
+  { id: "api-connector", name: "API Connector", disabled: true },
+  { id: "summarizer", name: "Summarizer", disabled: false },
+  { id: "switch", name: "Switch", disabled: true },
+  { id: "dcf-model", name: "DCF Model", disabled: true },
+  { id: "financial-analysis", name: "Financial Analysis", disabled: true },
+  { id: "appender", name: "Appender", disabled: true },
+  { id: "document-compiler", name: "Document Compiler", disabled: true },
+  { id: "email-sender", name: "Email Sender", disabled: false },
 ];
 
 export default () => {
@@ -35,9 +36,12 @@ export default () => {
         .sort((a, b) => a.name.localeCompare(b.name))
         .map((node) => (
           <Card
-            className="w-fit cursor-grab bg-muted"
+            className={cn(
+              "w-fit cursor-grab bg-muted",
+              node.disabled && "opacity-50 cursor-not-allowed"
+            )}
             onDragStart={(event) => onDragStart(event, node.id)}
-            draggable
+            draggable={!node.disabled}
             key={node.id}
           >
             <CardContent className="select-none px-3 py-1 text-sm">

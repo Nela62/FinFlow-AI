@@ -13,13 +13,15 @@ import { prefetchQuery } from "@supabase-cache-helpers/postgrest-react-query";
 export default async function PanelPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const {
     data: { user },
   } = await supabase.auth.getUser();
+
+  const { id } = await params;
 
   if (!user) {
     return redirect("/login");
@@ -27,7 +29,7 @@ export default async function PanelPage({
 
   const queryClient = new QueryClient();
 
-  await prefetchQuery(queryClient, fetchAllWidgets(supabase, params.id));
+  await prefetchQuery(queryClient, fetchAllWidgets(supabase, id));
 
   // Fetch panel data using the id from params
   // const { data: panel, error } = await supabase
@@ -83,7 +85,7 @@ export default async function PanelPage({
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <Panel panelUrl={params.id} userId={user.id} />
+      <Panel panelUrl={id} userId={user.id} />
     </HydrationBoundary>
   );
 }

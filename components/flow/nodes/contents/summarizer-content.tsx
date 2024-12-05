@@ -17,6 +17,7 @@ import { NodeData } from "@/types/react-flow";
 import { createUpdateConfigValue } from "@/lib/update-config-value";
 import { useInputValue } from "@/hooks/use-input-value";
 
+// TODO: Add word count to ATHINA AI
 const inputs: NodeInput[] = [
   {
     label: "context",
@@ -31,7 +32,7 @@ const inputs: NodeInput[] = [
   {
     label: "word_count",
     handle: { hasHandle: "false" },
-    value: [100, 500],
+    value: [200, 500],
   },
   {
     label: "keywords",
@@ -98,7 +99,7 @@ export const SummarizerContent = memo(
         <div className="space-y-2 nodrag">
           <p className="text-sm font-semibold">Word Count</p>
           <DoubleSlider
-            min={100}
+            min={50}
             max={1000}
             step={50}
             defaultValue={wordCount}

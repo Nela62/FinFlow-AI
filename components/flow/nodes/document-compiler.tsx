@@ -19,10 +19,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { dataTypesList, NodeInput, NodeOutput } from "@/types/node";
+import { NodeInput, NodeOutput } from "@/types/node";
 import { useDebouncedCallback } from "use-debounce";
-import { NodeWrapper } from "./components/node-wrapper";
-import { Outputs } from "./components/outputs-selection";
 import { res } from "./temp/report";
 
 function BxFile(props: SVGProps<SVGSVGElement>) {
@@ -44,13 +42,13 @@ function BxFile(props: SVGProps<SVGSVGElement>) {
 }
 
 const inputs: NodeInput[] = [
-  {
-    label: "text",
-    acceptedFormat: "Text",
-    acceptedTypes: dataTypesList
-      .filter((item) => item.formats.includes("Text"))
-      ?.map((item) => item.name),
-  },
+  // {
+  //   label: "text",
+  //   acceptedFormat: "Text",
+  //   acceptedTypes: dataTypesList
+  //     .filter((item) => item.formats.includes("Text"))
+  //     ?.map((item) => item.name),
+  // },
 ];
 
 type Params = {
@@ -66,10 +64,10 @@ const defaultParams: Params = {
 };
 
 const outputs: NodeOutput[] = [
-  { label: "output", dataType: "TXT" },
-  { label: "output", dataType: "MD" },
-  { label: "output", dataType: "PDF" },
-  { label: "output", dataType: "DOCX" },
+  // { label: "output", dataType: "TXT" },
+  // { label: "output", dataType: "MD" },
+  // { label: "output", dataType: "PDF" },
+  // { label: "output", dataType: "DOCX" },
 ];
 
 const runFn = async (params: Record<string, any>) => {
@@ -90,7 +88,8 @@ export const defaultData: DocumentCompilerNodeData = {
   label: "Document Compiler",
   params: defaultParams,
   inputs,
-  outputs: [{ label: "output", dataType: "MD" }],
+  outputs: [],
+  // outputs: [{ label: "output", dataType: "MD" }],
   runFn,
 };
 
@@ -122,114 +121,115 @@ function DocumentCompilerNodeComponent({
   }, [selectedOutputs]);
 
   return (
+    <div></div>
     // We add this class to use the same styles as React Flow's default nodes.
-    <NodeWrapper
-      nodeId={id}
-      width="w-[360px]"
-      inputs={inputs}
-      outputs={selectedOutputs}
-    >
-      <NodeHeader
-        title="Document Compiler"
-        bgColor="bg-amber-200"
-        textColor="text-amber-900"
-        iconFn={BxFile}
-        iconBgColor="bg-amber-500"
-      />
+    // <NodeWrapper
+    //   nodeId={id}
+    //   width="w-[360px]"
+    //   inputs={inputs}
+    //   outputs={selectedOutputs}
+    // >
+    //   <NodeHeader
+    //     title="Document Compiler"
+    //     bgColor="bg-amber-200"
+    //     textColor="text-amber-900"
+    //     iconFn={BxFile}
+    //     iconBgColor="bg-amber-500"
+    //   />
 
-      <div className="space-y-2 px-2">
-        <div className="space-y-2 nodrag">
-          <p className="text-sm font-semibold">Template Style</p>
-          <div className="flex gap-2">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button className="w-full justify-start" variant="outline">
-                  {params.templateStyle}
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuItem>
-                  {params.templateStyle ?? "Select an option"}
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-            <Button variant="outline" size="icon">
-              <Pencil />
-            </Button>
-          </div>
-          <Separator orientation="horizontal" />
-          <div className="space-y-3">
-            <p className="text-sm font-semibold">Custom Branding</p>
-            <div className="space-y-1">
-              <p className="text-xs font-semibold">Logo</p>
-              <div className="flex gap-2">
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className="w-full justify-between"
-                    >
-                      {params.logo ?? "Select an option"}
-                      <ChevronDown />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    <DropdownMenuItem>
-                      {params.logo ?? "Select an option"}
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-                <Button variant="outline" size="icon">
-                  <FolderOpen />
-                </Button>
-              </div>
-            </div>
-            <div className="space-y-1">
-              <p className="text-xs font-semibold">Banner</p>
-              <div className="flex gap-2">
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className="w-full justify-between"
-                    >
-                      {params.banner ?? "Select an option"}
-                      <ChevronDown />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    <DropdownMenuItem>
-                      {params.banner ?? "Select an option"}
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-                <Button variant="outline" size="icon">
-                  <FolderOpen />
-                </Button>
-              </div>
-            </div>
-          </div>
-          <Separator orientation="horizontal" />
-          <Outputs
-            nodeId={id}
-            outputs={outputs}
-            selectedOutputs={selectedOutputs}
-            setSelectedOutputs={setSelectedOutputs}
-          />
-          <Separator orientation="horizontal" />
+    //   <div className="space-y-2 px-2">
+    //     <div className="space-y-2 nodrag">
+    //       <p className="text-sm font-semibold">Template Style</p>
+    //       <div className="flex gap-2">
+    //         <DropdownMenu>
+    //           <DropdownMenuTrigger asChild>
+    //             <Button className="w-full justify-start" variant="outline">
+    //               {params.templateStyle}
+    //             </Button>
+    //           </DropdownMenuTrigger>
+    //           <DropdownMenuContent>
+    //             <DropdownMenuItem>
+    //               {params.templateStyle ?? "Select an option"}
+    //             </DropdownMenuItem>
+    //           </DropdownMenuContent>
+    //         </DropdownMenu>
+    //         <Button variant="outline" size="icon">
+    //           <Pencil />
+    //         </Button>
+    //       </div>
+    //       <Separator orientation="horizontal" />
+    //       <div className="space-y-3">
+    //         <p className="text-sm font-semibold">Custom Branding</p>
+    //         <div className="space-y-1">
+    //           <p className="text-xs font-semibold">Logo</p>
+    //           <div className="flex gap-2">
+    //             <DropdownMenu>
+    //               <DropdownMenuTrigger asChild>
+    //                 <Button
+    //                   variant="outline"
+    //                   className="w-full justify-between"
+    //                 >
+    //                   {params.logo ?? "Select an option"}
+    //                   <ChevronDown />
+    //                 </Button>
+    //               </DropdownMenuTrigger>
+    //               <DropdownMenuContent>
+    //                 <DropdownMenuItem>
+    //                   {params.logo ?? "Select an option"}
+    //                 </DropdownMenuItem>
+    //               </DropdownMenuContent>
+    //             </DropdownMenu>
+    //             <Button variant="outline" size="icon">
+    //               <FolderOpen />
+    //             </Button>
+    //           </div>
+    //         </div>
+    //         <div className="space-y-1">
+    //           <p className="text-xs font-semibold">Banner</p>
+    //           <div className="flex gap-2">
+    //             <DropdownMenu>
+    //               <DropdownMenuTrigger asChild>
+    //                 <Button
+    //                   variant="outline"
+    //                   className="w-full justify-between"
+    //                 >
+    //                   {params.banner ?? "Select an option"}
+    //                   <ChevronDown />
+    //                 </Button>
+    //               </DropdownMenuTrigger>
+    //               <DropdownMenuContent>
+    //                 <DropdownMenuItem>
+    //                   {params.banner ?? "Select an option"}
+    //                 </DropdownMenuItem>
+    //               </DropdownMenuContent>
+    //             </DropdownMenu>
+    //             <Button variant="outline" size="icon">
+    //               <FolderOpen />
+    //             </Button>
+    //           </div>
+    //         </div>
+    //       </div>
+    //       <Separator orientation="horizontal" />
+    //       <Outputs
+    //         nodeId={id}
+    //         outputs={outputs}
+    //         selectedOutputs={selectedOutputs}
+    //         setSelectedOutputs={setSelectedOutputs}
+    //       />
+    //       <Separator orientation="horizontal" />
 
-          <div className="flex justify-between">
-            <p className="text-xs">Cache output</p>
-            <div className="flex items-center space-x-2">
-              <Switch defaultChecked={false} id="cache-output" className="" />
-              <Label htmlFor="cache-output" className="text-xs">
-                Yes
-              </Label>
-            </div>
-          </div>
-        </div>
-      </div>
-    </NodeWrapper>
+    //       <div className="flex justify-between">
+    //         <p className="text-xs">Cache output</p>
+    //         <div className="flex items-center space-x-2">
+    //           <Switch defaultChecked={false} id="cache-output" className="" />
+    //           <Label htmlFor="cache-output" className="text-xs">
+    //             Yes
+    //           </Label>
+    //         </div>
+    //       </div>
+    //     </div>
+    //   </div>
+    // </NodeWrapper>
   );
 }
 

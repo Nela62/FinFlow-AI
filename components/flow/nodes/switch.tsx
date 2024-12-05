@@ -9,22 +9,21 @@ import { useNodesStore } from "@/providers/nodesProvider";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { NodeHeader } from "./components/node-header";
 import { Label } from "@/components/ui/label";
-import { dataTypesList, NodeInput, NodeOutput } from "@/types/node";
-import { NodeWrapper } from "./components/node-wrapper";
+import { NodeInput, NodeOutput } from "@/types/node";
 import { Badge } from "@/components/ui/badge";
 import { XIcon } from "lucide-react";
 
 const inputs: NodeInput[] = [
-  {
-    label: "node-1",
-    acceptedFormat: "Any",
-    acceptedTypes: dataTypesList.map((item) => item.name),
-  },
-  {
-    label: "node-2",
-    acceptedFormat: "Any",
-    acceptedTypes: dataTypesList.map((item) => item.name),
-  },
+  // {
+  //   label: "node-1",
+  //   acceptedFormat: "Any",
+  //   acceptedTypes: dataTypesList.map((item) => item.name),
+  // },
+  // {
+  //   label: "node-2",
+  //   acceptedFormat: "Any",
+  //   acceptedTypes: dataTypesList.map((item) => item.name),
+  // },
 ];
 
 type Params = {
@@ -35,7 +34,7 @@ const defaultParams: Params = {
   selectedInput: "handle-node-1",
 };
 
-const outputs: NodeOutput[] = [{ label: "node", dataType: "ANY" }];
+// const outputs: NodeOutput[] = [{ label: "node", dataType: "ANY" }];
 
 const runFn = async (params: Record<string, any>) => {
   return {};
@@ -53,7 +52,8 @@ export const defaultData: SwitchNodeData = {
   label: "Switch",
   params: defaultParams,
   inputs,
-  outputs: [{ label: "node-1", dataType: "JSON" }],
+  outputs: [],
+  // outputs: [{ label: "node-1", dataType: "JSON" }],
   runFn,
 };
 
@@ -78,132 +78,133 @@ function MdiSwitch(props: SVGProps<SVGSVGElement>) {
 
 // FIXME: on delete, readjust the node ids
 function SwitchNodeComponent({ id, data }: NodeProps<SwitchNode>) {
-  const updateNodeInternals = useUpdateNodeInternals();
-  const { updateNodeData } = useReactFlow();
+  // const updateNodeInternals = useUpdateNodeInternals();
+  // const { updateNodeData } = useReactFlow();
 
-  const { nodes, edges, deleteEdge } = useNodesStore((state) => state);
+  // const { nodes, edges, deleteEdge } = useNodesStore((state) => state);
 
-  const inputConnections = useMemo(() => {
-    return edges
-      .filter((edge) => edge.target === id)
-      .sort(
-        (a, b) =>
-          Number(a.targetHandle?.replace("handle-node-", "")) -
-          Number(b.targetHandle?.replace("handle-node-", ""))
-      );
-  }, [edges]);
+  // const inputConnections = useMemo(() => {
+  //   return edges
+  //     .filter((edge) => edge.target === id)
+  //     .sort(
+  //       (a, b) =>
+  //         Number(a.targetHandle?.replace("handle-node-", "")) -
+  //         Number(b.targetHandle?.replace("handle-node-", ""))
+  //     );
+  // }, [edges]);
 
-  const sourceNodes = useMemo(() => {
-    return inputConnections.map((edge) => ({
-      id: edge.source,
-      target: edge.targetHandle?.replace("handle-", "") ?? "",
-      data: nodes.find((node) => node.id === edge.source)?.data,
-    }));
-  }, [inputConnections]);
+  // const sourceNodes = useMemo(() => {
+  //   return inputConnections.map((edge) => ({
+  //     id: edge.source,
+  //     target: edge.targetHandle?.replace("handle-", "") ?? "",
+  //     data: nodes.find((node) => node.id === edge.source)?.data,
+  //   }));
+  // }, [inputConnections]);
 
-  const [inputs, setInputs] = useState(data.inputs);
+  // const [inputs, setInputs] = useState(data.inputs);
 
-  // FIXME: the output is different and should change according to the original node selected
-  const [selectedOutput, setSelectedOutput] = useState<NodeOutput>({
-    label: sourceNodes?.[0]?.target ?? "node-1",
-    dataType: sourceNodes?.[0]?.data?.outputs?.[0]?.dataType ?? "JSON",
-  });
+  // // FIXME: the output is different and should change according to the original node selected
+  // const [selectedOutput, setSelectedOutput] = useState<NodeOutput>({
+  //   label: sourceNodes?.[0]?.target ?? "node-1",
+  //   dataType: sourceNodes?.[0]?.data?.outputs?.[0]?.dataType ?? "JSON",
+  // });
 
-  useEffect(() => {
-    updateNodeData(id, { inputs });
-    updateNodeInternals(id);
-  }, [inputs]);
+  // useEffect(() => {
+  //   updateNodeData(id, { inputs });
+  //   updateNodeInternals(id);
+  // }, [inputs]);
 
-  useEffect(() => {
-    updateNodeData(id, { outputs: [selectedOutput] });
-    updateNodeInternals(id);
-  }, [selectedOutput]);
+  // useEffect(() => {
+  //   updateNodeData(id, { outputs: [selectedOutput] });
+  //   updateNodeInternals(id);
+  // }, [selectedOutput]);
 
-  const deleteInput = useCallback((conn: Edge) => {
-    setInputs(
-      inputs.filter(
-        (input) => input.label !== conn.targetHandle?.replace("handle-", "")
-      )
-    );
-    deleteEdge(conn.id);
-    updateNodeInternals(id);
-  }, []);
+  // const deleteInput = useCallback((conn: Edge) => {
+  //   setInputs(
+  //     inputs.filter(
+  //       (input) => input.label !== conn.targetHandle?.replace("handle-", "")
+  //     )
+  //   );
+  //   deleteEdge(conn.id);
+  //   updateNodeInternals(id);
+  // }, []);
 
   return (
-    <NodeWrapper
-      nodeId={id}
-      width="w-[370px]"
-      inputs={inputs}
-      outputs={outputs}
-    >
-      <NodeHeader
-        title="Switch"
-        bgColor="bg-gray-200"
-        iconBgColor="bg-gray-400"
-        textColor="text-gray-900"
-        iconFn={MdiSwitch}
-      />
-      <div className="space-y-4 px-2">
-        <RadioGroup
-          value={selectedOutput.label}
-          onValueChange={(value) => {
-            // FIXME: the output doesn't change
-            setSelectedOutput({
-              label: value,
-              dataType:
-                sourceNodes?.find((node) => node.target === value)?.data
-                  ?.outputs?.[0]?.dataType ?? "JSON",
-            });
-            updateNodeInternals(id);
-          }}
-          className="px-2 py-2 space-y-2"
-        >
-          {sourceNodes?.map((node, i) => (
-            <div className="flex items-center space-x-2" key={node.id}>
-              <RadioGroupItem value={node.target} id={node.id} />
-              <div className="flex gap-1 items-center">
-                <Badge variant="outline">{node.target}</Badge>
-                <Label htmlFor={node.id}>{node.data?.label}</Label>
-              </div>
-            </div>
-          ))}
-        </RadioGroup>
-        <div className="flex gap-2">
-          {inputConnections.map((conn) => (
-            <Button
-              variant="outline"
-              size="sm"
-              key={conn.id}
-              className="flex items-center gap-1"
-              onClick={() => {
-                deleteInput(conn);
-              }}
-            >
-              {conn.targetHandle?.replace("handle-", "")}
-              <XIcon className="w-4 h-4" />
-            </Button>
-          ))}
-        </div>
-        <Button
-          variant="outline"
-          size="sm"
-          className=""
-          onClick={() => {
-            setInputs([
-              ...inputs,
-              {
-                label: `node-${inputs.length + 1}`,
-                acceptedFormat: "Any",
-                acceptedTypes: dataTypesList.map((item) => item.name),
-              },
-            ]);
-            updateNodeInternals(id);
-          }}
-        >
-          Add Input
-        </Button>
-      </div>
-    </NodeWrapper>
+    <div></div>
+    // <NodeWrapper
+    //   nodeId={id}
+    //   width="w-[370px]"
+    //   inputs={inputs}
+    //   outputs={outputs}
+    // >
+    //   <NodeHeader
+    //     title="Switch"
+    //     bgColor="bg-gray-200"
+    //     iconBgColor="bg-gray-400"
+    //     textColor="text-gray-900"
+    //     iconFn={MdiSwitch}
+    //   />
+    //   <div className="space-y-4 px-2">
+    //     <RadioGroup
+    //       value={selectedOutput.label}
+    //       onValueChange={(value) => {
+    //         // FIXME: the output doesn't change
+    //         setSelectedOutput({
+    //           label: value,
+    //           dataType:
+    //             sourceNodes?.find((node) => node.target === value)?.data
+    //               ?.outputs?.[0]?.dataType ?? "JSON",
+    //         });
+    //         updateNodeInternals(id);
+    //       }}
+    //       className="px-2 py-2 space-y-2"
+    //     >
+    //       {sourceNodes?.map((node, i) => (
+    //         <div className="flex items-center space-x-2" key={node.id}>
+    //           <RadioGroupItem value={node.target} id={node.id} />
+    //           <div className="flex gap-1 items-center">
+    //             <Badge variant="outline">{node.target}</Badge>
+    //             <Label htmlFor={node.id}>{node.data?.label}</Label>
+    //           </div>
+    //         </div>
+    //       ))}
+    //     </RadioGroup>
+    //     <div className="flex gap-2">
+    //       {inputConnections.map((conn) => (
+    //         <Button
+    //           variant="outline"
+    //           size="sm"
+    //           key={conn.id}
+    //           className="flex items-center gap-1"
+    //           onClick={() => {
+    //             deleteInput(conn);
+    //           }}
+    //         >
+    //           {conn.targetHandle?.replace("handle-", "")}
+    //           <XIcon className="w-4 h-4" />
+    //         </Button>
+    //       ))}
+    //     </div>
+    //     <Button
+    //       variant="outline"
+    //       size="sm"
+    //       className=""
+    //       onClick={() => {
+    //         setInputs([
+    //           ...inputs,
+    //           {
+    //             label: `node-${inputs.length + 1}`,
+    //             acceptedFormat: "Any",
+    //             acceptedTypes: dataTypesList.map((item) => item.name),
+    //           },
+    //         ]);
+    //         updateNodeInternals(id);
+    //       }}
+    //     >
+    //       Add Input
+    //     </Button>
+    //   </div>
+    // </NodeWrapper>
   );
 }
 

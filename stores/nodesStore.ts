@@ -2,6 +2,7 @@ import { createStore } from "zustand/vanilla";
 
 export type NodesState = {
   selectedRunId: string | null;
+  isRunning: boolean;
   selectedTab: "logs" | "outputs";
 };
 
@@ -9,6 +10,7 @@ export type NodesActions = {
   setSelectedRunId: (runId: string) => void;
   setSelectedTab: (tab: "logs" | "outputs") => void;
   resetSelectedRunId: () => void;
+  setIsRunning: (isRunning: boolean) => void;
 };
 
 export type NodesStore = NodesState & NodesActions;
@@ -184,6 +186,7 @@ export type NodesStore = NodesState & NodesActions;
 const defaultInitState: NodesState = {
   selectedRunId: null,
   selectedTab: "logs",
+  isRunning: false,
 };
 
 export const createNodesStore = (initState: NodesState = defaultInitState) => {
@@ -192,6 +195,7 @@ export const createNodesStore = (initState: NodesState = defaultInitState) => {
     setSelectedRunId: (runId) => set({ selectedRunId: runId }),
     resetSelectedRunId: () => set({ selectedRunId: null }),
     setSelectedTab: (tab) => set({ selectedTab: tab }),
+    setIsRunning: (isRunning) => set({ isRunning }),
     // onNodesChange: (changes) => {
     //   set((state) => ({
     //     nodes: applyNodeChanges(changes, state.nodes),

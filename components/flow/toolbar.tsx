@@ -16,8 +16,9 @@ export type Trigger = {
 };
 
 export const Toolbar = ({ workflowId }: { workflowId: string }) => {
-  const [isRunning, setIsRunning] = useState(false);
-  const { setSelectedRunId } = useNodesStore((state) => state);
+  const { setSelectedRunId, setIsRunning, isRunning } = useNodesStore(
+    (state) => state
+  );
   const [triggers, setTriggers] = useState<Trigger[]>([]);
   const supabase = createClient();
 
@@ -42,10 +43,11 @@ export const Toolbar = ({ workflowId }: { workflowId: string }) => {
         },
       }
     );
-    setIsRunning(false);
     if (res.ok) {
       const { execution_id: executionId } = await res.json();
       setSelectedRunId(executionId);
+    } else {
+      setIsRunning(false);
     }
   }, [workflowId]);
 

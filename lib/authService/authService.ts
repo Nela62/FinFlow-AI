@@ -60,7 +60,7 @@ export const signInWithPassword = async (
   "use server";
 
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
 
     const { error } = await supabase.auth.signInWithPassword({
       email,
@@ -86,7 +86,7 @@ export const signInWithOtp = async (email: string): Promise<AuthResponse> => {
   "use server";
 
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
 
     const { error } = await supabase.auth.signInWithOtp({
       email,
@@ -109,7 +109,7 @@ export const initUser = async (userId: string, email: string) => {
   "use server";
 
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
 
     // await supabase.auth.updateUser({ data: { finished_onboarding: false } });
 
@@ -142,7 +142,7 @@ export const verifyOtp = async (
   "use server";
 
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { error } = await supabase.auth.verifyOtp({
       email,
       token,

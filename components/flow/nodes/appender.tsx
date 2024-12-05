@@ -8,30 +8,28 @@ import { NodeHeader } from "./components/node-header";
 import { Button } from "@/components/ui/button";
 import { useNodesStore } from "@/providers/nodesProvider";
 import SortableList from "./components/sortableList";
-import { dataTypesList, NodeInput, NodeOutput } from "@/types/node";
-import { NodeWrapper } from "./components/node-wrapper";
-import { Outputs } from "./components/outputs-selection";
+import { NodeInput, NodeOutput } from "@/types/node";
 import { Separator } from "@/components/ui/separator";
 import { res as summaryRes } from "./temp/summary";
 import { md } from "./temp/dcf";
 import { res as finAnalysisRes } from "./temp/fin-analysis";
 import { res as reportRes } from "./temp/report";
 
-const textTypes = dataTypesList
-  .filter((item) => item.formats.includes("Text"))
-  ?.map((item) => item.name);
+// const textTypes = dataTypesList
+//   .filter((item) => item.formats.includes("Text"))
+//   ?.map((item) => item.name);
 
 const inputs: NodeInput[] = [
-  {
-    label: "node-1",
-    acceptedFormat: "Text",
-    acceptedTypes: textTypes,
-  },
-  {
-    label: "node-2",
-    acceptedFormat: "Text",
-    acceptedTypes: textTypes,
-  },
+  // {
+  //   label: "node-1",
+  //   acceptedFormat: "Text",
+  //   acceptedTypes: textTypes,
+  // },
+  // {
+  //   label: "node-2",
+  //   acceptedFormat: "Text",
+  //   acceptedTypes: textTypes,
+  // },
 ];
 
 type Params = {};
@@ -39,8 +37,8 @@ type Params = {};
 const defaultParams: Params = {};
 
 const outputs: NodeOutput[] = [
-  { label: "text", dataType: "TXT" },
-  { label: "text", dataType: "MD" },
+  // { label: "text", dataType: "TXT" },
+  // { label: "text", dataType: "MD" },
 ];
 
 // FIXME: on edge delete, does not readjust the inputs
@@ -64,7 +62,8 @@ export const defaultData: AppenderNodeData = {
   label: "Appender",
   params: defaultParams,
   inputs,
-  outputs: [{ label: "text", dataType: "MD" }],
+  outputs: [],
+  // outputs: [{ label: "text", dataType: "MD" }],
   runFn,
 };
 
@@ -92,91 +91,92 @@ function AppenderNodeComponent({ id, data }: NodeProps<AppenderNodeType>) {
   const updateNodeInternals = useUpdateNodeInternals();
   const { updateNodeData } = useReactFlow();
 
-  const { nodes, edges } = useNodesStore((state) => state);
+  // const { nodes, edges } = useNodesStore((state) => state);
 
-  const inputConnections = useMemo(() => {
-    return edges
-      .filter((edge) => edge.target === id)
-      .sort(
-        (a, b) =>
-          Number(a.targetHandle?.replace("handle-node-", "")) -
-          Number(b.targetHandle?.replace("handle-node-", ""))
-      );
-  }, [edges]);
+  // const inputConnections = useMemo(() => {
+  //   return edges
+  //     .filter((edge) => edge.target === id)
+  //     .sort(
+  //       (a, b) =>
+  //         Number(a.targetHandle?.replace("handle-node-", "")) -
+  //         Number(b.targetHandle?.replace("handle-node-", ""))
+  //     );
+  // }, [edges]);
 
-  const sourceNodes = useMemo(() => {
-    return inputConnections.map((edge) => ({
-      id: edge.source,
-      target: edge.targetHandle?.replace("handle-", "") ?? "",
-      data: nodes.find((node) => node.id === edge.source)?.data,
-    }));
-  }, [inputConnections]);
+  // const sourceNodes = useMemo(() => {
+  //   return inputConnections.map((edge) => ({
+  //     id: edge.source,
+  //     target: edge.targetHandle?.replace("handle-", "") ?? "",
+  //     data: nodes.find((node) => node.id === edge.source)?.data,
+  //   }));
+  // }, [inputConnections]);
 
-  const [inputs, setInputs] = useState(data.inputs);
+  // const [inputs, setInputs] = useState(data.inputs);
 
-  const [selectedOutputs, setSelectedOutputs] = useState<NodeOutput[]>(
-    data.outputs
-  );
+  // const [selectedOutputs, setSelectedOutputs] = useState<NodeOutput[]>(
+  //   data.outputs
+  // );
 
-  useEffect(() => {
-    updateNodeData(id, { inputs });
-    updateNodeInternals(id);
-  }, [inputs]);
+  // useEffect(() => {
+  //   updateNodeData(id, { inputs });
+  //   updateNodeInternals(id);
+  // }, [inputs]);
 
-  useEffect(() => {
-    updateNodeData(id, { outputs: selectedOutputs });
-    updateNodeInternals(id);
-  }, [selectedOutputs]);
+  // useEffect(() => {
+  //   updateNodeData(id, { outputs: selectedOutputs });
+  //   updateNodeInternals(id);
+  // }, [selectedOutputs]);
 
   return (
-    <NodeWrapper
-      nodeId={id}
-      width="w-[360px]"
-      inputs={inputs}
-      outputs={selectedOutputs}
-    >
-      <NodeHeader
-        title="Appender"
-        bgColor="bg-gray-200"
-        iconBgColor="bg-gray-400"
-        textColor="text-gray-900"
-        iconFn={FluentMerge16Filled}
-      />
-      <div className="space-y-4 px-2 pt-2">
-        <p className="text-sm font-semibold">Order</p>
-        {/* TODO: Improve the ui of list items */}
-        <SortableList
-          items={sourceNodes.map((node) => ({
-            id: node.id,
-            title: node?.data?.label ?? node.id,
-          }))}
-        />
-        {/* TODO: add ability to remove inputs */}
-        <Button
-          variant="outline"
-          onClick={() => {
-            setInputs([
-              ...inputs,
-              {
-                label: `input-${inputs.length + 1}`,
-                acceptedFormat: "Text",
-                acceptedTypes: textTypes,
-              },
-            ]);
-            updateNodeInternals(id);
-          }}
-        >
-          Add Input
-        </Button>
-        <Separator orientation="horizontal" />
-        <Outputs
-          nodeId={id}
-          outputs={outputs}
-          selectedOutputs={selectedOutputs}
-          setSelectedOutputs={setSelectedOutputs}
-        />
-      </div>
-    </NodeWrapper>
+    <div></div>
+    // <NodeWrapper
+    //   nodeId={id}
+    //   width="w-[360px]"
+    //   inputs={inputs}
+    //   outputs={selectedOutputs}
+    // >
+    //   <NodeHeader
+    //     title="Appender"
+    //     bgColor="bg-gray-200"
+    //     iconBgColor="bg-gray-400"
+    //     textColor="text-gray-900"
+    //     iconFn={FluentMerge16Filled}
+    //   />
+    //   <div className="space-y-4 px-2 pt-2">
+    //     <p className="text-sm font-semibold">Order</p>
+    //     {/* TODO: Improve the ui of list items */}
+    //     <SortableList
+    //       items={sourceNodes.map((node) => ({
+    //         id: node.id,
+    //         title: node?.data?.label ?? node.id,
+    //       }))}
+    //     />
+    //     {/* TODO: add ability to remove inputs */}
+    //     <Button
+    //       variant="outline"
+    //       onClick={() => {
+    //         setInputs([
+    //           ...inputs,
+    //           {
+    //             label: `input-${inputs.length + 1}`,
+    //             acceptedFormat: "Text",
+    //             acceptedTypes: textTypes,
+    //           },
+    //         ]);
+    //         updateNodeInternals(id);
+    //       }}
+    //     >
+    //       Add Input
+    //     </Button>
+    //     <Separator orientation="horizontal" />
+    //     <Outputs
+    //       nodeId={id}
+    //       outputs={outputs}
+    //       selectedOutputs={selectedOutputs}
+    //       setSelectedOutputs={setSelectedOutputs}
+    //     />
+    //   </div>
+    // </NodeWrapper>
   );
 }
 

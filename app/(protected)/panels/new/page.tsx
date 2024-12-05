@@ -3,7 +3,7 @@ import { NewPanelComponent } from "./new-panel";
 import { redirect } from "next/navigation";
 
 export default async function NewPanelPage() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();

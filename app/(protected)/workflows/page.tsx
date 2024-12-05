@@ -5,7 +5,7 @@ import { nanoid } from "nanoid";
 import { redirect } from "next/navigation";
 
 export default async function WorkflowsPage() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: workflows } = await fetchAllWorkflows(supabase);
 
   if (!workflows) return <Skeleton className="w-full h-10" />;

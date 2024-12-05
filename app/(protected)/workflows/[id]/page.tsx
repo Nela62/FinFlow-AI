@@ -5,9 +5,9 @@ import { WorkflowPageComponent } from "./workflow-page";
 export default async function WorkflowPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
-  const {id} = await params;
+  const { id } = await params;
   const supabase = await createClient();
   const userId = (await supabase.auth.getUser()).data.user?.id;
 
