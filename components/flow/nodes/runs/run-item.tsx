@@ -3,7 +3,7 @@ import { RunHeader } from "./run-header";
 
 export const RunItem = () => {
   return (
-    <div className="space-y-3 p-4">
+    <div className="">
       <RunHeader />
       <RunLogs />
     </div>

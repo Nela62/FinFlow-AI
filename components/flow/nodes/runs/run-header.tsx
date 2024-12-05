@@ -22,7 +22,7 @@ export const RunHeader = () => {
   return (
     <>
       {run ? (
-        <div className="flex justify-between items-center pr-2">
+        <div className="flex justify-between items-center px-4 py-2">
           <div className="flex items-center gap-2">
             <Button
               onClick={resetSelectedRunId}

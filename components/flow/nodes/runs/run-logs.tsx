@@ -25,12 +25,12 @@ const TaskStatusIcon = ({ status }: { status: Task["status"] }) => {
   console.log("status", status);
   switch (status) {
     case "COMPLETED":
-      return <CircleCheck className="h-4 w-4" />;
+      return <CircleCheck className="h-4 w-4 text-primary/80" />;
     case "STARTED":
-      return <Loader2 className="h-4 w-4 animate-spin" />;
+      return <Loader2 className="h-4 w-4 animate-spin text-primary/80" />;
     case "PENDING":
     default:
-      return <CircleDashed className="h-4 w-4" />;
+      return <CircleDashed className="h-4 w-4 text-primary/80" />;
   }
 };
 
@@ -116,7 +116,6 @@ export const RunLogs = () => {
           filter: `execution_id=eq.${selectedRunId}`,
         },
         (payload) => {
-          console.log("payload", payload);
           setTasks((prev) => {
             const existingTaskIndex = prev.findIndex(
               (task) => task.id === (payload.new as any).id
@@ -203,7 +202,7 @@ export const RunLogs = () => {
   }, [selectedRunId, execution?.status]);
 
   return (
-    <div className="space-y-2 py-2">
+    <div className="space-y-2 py-2 px-4">
       {tasks
         .sort(
           (a, b) =>
@@ -212,8 +211,8 @@ export const RunLogs = () => {
         .map((task) => (
           <div key={task.id} className="space-y-1">
             <Dialog>
-              <DialogTrigger>
-                <div className="flex items-center gap-4 group cursor-pointer hover:bg-muted rounded-sm p-2">
+              <DialogTrigger className="w-full">
+                <div className="flex items-center justify-between w-full gap-4 group cursor-pointer hover:bg-muted rounded-sm p-2">
                   <p className="font-semibold">{task.name}</p>
                   <Maximize2 className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity" />
                 </div>
@@ -221,7 +220,7 @@ export const RunLogs = () => {
               <TasksDetails taskId={task.id} tasks={tasks} />
             </Dialog>
 
-            <div className="pl-6 space-y-1">
+            <div className="pl-4 space-y-1">
               {taskSubtasksMap[task.id]
                 ?.sort(
                   (a, b) =>
@@ -231,9 +230,7 @@ export const RunLogs = () => {
                 .map((subtask) => (
                   <div key={subtask.id} className="flex items-center gap-2">
                     <TaskStatusIcon status={subtask.status} />
-                    <p className="text-sm text-muted-foreground">
-                      {subtask.name}
-                    </p>
+                    <p className="text-sm text-primary/80">{subtask.name}</p>
                   </div>
                 ))}
             </div>

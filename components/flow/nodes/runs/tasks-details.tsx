@@ -9,11 +9,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import { Task } from "@/types/run";
 import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
-import { Copy, Download } from "lucide-react";
 import React, { useState } from "react";
 import { useMemo } from "react";
 import { DisplayContent } from "./display-content";
 import { Accordion } from "@/components/ui/accordion";
+
+// FIXME: Move the cross icon lower
+// FIXME: Fix the accordion default value
 
 export const TasksDetails = ({
   taskId,
@@ -39,7 +41,7 @@ export const TasksDetails = ({
       </VisuallyHidden.Root>
       <Tabs defaultValue={tab}>
         <div className="h-full grid grid-cols-[auto_1fr] grid-rows-[auto_1fr] divide-x">
-          <div className="px-4 py-3 flex items-center border-b h-[65px]">
+          <div className="px-4 py-3 flex items-center border-b h-[65px] w-[250px]">
             <p className="font-semibold">All tasks</p>
           </div>
           <div className="px-4 py-3 flex items-center justify-between border-b pr-14 h-[65px]">
@@ -53,7 +55,7 @@ export const TasksDetails = ({
               </TabsTrigger>
             </TabsList>
           </div>
-          <div className="h-full">
+          <div className="h-full w-[250px]">
             {tasks
               .sort(
                 (a, b) =>
@@ -64,7 +66,7 @@ export const TasksDetails = ({
                 <React.Fragment key={task.id}>
                   <div
                     className={cn(
-                      "flex items-center gap-6 justify-between hover:bg-slate-100 py-3 px-4 cursor-pointer",
+                      "flex items-center gap-6 justify-between hover:bg-slate-100 py-4 px-4 cursor-pointer",
                       selectedTaskId === task.id && "bg-slate-50"
                     )}
                     onClick={() => setSelectedTaskId(task.id)}
@@ -87,11 +89,15 @@ export const TasksDetails = ({
               ))}
           </div>
           <div className="flex flex-col h-full">
-            <TabsContent value="outputs" className="max-h-[50vh] mt-0">
+            <TabsContent
+              value="outputs"
+              className="max-h-[calc(90vh-65px)] mt-0"
+            >
               <Accordion
                 type="single"
                 collapsible
                 className="h-full flex flex-col"
+                defaultValue={task?.outputValues[0]?.label}
               >
                 {task?.outputValues.map((value) => (
                   <DisplayContent
@@ -100,16 +106,27 @@ export const TasksDetails = ({
                     content={value.value}
                   />
                 ))}
-                {task?.outputValues.map((value, index) => (
+              </Accordion>
+            </TabsContent>
+            <TabsContent
+              value="inputs"
+              className="max-h-[calc(90vh-65px)] mt-0"
+            >
+              <Accordion
+                type="single"
+                collapsible
+                className="h-full flex flex-col"
+                defaultValue={task?.inputValues[0]?.label}
+              >
+                {task?.inputValues.map((value) => (
                   <DisplayContent
-                    key={`${value.label}-${index}`}
-                    name={`${value.label} (JSON)`}
+                    key={value.label}
+                    name={value.label}
                     content={value.value}
                   />
                 ))}
               </Accordion>
             </TabsContent>
-            <TabsContent value="inputs">Inputs</TabsContent>
           </div>
         </div>
       </Tabs>
