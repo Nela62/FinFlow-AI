@@ -14,6 +14,8 @@ import {
   fetchExecutionById,
 } from "@/lib/queries";
 import { fetchAllTasksByExecutionId } from "@/lib/queries";
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
+import { TasksDetails } from "./tasks-details";
 
 const TaskStatusIcon = ({ status }: { status: Task["status"] }) => {
   console.log("status", status);
@@ -205,10 +207,16 @@ export const RunLogs = () => {
         )
         .map((task) => (
           <div key={task.id} className="space-y-1">
-            <div className="flex items-center gap-4 group cursor-pointer hover:bg-muted rounded-sm p-2">
-              <p className="font-semibold">{task.name}</p>
-              <Maximize2 className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity" />
-            </div>
+            <Dialog>
+              <DialogTrigger>
+                <div className="flex items-center gap-4 group cursor-pointer hover:bg-muted rounded-sm p-2">
+                  <p className="font-semibold">{task.name}</p>
+                  <Maximize2 className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity" />
+                </div>
+              </DialogTrigger>
+              <TasksDetails taskId={task.id} tasks={tasks} />
+            </Dialog>
+
             <div className="pl-6 space-y-1">
               {taskSubtasksMap[task.id]
                 ?.sort(
