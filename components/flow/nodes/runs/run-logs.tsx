@@ -17,6 +17,10 @@ import { fetchAllTasksByExecutionId } from "@/lib/queries";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { TasksDetails } from "./tasks-details";
 
+// TODO: add icons before each task name
+// TODO: add separators between tasks
+// TODO: remove padding so separators are full width
+
 const TaskStatusIcon = ({ status }: { status: Task["status"] }) => {
   console.log("status", status);
   switch (status) {
@@ -38,7 +42,7 @@ export const RunLogs = () => {
 
   const supabase = createClient();
 
-  // TODO: check if the run is still running - then listen in real time. once the run is completed, stop listening.
+  // TODO: add a timer showing the time since the task started.
 
   useEffect(() => {
     if (!selectedRunId) return;
