@@ -271,8 +271,8 @@ export const RunLogs = () => {
                   taskSubtasksMap[task.id]
                     .sort(
                       (a, b) =>
-                        new Date(a.updatedAt).getTime() -
-                        new Date(b.updatedAt).getTime()
+                        new Date(a.createdAt).getTime() -
+                        new Date(b.createdAt).getTime()
                     )
                     .map((subtask) => (
                       <div key={subtask.id} className="flex items-center gap-2">
@@ -291,10 +291,10 @@ export const RunLogs = () => {
       ) : (
         <>
           <Skeleton className="h-8 w-full" />
-          <Skeleton className="pl-4 h-8 w-full" />
-          <Skeleton className="pl-4 h-8 w-full" />
-          <Skeleton className="pl-4 h-8 w-full" />
-          <Skeleton className="pl-4 h-8 w-full" />
+          <Skeleton className="ml-4 h-8 w-full" />
+          <Skeleton className="ml-4 h-8 w-full" />
+          <Skeleton className="ml-4 h-8 w-full" />
+          <Skeleton className="ml-4 h-8 w-full" />
         </>
       )}
     </div>
