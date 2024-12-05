@@ -67,7 +67,7 @@ export const RunsList = ({ workflowId }: { workflowId: string }) => {
               </React.Fragment>
             ))
         ) : (
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-muted-foreground pl-2">
             No executions yet. Click the run button to get started.
           </p>
         )}

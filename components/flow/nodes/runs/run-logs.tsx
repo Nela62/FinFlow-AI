@@ -289,7 +289,13 @@ export const RunLogs = () => {
             </div>
           ))
       ) : (
-        <Skeleton className="h-4 w-full" />
+        <>
+          <Skeleton className="h-8 w-full" />
+          <Skeleton className="pl-4 h-8 w-full" />
+          <Skeleton className="pl-4 h-8 w-full" />
+          <Skeleton className="pl-4 h-8 w-full" />
+          <Skeleton className="pl-4 h-8 w-full" />
+        </>
       )}
     </div>
   );
