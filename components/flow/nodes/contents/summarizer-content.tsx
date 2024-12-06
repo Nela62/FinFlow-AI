@@ -183,9 +183,9 @@ export const SummarizerContent = memo(
               className="pb-6"
               max={1}
               step={0.1}
-              value={[relevanceThreshold]}
+              defaultValue={[relevanceThreshold]}
               onValueChange={(vals) => {
-                updateConfigValue("relevanceThreshold", vals[0]);
+                updateConfigValue("relevance_threshold", vals[0]);
               }}
             />
             <p
