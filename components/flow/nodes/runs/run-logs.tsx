@@ -17,7 +17,10 @@ import { fetchAllTasksByExecutionId } from "@/lib/queries";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { TasksDetails } from "./tasks-details";
 import { Skeleton } from "@/components/ui/skeleton";
-import { REALTIME_CHANNEL_STATES } from "@supabase/supabase-js";
+import {
+  REALTIME_CHANNEL_STATES,
+  RealtimeChannel,
+} from "@supabase/supabase-js";
 
 // TODO: add icons before each task name
 // TODO: add separators between tasks
@@ -52,10 +55,125 @@ export const RunLogs = () => {
     setSubtasks([]);
   }, [selectedRunId]);
 
-  const init = useCallback(async () => {
-    if (!selectedRunId) return;
-    setIsLoading(true);
+  const init = useCallback(
+    async (channel: RealtimeChannel) => {
+      if (!selectedRunId) return;
+      setIsLoading(true);
 
+      channel.subscribe();
+
+      const runRes = await fetchExecutionById(supabase, selectedRunId);
+
+      // console.log("subtasksRes", subtasksRes);
+
+      if (!runRes.data) {
+        setIsLoading(false);
+        throw new Error("Failed to fetch run data");
+      }
+
+      if (runRes.data?.status === "COMPLETE") {
+        channel.unsubscribe();
+        supabase.removeChannel(channel);
+
+        const [tasksRes, subtasksRes] = await Promise.all([
+          fetchAllTasksByExecutionId(supabase, selectedRunId),
+          fetchAllSubtasksByExecutionId(supabase, selectedRunId),
+        ]);
+
+        setExecution({
+          ...runRes.data,
+          startedAt: runRes.data?.started_at,
+          completedAt: runRes.data?.completed_at,
+        });
+
+        if (!tasksRes.data || !subtasksRes.data) {
+          setIsLoading(false);
+          throw new Error("Failed to fetch run data");
+        }
+
+        setTasks(
+          tasksRes.data.map((t) => ({
+            ...t,
+            inputValues: t.input_values as IOValue[],
+            outputValues: t.output_values as IOValue[],
+            startedAt: t.started_at,
+            completedAt: t.completed_at,
+          }))
+        );
+        setSubtasks(
+          subtasksRes.data.map((t) => ({
+            ...t,
+            createdAt: t.created_at,
+            updatedAt: t.updated_at,
+            taskId: t.task_id,
+          }))
+        );
+      } else {
+        while (channel.state !== REALTIME_CHANNEL_STATES.joined) {
+          await new Promise((resolve) => setTimeout(resolve, 100));
+        }
+
+        const [tasksRes, subtasksRes] = await Promise.all([
+          fetchAllTasksByExecutionId(supabase, selectedRunId),
+          fetchAllSubtasksByExecutionId(supabase, selectedRunId),
+        ]);
+
+        if (!tasksRes.data || !subtasksRes.data) {
+          setIsLoading(false);
+          throw new Error("Failed to fetch run data");
+        }
+
+        console.log("channel joined");
+        console.log("tasksRes.data", tasksRes.data);
+        console.log("subtasksRes.data", subtasksRes.data);
+
+        !execution &&
+          setExecution({
+            id: runRes.data?.id,
+            name: runRes.data?.name,
+            status: runRes.data?.status,
+            startedAt: runRes.data?.started_at,
+            completedAt: runRes.data?.completed_at,
+          });
+
+        setTasks((prev) => [
+          ...prev,
+          ...tasksRes.data
+            .filter((t) => !prev.some((p) => p.id === t.id))
+            .map((t) => ({
+              ...t,
+              inputValues: t.input_values as IOValue[],
+              outputValues: t.output_values as IOValue[],
+              startedAt: t.started_at,
+              completedAt: t.completed_at,
+            })),
+        ]);
+
+        setSubtasks((prev) => [
+          ...prev,
+          ...subtasksRes.data
+            .filter((t) => !prev.some((p) => p.id === t.id))
+            .map((t) => ({
+              ...t,
+              createdAt: t.created_at,
+              updatedAt: t.updated_at,
+              taskId: t.task_id,
+            })),
+        ]);
+      }
+
+      setIsLoading(false);
+    },
+    [selectedRunId]
+  );
+
+  useEffect(() => {
+    if (execution?.status === "COMPLETE") {
+      setIsRunning(false);
+    }
+  }, [execution?.status]);
+
+  useEffect(() => {
     const channel = supabase
       .channel(`run-${selectedRunId}-updates`)
       .on(
@@ -151,105 +269,13 @@ export const RunLogs = () => {
             return [...prev, newSubtask];
           });
         }
-      )
-      .subscribe();
-
-    const [runRes, tasksRes, subtasksRes] = await Promise.all([
-      fetchExecutionById(supabase, selectedRunId),
-      fetchAllTasksByExecutionId(supabase, selectedRunId),
-      fetchAllSubtasksByExecutionId(supabase, selectedRunId),
-    ]);
-
-    // console.log("subtasksRes", subtasksRes);
-
-    if (!runRes.data || !tasksRes.data || !subtasksRes.data) {
-      setIsLoading(false);
-      throw new Error("Failed to fetch run data");
-    }
-
-    if (runRes.data?.status === "COMPLETE") {
-      supabase.removeChannel(channel);
-
-      setExecution({
-        ...runRes.data,
-        startedAt: runRes.data?.started_at,
-        completedAt: runRes.data?.completed_at,
-      });
-      setTasks(
-        tasksRes.data.map((t) => ({
-          ...t,
-          inputValues: t.input_values as IOValue[],
-          outputValues: t.output_values as IOValue[],
-          startedAt: t.started_at,
-          completedAt: t.completed_at,
-        }))
       );
-      setSubtasks(
-        subtasksRes.data.map((t) => ({
-          ...t,
-          createdAt: t.created_at,
-          updatedAt: t.updated_at,
-          taskId: t.task_id,
-        }))
-      );
-    } else {
-      while (channel.state !== REALTIME_CHANNEL_STATES.joined) {
-        await new Promise((resolve) => setTimeout(resolve, 100));
-      }
-      console.log("channel joined");
-      console.log("tasksRes.data", tasksRes.data);
-      console.log("subtasksRes.data", subtasksRes.data);
 
-      !execution &&
-        setExecution({
-          id: runRes.data?.id,
-          name: runRes.data?.name,
-          status: runRes.data?.status,
-          startedAt: runRes.data?.started_at,
-          completedAt: runRes.data?.completed_at,
-        });
-
-      setTasks((prev) => [
-        ...prev,
-        ...tasksRes.data
-          .filter((t) => !prev.some((p) => p.id === t.id))
-          .map((t) => ({
-            ...t,
-            inputValues: t.input_values as IOValue[],
-            outputValues: t.output_values as IOValue[],
-            startedAt: t.started_at,
-            completedAt: t.completed_at,
-          })),
-      ]);
-
-      setSubtasks((prev) => [
-        ...prev,
-        ...subtasksRes.data
-          .filter((t) => !prev.some((p) => p.id === t.id))
-          .map((t) => ({
-            ...t,
-            createdAt: t.created_at,
-            updatedAt: t.updated_at,
-            taskId: t.task_id,
-          })),
-      ]);
-    }
-
-    setIsLoading(false);
+    init(channel);
 
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [selectedRunId]);
-
-  useEffect(() => {
-    if (execution?.status === "COMPLETE") {
-      setIsRunning(false);
-    }
-  }, [execution?.status]);
-
-  useEffect(() => {
-    init();
   }, [init]);
 
   const taskSubtasksMap = useMemo(() => {
