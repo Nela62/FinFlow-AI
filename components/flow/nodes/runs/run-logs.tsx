@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Execution, IOValue, Subtask, Task } from "@/types/run";
 import { useNodesStore } from "@/providers/nodesProvider";
@@ -34,85 +34,23 @@ const TaskStatusIcon = ({ status }: { status: Task["status"] }) => {
   }
 };
 
+// TODO: add a timer showing the time since the task started.
+
 export const RunLogs = () => {
   const { selectedRunId, setIsRunning } = useNodesStore((state) => state);
   const [execution, setExecution] = useState<Execution | null>(null);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [subtasks, setSubtasks] = useState<Subtask[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const supabase = createClient();
 
-  // TODO: add a timer showing the time since the task started.
-
-  useEffect(() => {
+  const init = useCallback(async () => {
     if (!selectedRunId) return;
+    setIsLoading(true);
 
-    fetchExecutionById(supabase, selectedRunId).then((res) => {
-      if (!res.data) return;
-
-      setExecution({
-        id: res.data?.id,
-        name: res.data?.name,
-        status: res.data?.status,
-        startedAt: res.data?.started_at,
-        completedAt: res.data?.completed_at,
-      });
-    });
-  }, [selectedRunId]);
-
-  useEffect(() => {
-    if (!execution) return;
-    if (execution.status === "COMPLETED") {
-      setIsRunning(false);
-    }
-  }, [execution]);
-
-  useEffect(() => {
-    if (!selectedRunId) return;
-
-    const supabase = createClient();
-    fetchAllTasksByExecutionId(supabase, selectedRunId).then((res) => {
-      setTasks(
-        res.data?.map((t) => ({
-          ...t,
-          startedAt: t.started_at,
-          completedAt: t.completed_at,
-          inputValues: t.input_values as IOValue[],
-          outputValues: t.output_values as IOValue[],
-        })) ?? []
-      );
-    });
-    fetchAllSubtasksByExecutionId(supabase, selectedRunId).then((res) => {
-      setSubtasks(
-        res.data?.map((t) => ({
-          ...t,
-          taskId: t.task_id,
-          createdAt: t.created_at,
-          updatedAt: t.updated_at,
-        })) ?? []
-      );
-    });
-  }, [selectedRunId]);
-
-  const taskSubtasksMap = useMemo(() => {
-    console.log("subtasks", subtasks);
-    return subtasks.reduce(
-      (acc, subtask) => {
-        if (!acc[subtask.taskId]) {
-          acc[subtask.taskId] = [];
-        }
-        acc[subtask.taskId].push(subtask);
-        return acc;
-      },
-      {} as Record<string, Subtask[]>
-    );
-  }, [subtasks]);
-
-  useEffect(() => {
-    if (!selectedRunId) return;
-
-    const executionChannel = supabase
-      .channel("execution-changes")
+    const channel = supabase
+      .channel(`run-${selectedRunId}-updates`)
       .on(
         "postgres_changes",
         {
@@ -122,6 +60,7 @@ export const RunLogs = () => {
           filter: `id=eq.${selectedRunId}`,
         },
         (payload) => {
+          console.log("payload", payload);
           setExecution((prev) => {
             const newExecution = {
               id: (payload.new as any).id,
@@ -135,22 +74,6 @@ export const RunLogs = () => {
           });
         }
       )
-      .subscribe();
-
-    if (execution?.status === "COMPLETED") {
-      supabase.removeChannel(executionChannel);
-    }
-
-    return () => {
-      supabase.removeChannel(executionChannel);
-    };
-  }, [selectedRunId, execution?.status]);
-
-  useEffect(() => {
-    if (!selectedRunId) return;
-
-    const tasksChannel = supabase
-      .channel("tasks-changes")
       .on(
         "postgres_changes",
         {
@@ -185,22 +108,6 @@ export const RunLogs = () => {
           });
         }
       )
-      .subscribe();
-
-    if (execution?.status === "COMPLETED") {
-      supabase.removeChannel(tasksChannel);
-    }
-
-    return () => {
-      supabase.removeChannel(tasksChannel);
-    };
-  }, [selectedRunId, execution?.status]);
-
-  useEffect(() => {
-    if (!selectedRunId) return;
-
-    const subtasksChannel = supabase
-      .channel("subtasks-changes")
       .on(
         "postgres_changes",
         {
@@ -210,6 +117,8 @@ export const RunLogs = () => {
           filter: `execution_id=eq.${selectedRunId}`,
         },
         (payload) => {
+          console.log("payload", payload);
+
           setSubtasks((prev) => {
             const existingSubtaskIndex = prev.findIndex(
               (subtask) => subtask.id === (payload.new as any).id
@@ -233,21 +142,95 @@ export const RunLogs = () => {
             return [...prev, newSubtask];
           });
         }
-      )
-      .subscribe();
+      );
 
-    if (execution?.status === "COMPLETED") {
-      supabase.removeChannel(subtasksChannel);
+    const [runRes, tasksRes, subtasksRes] = await Promise.all([
+      fetchExecutionById(supabase, selectedRunId),
+      fetchAllTasksByExecutionId(supabase, selectedRunId),
+      fetchAllSubtasksByExecutionId(supabase, selectedRunId),
+    ]);
+
+    console.log("subtasksRes", subtasksRes);
+
+    if (!runRes.data || !tasksRes.data || !subtasksRes.data) return;
+
+    if (runRes.data?.status !== "COMPLETED") {
+      // Subscribe to changes
+      channel.subscribe();
     }
 
+    !execution &&
+      setExecution({
+        id: runRes.data?.id,
+        name: runRes.data?.name,
+        status: runRes.data?.status,
+        startedAt: runRes.data?.started_at,
+        completedAt: runRes.data?.completed_at,
+      });
+
+    setTasks((prev) => [
+      ...prev,
+      ...tasksRes.data
+        .filter((t) => !prev.some((p) => p.id === t.id))
+        .map((t) => ({
+          ...t,
+          inputValues: t.input_values as IOValue[],
+          outputValues: t.output_values as IOValue[],
+          startedAt: t.started_at,
+          completedAt: t.completed_at,
+        })),
+    ]);
+
+    setSubtasks((prev) => [
+      ...prev,
+      ...subtasksRes.data
+        .filter((t) => !prev.some((p) => p.id === t.id))
+        .map((t) => ({
+          ...t,
+          createdAt: t.created_at,
+          updatedAt: t.updated_at,
+          taskId: t.task_id,
+        })),
+    ]);
+
+    setIsLoading(false);
+
     return () => {
-      supabase.removeChannel(subtasksChannel);
+      supabase.removeChannel(channel);
     };
-  }, [selectedRunId, execution?.status]);
+  }, [selectedRunId]);
+
+  useEffect(() => {
+    if (execution?.status === "COMPLETED") {
+      setIsRunning(false);
+    }
+  }, [execution?.status]);
+
+  useEffect(() => {
+    init();
+  }, [init]);
+
+  const taskSubtasksMap = useMemo(() => {
+    console.log("subtasks", subtasks);
+    return subtasks.reduce(
+      (acc, subtask) => {
+        if (!acc[subtask.taskId]) {
+          acc[subtask.taskId] = [];
+        }
+        acc[subtask.taskId].push(subtask);
+        return acc;
+      },
+      {} as Record<string, Subtask[]>
+    );
+  }, [subtasks]);
+
+  useEffect(() => {
+    console.log("taskSubtasksMap", taskSubtasksMap);
+  }, [taskSubtasksMap]);
 
   return (
     <div className="space-y-2 py-2 px-4">
-      {tasks && tasks.length > 0 ? (
+      {!isLoading ? (
         tasks
           .sort(
             (a, b) =>
@@ -289,13 +272,26 @@ export const RunLogs = () => {
             </div>
           ))
       ) : (
-        <>
-          <Skeleton className="h-8 w-full" />
-          <Skeleton className="ml-4 h-8 w-full" />
-          <Skeleton className="ml-4 h-8 w-full" />
-          <Skeleton className="ml-4 h-8 w-full" />
-          <Skeleton className="ml-4 h-8 w-full" />
-        </>
+        <div className="space-y-4 py-4">
+          <Skeleton className="h-6 w-full" />
+          <div className="w-full pl-8 space-y-4">
+            <Skeleton className="h-6 w-full" />
+            <Skeleton className="h-6 w-full" />
+            <Skeleton className="h-6 w-full" />
+          </div>
+          <Skeleton className="h-6 w-full" />
+          <div className="w-full pl-8 space-y-4">
+            <Skeleton className="h-6 w-full" />
+            <Skeleton className="h-6 w-full" />
+            <Skeleton className="h-6 w-full" />
+          </div>
+          <Skeleton className="h-6 w-full" />
+          <div className="w-full pl-8 space-y-4">
+            <Skeleton className="h-6 w-full" />
+            <Skeleton className="h-6 w-full" />
+            <Skeleton className="h-6 w-full" />
+          </div>
+        </div>
       )}
     </div>
   );
