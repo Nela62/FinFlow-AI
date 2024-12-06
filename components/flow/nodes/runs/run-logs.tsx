@@ -17,6 +17,7 @@ import { fetchAllTasksByExecutionId } from "@/lib/queries";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { TasksDetails } from "./tasks-details";
 import { Skeleton } from "@/components/ui/skeleton";
+import { REALTIME_CHANNEL_STATES } from "@supabase/supabase-js";
 
 // TODO: add icons before each task name
 // TODO: add separators between tasks
@@ -184,6 +185,10 @@ export const RunLogs = () => {
         }))
       );
     } else {
+      while (channel.state !== REALTIME_CHANNEL_STATES.joined) {
+        await new Promise((resolve) => setTimeout(resolve, 100));
+      }
+
       !execution &&
         setExecution({
           id: runRes.data?.id,
