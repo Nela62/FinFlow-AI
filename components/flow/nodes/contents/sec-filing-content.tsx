@@ -36,7 +36,7 @@ const inputs: NodeInput[] = [
       fileFormats: [FileFormat.TXT],
       dynamic: false,
     },
-    value: "10-K",
+    value: "10-Q",
   },
   // TODO: add time period
 ];

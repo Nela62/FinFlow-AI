@@ -17,6 +17,91 @@ export type FilingType = {
 
 export const SEC_FILING_TYPES: FilingType[] = [
   {
+    type: "10-Q",
+    description: "Quarterly Report",
+    sections: [
+      {
+        name: "Part I — Financial Information",
+        subSections: [
+          {
+            name: "Item 1",
+            description: "Financial Statements",
+            details:
+              "Includes the registrant's unaudited financial statements for the quarter, such as balance sheets, income statements, cash flow statements, and accompanying notes to the financial statements.",
+          },
+          {
+            name: "Item 2",
+            description:
+              "Management's Discussion and Analysis of Financial Condition and Results of Operations (MD&A)",
+            details:
+              "Discusses financial results, trends, and significant events affecting operations during the quarter.",
+          },
+          {
+            name: "Item 3",
+            description:
+              "Quantitative and Qualitative Disclosures About Market Risk",
+            details:
+              "Details the registrant's exposure to risks such as interest rate, foreign currency exchange, commodity prices, and equity prices.",
+          },
+          {
+            name: "Item 4",
+            description: "Controls and Procedures",
+            details:
+              "Provides information about the effectiveness of disclosure controls and internal controls over financial reporting.",
+          },
+        ],
+      },
+      {
+        name: "Part II — Other Information",
+        subSections: [
+          {
+            name: "Item 1",
+            description: "Legal Proceedings",
+            details:
+              "Describes significant legal actions or updates to previously disclosed legal matters.",
+          },
+          {
+            name: "Item 1A",
+            description: "Risk Factors",
+            details:
+              "Reports any material changes to risk factors previously disclosed in the registrant's most recent Form 10-K.",
+          },
+          {
+            name: "Item 2",
+            description:
+              "Unregistered Sales of Equity Securities and Use of Proceeds",
+            details:
+              "Information about unregistered sales of securities and repurchases of equity securities during the quarter.",
+          },
+          {
+            name: "Item 3",
+            description: "Defaults Upon Senior Securities",
+            details:
+              "Reports material defaults or arrearages on debt or preferred equity securities.",
+          },
+          {
+            name: "Item 4",
+            description: "Mine Safety Disclosures",
+            details:
+              "If applicable, discloses mine safety information as required by the Dodd-Frank Act.",
+          },
+          {
+            name: "Item 5",
+            description: "Other Information",
+            details:
+              "Reports material events or information not disclosed elsewhere in the 10-Q.",
+          },
+          {
+            name: "Item 6",
+            description: "Exhibits",
+            details:
+              "Lists exhibits filed with the form, such as contracts, agreements, or certifications.",
+          },
+        ],
+      },
+    ],
+  },
+  {
     type: "10-K",
     description: "Annual Report",
     sections: [
@@ -152,91 +237,6 @@ export const SEC_FILING_TYPES: FilingType[] = [
             description: "Exhibits and Financial Statement Schedules",
             details:
               "Listing of exhibits and schedules included in the report.",
-          },
-        ],
-      },
-    ],
-  },
-  {
-    type: "10-Q",
-    description: "Quarterly Report",
-    sections: [
-      {
-        name: "Part I — Financial Information",
-        subSections: [
-          {
-            name: "Item 1",
-            description: "Financial Statements",
-            details:
-              "Includes the registrant's unaudited financial statements for the quarter, such as balance sheets, income statements, cash flow statements, and accompanying notes to the financial statements.",
-          },
-          {
-            name: "Item 2",
-            description:
-              "Management's Discussion and Analysis of Financial Condition and Results of Operations (MD&A)",
-            details:
-              "Discusses financial results, trends, and significant events affecting operations during the quarter.",
-          },
-          {
-            name: "Item 3",
-            description:
-              "Quantitative and Qualitative Disclosures About Market Risk",
-            details:
-              "Details the registrant's exposure to risks such as interest rate, foreign currency exchange, commodity prices, and equity prices.",
-          },
-          {
-            name: "Item 4",
-            description: "Controls and Procedures",
-            details:
-              "Provides information about the effectiveness of disclosure controls and internal controls over financial reporting.",
-          },
-        ],
-      },
-      {
-        name: "Part II — Other Information",
-        subSections: [
-          {
-            name: "Item 1",
-            description: "Legal Proceedings",
-            details:
-              "Describes significant legal actions or updates to previously disclosed legal matters.",
-          },
-          {
-            name: "Item 1A",
-            description: "Risk Factors",
-            details:
-              "Reports any material changes to risk factors previously disclosed in the registrant's most recent Form 10-K.",
-          },
-          {
-            name: "Item 2",
-            description:
-              "Unregistered Sales of Equity Securities and Use of Proceeds",
-            details:
-              "Information about unregistered sales of securities and repurchases of equity securities during the quarter.",
-          },
-          {
-            name: "Item 3",
-            description: "Defaults Upon Senior Securities",
-            details:
-              "Reports material defaults or arrearages on debt or preferred equity securities.",
-          },
-          {
-            name: "Item 4",
-            description: "Mine Safety Disclosures",
-            details:
-              "If applicable, discloses mine safety information as required by the Dodd-Frank Act.",
-          },
-          {
-            name: "Item 5",
-            description: "Other Information",
-            details:
-              "Reports material events or information not disclosed elsewhere in the 10-Q.",
-          },
-          {
-            name: "Item 6",
-            description: "Exhibits",
-            details:
-              "Lists exhibits filed with the form, such as contracts, agreements, or certifications.",
           },
         ],
       },
