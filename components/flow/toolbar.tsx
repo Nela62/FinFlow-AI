@@ -52,7 +52,7 @@ export const Toolbar = ({ workflowId }: { workflowId: string }) => {
   }, [workflowId]);
 
   return (
-    <div className="flex items-center justify-between gap-2 p-2 bg-transparent backdrop-blur-md absolute top-2 left-1/2 -translate-x-1/2 z-20 shadow-sm border rounded-lg">
+    <div className="flex items-center justify-between gap-2 p-2 bg-transparent backdrop-blur-md absolute top-4 left-1/2 -translate-x-1/2 z-20 shadow-sm border rounded-lg">
       <Button size="icon" className="bg-steel-blue-600 hover:bg-steel-blue-700">
         <Settings className="h-5 w-5" />
       </Button>

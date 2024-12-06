@@ -104,7 +104,7 @@ export const SummarizerContent = memo(
             step={50}
             defaultValue={wordCount}
             onValueChange={(vals) => {
-              updateConfigValue("wordCount", vals);
+              updateConfigValue("word_count", vals);
             }}
           />
 
