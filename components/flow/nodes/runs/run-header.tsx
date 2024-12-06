@@ -49,7 +49,7 @@ export const RunHeader = () => {
               )}
             >
               {/* {run.status.toLowerCase()} */}
-              {isRunning ? "Started" : "Completed"}
+              {isRunning ? "Started" : "Complete"}
             </p>
           </div>
         </div>

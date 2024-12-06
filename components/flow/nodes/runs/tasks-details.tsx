@@ -75,7 +75,7 @@ export const TasksDetails = ({
                     <p
                       className={cn(
                         "text-xs text-muted-foreground capitalize",
-                        task.status === "COMPLETED" && "text-green-600",
+                        task.status === "COMPLETE" && "text-green-600",
                         task.status === "FAILED" && "text-red-600",
                         task.status === "STARTED" && "text-yellow-600",
                         task.status === "PENDING" && "text-gray-600"

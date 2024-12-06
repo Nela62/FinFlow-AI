@@ -52,7 +52,7 @@ export const RunsList = ({ workflowId }: { workflowId: string }) => {
                   <p
                     className={cn(
                       "text-xs text-muted-foreground capitalize",
-                      run.status === "COMPLETED" && "text-green-600",
+                      run.status === "COMPLETE" && "text-green-600",
                       run.status === "FAILED" && "text-red-600",
                       run.status === "STARTED" && "text-yellow-600",
                       run.status === "PENDING" && "text-gray-600"

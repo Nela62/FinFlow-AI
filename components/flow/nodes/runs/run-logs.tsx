@@ -25,7 +25,7 @@ import { REALTIME_CHANNEL_STATES } from "@supabase/supabase-js";
 
 const TaskStatusIcon = ({ status }: { status: Task["status"] }) => {
   switch (status) {
-    case "COMPLETED":
+    case "COMPLETE":
       return <CircleCheck className="h-4 w-4 text-primary/80" />;
     case "STARTED":
       return <Loader2 className="h-4 w-4 animate-spin text-primary/80" />;
@@ -165,7 +165,7 @@ export const RunLogs = () => {
       throw new Error("Failed to fetch run data");
     }
 
-    if (runRes.data?.status === "COMPLETED") {
+    if (runRes.data?.status === "COMPLETE") {
       supabase.removeChannel(channel);
 
       setExecution({
@@ -238,7 +238,7 @@ export const RunLogs = () => {
   }, [selectedRunId]);
 
   useEffect(() => {
-    if (execution?.status === "COMPLETED") {
+    if (execution?.status === "COMPLETE") {
       setIsRunning(false);
     }
   }, [execution?.status]);
