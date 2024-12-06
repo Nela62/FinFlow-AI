@@ -90,6 +90,8 @@ export const RunLogs = () => {
           filter: `execution_id=eq.${selectedRunId}`,
         },
         (payload) => {
+          console.log("tasks payload", payload);
+
           setTasks((prev) => {
             const existingTaskIndex = prev.findIndex(
               (task) => task.id === (payload.new as any).id
@@ -124,7 +126,7 @@ export const RunLogs = () => {
           filter: `execution_id=eq.${selectedRunId}`,
         },
         (payload) => {
-          console.log("payload", payload);
+          console.log("subtasks payload", payload);
 
           setSubtasks((prev) => {
             const existingSubtaskIndex = prev.findIndex(
@@ -194,6 +196,9 @@ export const RunLogs = () => {
       while (channel.state !== REALTIME_CHANNEL_STATES.joined) {
         await new Promise((resolve) => setTimeout(resolve, 100));
       }
+      console.log("channel joined");
+      console.log("tasksRes.data", tasksRes.data);
+      console.log("subtasksRes.data", subtasksRes.data);
 
       !execution &&
         setExecution({
@@ -248,7 +253,6 @@ export const RunLogs = () => {
   }, [init]);
 
   const taskSubtasksMap = useMemo(() => {
-    console.log("subtasks", subtasks);
     return subtasks.reduce(
       (acc, subtask) => {
         if (!acc[subtask.taskId]) {
@@ -260,10 +264,6 @@ export const RunLogs = () => {
       {} as Record<string, Subtask[]>
     );
   }, [subtasks]);
-
-  useEffect(() => {
-    console.log("taskSubtasksMap", taskSubtasksMap);
-  }, [taskSubtasksMap]);
 
   return (
     <div className="space-y-2 py-2 px-4">

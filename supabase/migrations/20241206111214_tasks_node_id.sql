@@ -1,0 +1,3 @@
+ALTER TABLE tasks
+  ALTER COLUMN node_id DROP NOT NULL;
+
