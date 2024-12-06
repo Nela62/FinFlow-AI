@@ -142,7 +142,8 @@ export const RunLogs = () => {
             return [...prev, newSubtask];
           });
         }
-      );
+      )
+      .subscribe();
 
     const [runRes, tasksRes, subtasksRes] = await Promise.all([
       fetchExecutionById(supabase, selectedRunId),
@@ -150,48 +151,73 @@ export const RunLogs = () => {
       fetchAllSubtasksByExecutionId(supabase, selectedRunId),
     ]);
 
-    console.log("subtasksRes", subtasksRes);
+    // console.log("subtasksRes", subtasksRes);
 
-    if (!runRes.data || !tasksRes.data || !subtasksRes.data) return;
-
-    if (runRes.data?.status !== "COMPLETED") {
-      // Subscribe to changes
-      channel.subscribe();
+    if (!runRes.data || !tasksRes.data || !subtasksRes.data) {
+      setIsLoading(false);
+      throw new Error("Failed to fetch run data");
     }
 
-    !execution &&
+    if (runRes.data?.status === "COMPLETED") {
+      supabase.removeChannel(channel);
+
       setExecution({
-        id: runRes.data?.id,
-        name: runRes.data?.name,
-        status: runRes.data?.status,
+        ...runRes.data,
         startedAt: runRes.data?.started_at,
         completedAt: runRes.data?.completed_at,
       });
-
-    setTasks((prev) => [
-      ...prev,
-      ...tasksRes.data
-        .filter((t) => !prev.some((p) => p.id === t.id))
-        .map((t) => ({
+      setTasks(
+        tasksRes.data.map((t) => ({
           ...t,
           inputValues: t.input_values as IOValue[],
           outputValues: t.output_values as IOValue[],
           startedAt: t.started_at,
           completedAt: t.completed_at,
-        })),
-    ]);
-
-    setSubtasks((prev) => [
-      ...prev,
-      ...subtasksRes.data
-        .filter((t) => !prev.some((p) => p.id === t.id))
-        .map((t) => ({
+        }))
+      );
+      setSubtasks(
+        subtasksRes.data.map((t) => ({
           ...t,
           createdAt: t.created_at,
           updatedAt: t.updated_at,
           taskId: t.task_id,
-        })),
-    ]);
+        }))
+      );
+    } else {
+      !execution &&
+        setExecution({
+          id: runRes.data?.id,
+          name: runRes.data?.name,
+          status: runRes.data?.status,
+          startedAt: runRes.data?.started_at,
+          completedAt: runRes.data?.completed_at,
+        });
+
+      setTasks((prev) => [
+        ...prev,
+        ...tasksRes.data
+          .filter((t) => !prev.some((p) => p.id === t.id))
+          .map((t) => ({
+            ...t,
+            inputValues: t.input_values as IOValue[],
+            outputValues: t.output_values as IOValue[],
+            startedAt: t.started_at,
+            completedAt: t.completed_at,
+          })),
+      ]);
+
+      setSubtasks((prev) => [
+        ...prev,
+        ...subtasksRes.data
+          .filter((t) => !prev.some((p) => p.id === t.id))
+          .map((t) => ({
+            ...t,
+            createdAt: t.created_at,
+            updatedAt: t.updated_at,
+            taskId: t.task_id,
+          })),
+      ]);
+    }
 
     setIsLoading(false);
 
