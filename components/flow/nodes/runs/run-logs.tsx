@@ -46,6 +46,12 @@ export const RunLogs = () => {
 
   const supabase = createClient();
 
+  useEffect(() => {
+    setExecution(null);
+    setTasks([]);
+    setSubtasks([]);
+  }, [selectedRunId]);
+
   const init = useCallback(async () => {
     if (!selectedRunId) return;
     setIsLoading(true);
