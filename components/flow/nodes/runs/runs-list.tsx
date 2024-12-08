@@ -1,6 +1,7 @@
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
+import { TOP_BAR_HEIGHT } from "@/lib/const";
 import { fetchAllExecutionsByWorkflowId } from "@/lib/queries";
 import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
@@ -24,9 +25,14 @@ export const RunsList = ({ workflowId }: { workflowId: string }) => {
   if (isLoading || !runs) return <Skeleton className="h-10 w-full" />;
 
   return (
-    <div className="pl-2 pt-4 flex flex-col gap-2 h-full">
-      <p className="text-lg font-semibold pl-2">Runs</p>
-      <ScrollArea className="flex-1 pr-2">
+    <div className="flex flex-col gap-2 h-full">
+      <div
+        className="text-lg font-semibold border-b border-slate-300 flex items-center px-4"
+        style={{ height: TOP_BAR_HEIGHT }}
+      >
+        <p className="">Runs</p>
+      </div>
+      <ScrollArea className="flex-1 px-2">
         {runs.length > 0 ? (
           runs
             .sort(

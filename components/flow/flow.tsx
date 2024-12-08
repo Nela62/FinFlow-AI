@@ -208,10 +208,9 @@ const DnDFlow = ({
       <Dialog>
         <Popover>
           <div
-            className="h-full w-full relative bg-slate-200 rounded-tl-xl"
+            className="h-full w-full relative bg-slate-200 rounded-tl-[5px]"
             ref={reactFlowWrapper}
           >
-            <Toolbar workflowId={workflowId} />
             <ReactFlow
               nodes={nodes}
               nodeTypes={nodeTypes}
@@ -239,8 +238,11 @@ const DnDFlow = ({
               {/* <Controls /> */}
             </ReactFlow>
           </div>
-          <NodeLibrarySidebar />
-          <RunsSidebar workflowId={workflowId} />
+          <div className="flex absolute top-0 left-0 right-0 bottom-0 pointer-events-none">
+            <NodeLibrarySidebar />
+            <Toolbar workflowId={workflowId} />
+            <RunsSidebar workflowId={workflowId} />
+          </div>
         </Popover>
       </Dialog>
     </div>

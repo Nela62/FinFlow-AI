@@ -9,7 +9,7 @@ export const RunsSidebar = ({ workflowId }: { workflowId: string }) => {
   return (
     <div
       className={cn(
-        "flex flex-col gap-4 h-full absolute top-0 bottom-0 right-0 border-l backdrop-blur-md bg-background/40 shadow-sm",
+        "flex flex-col gap-4 h-full border-l backdrop-blur-md bg-background/40 shadow-sm pointer-events-auto",
         selectedRunId ? "w-[500px]" : "w-[300px]"
       )}
     >

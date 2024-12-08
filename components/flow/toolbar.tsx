@@ -8,6 +8,8 @@ import { TriggerContent } from "./triggers/trigger-content";
 import { useQuery } from "@supabase-cache-helpers/postgrest-react-query";
 import { fetchNodesByWorkflowId } from "@/lib/queries";
 import { createClient } from "@/lib/supabase/client";
+import { TOP_BAR_HEIGHT } from "@/lib/const";
+import { Separator } from "../ui/separator";
 
 export type Trigger = {
   id: string;
@@ -52,16 +54,18 @@ export const Toolbar = ({ workflowId }: { workflowId: string }) => {
   }, [workflowId]);
 
   return (
-    <div className="flex items-center justify-between gap-2 p-2 bg-transparent backdrop-blur-md absolute top-4 left-1/2 -translate-x-1/2 z-20 shadow-sm border rounded-lg">
-      <Button size="icon" className="bg-steel-blue-600 hover:bg-steel-blue-700">
-        <Settings className="h-5 w-5" />
+    <div
+      className="grow flex items-center justify-end pr-4 h-fit gap-2 backdrop-blur-md bg-background/40 shadow-sm border-b border-slate-300 z-20 pointer-events-auto"
+      style={{ height: TOP_BAR_HEIGHT }}
+    >
+      <Separator orientation="vertical" className="h-full text-slate-300" />
+      <Button size="icon" variant="ghost" className="h-fit w-fit p-1.5">
+        <Settings className="h-4 w-4" />
       </Button>
+      <Separator orientation="vertical" className="h-full text-slate-300" />
       <PopoverTrigger asChild>
-        <Button
-          size="icon"
-          className="bg-steel-blue-600 hover:bg-steel-blue-700"
-        >
-          <AlarmClock className="h-5 w-5" />
+        <Button size="icon" variant="ghost" className="h-fit w-fit p-1.5">
+          <AlarmClock className="h-4 w-4" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="space-y-2 mt-4">
@@ -80,22 +84,28 @@ export const Toolbar = ({ workflowId }: { workflowId: string }) => {
           </p>
         )}
         <DialogTrigger asChild>
-          <Button variant="outline" size="sm" className="flex gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            className="flex gap-2  h-fit w-fit p-2"
+          >
             <Plus className="h-4 w-4" />
             New Trigger
           </Button>
         </DialogTrigger>
         <TriggerContent addTrigger={addTrigger} />
       </PopoverContent>
+      <Separator orientation="vertical" className="h-full text-slate-300" />
       <Button
-        className="bg-steel-blue-600 hover:bg-steel-blue-700"
+        variant="ghost"
+        className="w-fit p-1.5"
         onClick={runWorkflow}
         disabled={isRunning}
       >
         {isRunning ? (
-          <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
         ) : (
-          <Play className="h-5 w-5 mr-2" />
+          <Play className="h-4 w-4 mr-2" />
         )}
         {isRunning ? "Running..." : "Run"}
       </Button>
