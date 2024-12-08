@@ -1,20 +1,9 @@
 "use client";
 
-import { AppSidebar } from "@/components/app-sidebar";
-import { Breadcrumbs } from "@/components/breadcrumbs";
-import Chat from "@/components/chat/chat";
-import { Card } from "@/components/ui/card";
-import {
-  ResizableHandle,
-  ResizablePanel,
-  ResizablePanelGroup,
-} from "@/components/ui/resizable";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { TopBarAddWidgets } from "@/components/widgets/top-bar-add-widgets";
-import { cn } from "@/lib/utils";
-import { usePathname } from "next/navigation";
+import { LeftSidebar } from "@/components/sidebar/left-sidebar";
+import { Button } from "@/components/ui/button";
+import { SidebarProvider } from "@/components/ui/sidebar";
+import { Bot } from "lucide-react";
 
 export const LayoutComponent = ({
   children,
@@ -23,15 +12,20 @@ export const LayoutComponent = ({
   children: React.ReactNode;
   userId: string;
 }) => {
-  const pathname = usePathname();
-  const paths = pathname.split("/");
-  const isWorkflowsPage = paths[1] === "workflows";
-
   return (
-    <SidebarProvider>
-      <AppSidebar />
-      <div className="px-2 bg-sidebar w-full max-h-screen">
-        <ResizablePanelGroup direction="horizontal" className="">
+    <SidebarProvider className="flex">
+      {/* <AppSidebar /> */}
+      <LeftSidebar />
+      <div className="bg-sidebar w-full max-h-screen relative grow">
+        <div className="w-full h-[35px] bg-slate-700 z-40">
+          <Button variant="ghost" size="icon">
+            <Bot className="w-4 h-4 text-white" />
+          </Button>
+        </div>
+        <div className="relative h-[calc(100vh-35px)] w-full bg-slate-700">
+          {children}
+        </div>
+        {/* <ResizablePanelGroup direction="horizontal" className="">
           <ResizablePanel defaultSize={75}>
             <Card className="flex-1 my-2 h-[calc(100vh-16px)] flex flex-col w-full">
               {!isWorkflowsPage ? (
@@ -68,7 +62,7 @@ export const LayoutComponent = ({
               </ResizablePanel>
             </>
           )}
-        </ResizablePanelGroup>
+        </ResizablePanelGroup> */}
       </div>
     </SidebarProvider>
   );

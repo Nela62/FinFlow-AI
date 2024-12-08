@@ -11,9 +11,8 @@ import { ArrowLeftIcon } from "lucide-react";
 // TODO: Improve the design of this component: add completion time
 
 export const RunHeader = () => {
-  const { selectedRunId, resetSelectedRunId, isRunning } = useNodesStore(
-    (state) => state
-  );
+  const { selectedRunId, resetSelectedRunId, isRunning, setIsRunning } =
+    useNodesStore((state) => state);
 
   const supabase = createClient();
   const { data: run } = useQuery(
@@ -27,7 +26,10 @@ export const RunHeader = () => {
         <div className="flex justify-between items-center px-4 py-2">
           <div className="flex items-center gap-2">
             <Button
-              onClick={resetSelectedRunId}
+              onClick={() => {
+                resetSelectedRunId();
+                setIsRunning(false);
+              }}
               size="icon"
               variant="ghost"
               className="h-8 w-8"

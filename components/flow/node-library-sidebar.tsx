@@ -1,8 +1,6 @@
-import React, { useState } from "react";
+import React from "react";
 import { useDnD } from "./dnd-context";
 import { Card, CardContent } from "../ui/card";
-import { Button } from "../ui/button";
-import { useNodesStore } from "@/providers/nodesProvider";
 import { cn } from "@/lib/utils";
 
 const nodesList = [
@@ -17,7 +15,7 @@ const nodesList = [
   { id: "email-sender", name: "Email Sender", disabled: false },
 ];
 
-export default () => {
+export const NodeLibrarySidebar = () => {
   const [_, setType] = useDnD();
 
   const onDragStart = (
@@ -30,7 +28,7 @@ export default () => {
   };
 
   return (
-    <aside className="flex flex-col gap-4 w-fit absolute top-4 left-4 border rounded-md backdrop-blur-md bg-background/40 p-4 shadow-sm">
+    <aside className="flex flex-col gap-4 rounded-tl-xl absolute top-0 left-0 bottom-0 border-r backdrop-blur-md bg-background/40 p-4 shadow-sm w-[300px]">
       <div className="text-lg font-semibold">Node Library</div>
       {nodesList
         .sort((a, b) => a.name.localeCompare(b.name))

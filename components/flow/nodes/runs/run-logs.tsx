@@ -112,6 +112,7 @@ export const RunLogs = () => {
         while (channel.state !== REALTIME_CHANNEL_STATES.joined) {
           await new Promise((resolve) => setTimeout(resolve, 100));
         }
+        console.log("channel joined at ", new Date().toISOString());
 
         const [tasksRes, subtasksRes] = await Promise.all([
           fetchAllTasksByExecutionId(supabase, selectedRunId),
@@ -123,7 +124,6 @@ export const RunLogs = () => {
           throw new Error("Failed to fetch run data");
         }
 
-        console.log("channel joined");
         console.log("tasksRes.data", tasksRes.data);
         console.log("subtasksRes.data", subtasksRes.data);
 

@@ -22,7 +22,7 @@ import { useDebouncedCallback } from "use-debounce";
 import "@xyflow/react/dist/style.css";
 
 import { DnDProvider, useDnD } from "./dnd-context";
-import Sidebar from "./node-library-sidebar";
+import { NodeLibrarySidebar } from "./node-library-sidebar";
 import { Toolbar } from "./toolbar";
 import { Dialog } from "../ui/dialog";
 import { Popover } from "../ui/popover";
@@ -208,7 +208,7 @@ const DnDFlow = ({
       <Dialog>
         <Popover>
           <div
-            className="h-[calc(100vh-18px)] w-[calc(100vw-70px)] relative"
+            className="h-full w-full relative bg-slate-200 rounded-tl-xl"
             ref={reactFlowWrapper}
           >
             <Toolbar workflowId={workflowId} />
@@ -235,11 +235,11 @@ const DnDFlow = ({
               }}
               defaultViewport={{ x: 200, y: 100, zoom: 0.7 }}
             >
-              <Background size={2.5} gap={34} />
-              <Controls />
+              <Background size={1} gap={20} />
+              {/* <Controls /> */}
             </ReactFlow>
           </div>
-          <Sidebar />
+          <NodeLibrarySidebar />
           <RunsSidebar workflowId={workflowId} />
         </Popover>
       </Dialog>

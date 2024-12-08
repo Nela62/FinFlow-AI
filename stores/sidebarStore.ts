@@ -1,22 +1,26 @@
 import { createStore } from "zustand/vanilla";
 import { devtools } from "zustand/middleware";
-import { Panel, Widget } from "@/types/panel";
+
+export type TabType = "workflows";
 
 export type SidebarState = {
-  isChatOpen: boolean;
-  workspaceId: string | null;
+  selectedTab: TabType;
+  // isChatOpen: boolean;
+  // workspaceId: string | null;
 };
 
 export type SidebarActions = {
-  setIsChatOpen: (isChatOpen: boolean) => void;
-  setWorkspaceId: (workspaceId: string) => void;
+  setSelectedTab: (selectedTab: TabType) => void;
+  // setIsChatOpen: (isChatOpen: boolean) => void;
+  // setWorkspaceId: (workspaceId: string) => void;
 };
 
 export type SidebarStore = SidebarState & SidebarActions;
 
 const defaultInitState: SidebarState = {
-  isChatOpen: false,
-  workspaceId: null,
+  selectedTab: "workflows",
+  // isChatOpen: false,
+  // workspaceId: null,
 };
 
 export const createSidebarStore = (
@@ -25,8 +29,9 @@ export const createSidebarStore = (
   return createStore<SidebarStore>()(
     devtools((set) => ({
       ...initState,
-      setIsChatOpen: (isChatOpen) => set({ isChatOpen }),
-      setWorkspaceId: (workspaceId) => set({ workspaceId }),
+      setSelectedTab: (selectedTab) => set({ selectedTab }),
+      // setIsChatOpen: (isChatOpen) => set({ isChatOpen }),
+      // setWorkspaceId: (workspaceId) => set({ workspaceId }),
     }))
   );
 };
