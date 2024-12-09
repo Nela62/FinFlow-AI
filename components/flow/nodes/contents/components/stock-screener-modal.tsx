@@ -17,6 +17,7 @@ import { Input } from "@/components/ui/input";
 import { Trash2Icon } from "lucide-react";
 import { STOCK_FILTERS, stockFiltersMap } from "@/lib/stock-filters";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import React from "react";
 
 type Rule = {
   field: string;
@@ -73,6 +74,37 @@ const initialConfig: Group = {
       ],
     },
   ],
+
+  // {
+  //   logic: "AND",
+  //   rules: [
+  //     { field: "industry", operator: "equal", value: "semiconductors" },
+  //     {
+  //       logic: "AND",
+  //       rules: [
+  //         { field: "pe_ratio", operator: "less", value: 25 },
+  //         {
+  //           logic: "OR",
+  //           rules: [
+  //             { field: "revenue_growth_yoy", operator: "greater", value: 15 },
+  //             { field: "gross_margin", operator: "greater", value: 50 },
+  //           ],
+  //         },
+  //         {
+  //           logic: "OR",
+  //           rules: [
+  //             { field: "debt_to_equity", operator: "less", value: 0.3 },
+  //             {
+  //               field: "return_on_invested_capital",
+  //               operator: "greater",
+  //               value: 20,
+  //             },
+  //           ],
+  //         },
+  //       ],
+  //     },
+  //   ],
+  // },
 };
 
 export const StockScreenerModal = () => {
@@ -144,82 +176,96 @@ export const StockScreenerModal = () => {
         </div>
       </div>
       <div className="space-y-4">
-        {group.rules.map((rule, ruleIndex) =>
-          "logic" in rule ? (
-            renderRules(rule as Group, ruleIndex)
-          ) : (
-            <div
-              className="p-2 mt-2 grid grid-cols-[2fr_1fr_1fr_auto] gap-2"
-              key={ruleIndex}
-            >
-              <Select
-                options={STOCK_FILTERS.map((group) => ({
-                  label: group.label,
-                  options: group.options.map((option) => ({
+        {group.rules.map((rule, ruleIndex) => (
+          <React.Fragment key={ruleIndex}>
+            {ruleIndex > 0 && (
+              <div className="text-center text-gray-500 font-medium text-sm">
+                {group.logic}
+              </div>
+            )}
+            {"logic" in rule ? (
+              renderRules(rule as Group, ruleIndex)
+            ) : (
+              <div
+                className="p-2 mt-2 grid grid-cols-[2fr_1fr_1fr_auto] gap-2"
+                key={ruleIndex}
+              >
+                <Select
+                  options={STOCK_FILTERS.map((group) => ({
+                    label: group.label,
+                    options: group.options.map((option) => ({
+                      label:
+                        stockFiltersMap[option as keyof typeof stockFiltersMap],
+                      value: option,
+                    })),
+                  }))}
+                  value={{
                     label:
-                      stockFiltersMap[option as keyof typeof stockFiltersMap],
-                    value: option,
-                  })),
-                }))}
-                value={{
-                  label:
-                    stockFiltersMap[rule.field as keyof typeof stockFiltersMap],
-                  value: rule.field,
-                }}
-                onChange={(value) => {
-                  // if (value && Array.isArray(value)) {
-                  //   setValue(value);
-                  // }
-                }}
-                primaryColor="sky"
-                isClearable
-                isSearchable
-                formatGroupLabel={(data) => (
-                  <div
-                    className={`py-2 text-xs flex items-center justify-between`}
-                  >
-                    <span className="font-bold">{data.label}</span>
-                    <span className="bg-gray-200 h-5 p-1.5 flex items-center justify-center rounded-full">
-                      {data.options.length}
-                    </span>
-                  </div>
-                )}
-              />
+                      stockFiltersMap[
+                        rule.field as keyof typeof stockFiltersMap
+                      ],
+                    value: rule.field,
+                  }}
+                  onChange={(value) => {
+                    if (value && !Array.isArray(value)) {
+                      const newConfig = { ...config };
+                      (newConfig.rules[groupIndex] as Group).rules[ruleIndex] =
+                        {
+                          ...rule,
+                          field: value.value,
+                        };
+                      setConfig(newConfig);
+                    }
+                  }}
+                  primaryColor="sky"
+                  isClearable
+                  isSearchable
+                  formatGroupLabel={(data) => (
+                    <div
+                      className={`py-2 text-xs flex items-center justify-between`}
+                    >
+                      <span className="font-bold">{data.label}</span>
+                      <span className="bg-gray-200 h-5 p-1.5 flex items-center justify-center rounded-full">
+                        {data.options.length}
+                      </span>
+                    </div>
+                  )}
+                />
 
-              <Select
-                options={
-                  stringMetrics.includes(rule.field)
-                    ? stringOperators
-                    : numberOperators
-                }
-                value={operator}
-                primaryColor="sky"
-                onChange={(value) => {
-                  // const newConfig = { ...config };
-                  // (newConfig.rules[groupIndex] as Group).rules[ruleIndex] = {
-                  //   ...rule,
-                  //   operator: value,
-                  // };
-                  // setConfig(newConfig);
-                }}
-              />
-              <Input
-                type="text"
-                placeholder="Field"
-                value={rule.value ?? ""}
-                onChange={(e) => {
-                  const newConfig = { ...config };
-                  (newConfig.rules[groupIndex] as Group).rules[ruleIndex] = {
-                    ...rule,
-                    field: e.target.value,
-                  };
-                  setConfig(newConfig);
-                }}
-              />
-              <Button variant="secondary" size="icon">
-                <Trash2Icon className="w-4 h-4" />
-              </Button>
-              {/* <select
+                <Select
+                  options={
+                    stringMetrics.includes(rule.field)
+                      ? stringOperators
+                      : numberOperators
+                  }
+                  value={operator}
+                  primaryColor="sky"
+                  onChange={(value) => {
+                    // const newConfig = { ...config };
+                    // (newConfig.rules[groupIndex] as Group).rules[ruleIndex] = {
+                    //   ...rule,
+                    //   operator: value,
+                    // };
+                    // setConfig(newConfig);
+                  }}
+                />
+                <Input
+                  type="text"
+                  placeholder="Field"
+                  value={rule.value ?? ""}
+                  onChange={(e) => {
+                    const newConfig = { ...config };
+                    (newConfig.rules[groupIndex] as Group).rules[ruleIndex] = {
+                      ...rule,
+                      field: e.target.value,
+                    };
+                    setConfig(newConfig);
+                  }}
+                />
+                <Button variant="secondary" size="icon">
+                  <Trash2Icon className="w-4 h-4" />
+                </Button>
+                {/* <select
               value={rule.operator}
               onChange={(e) => {
                 const newConfig = { ...config };
@@ -234,7 +280,7 @@ export const StockScreenerModal = () => {
               <option value="equal">equal</option>
               <option value="contains">contains</option>
             </select> */}
-              {/* <input
+                {/* <input
               type="text"
               placeholder="Value"
               value={rule.value ?? ""}
@@ -247,9 +293,10 @@ export const StockScreenerModal = () => {
                 setConfig(newConfig);
               }}
               /> */}
-            </div>
-          )
-        )}
+              </div>
+            )}
+          </React.Fragment>
+        ))}
       </div>
     </Card>
   );

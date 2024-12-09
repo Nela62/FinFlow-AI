@@ -34,7 +34,9 @@ export const OutputHandle = ({
         <div className="flex gap-1 bg-background rounded-md px-2 py-0.5 items-center">
           {/* <File className="h-2 w-2 text-muted-foreground" /> */}
           <p className="text-xs text-muted-foreground">
-            {selectedFileFormat.fileFormat}
+            {output.isList
+              ? `List[${selectedFileFormat.fileFormat}]`
+              : selectedFileFormat.fileFormat}
           </p>
         </div>
       </div>
