@@ -1,4 +1,4 @@
-import { memo, useCallback, useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import { NodeInput, NodeOutput, NodeType } from "@/types/node";
 import { Input } from "@/components/ui/input";
 import { DataCategory, FileFormat } from "@/types/dataFormat";
@@ -22,6 +22,7 @@ const inputs: NodeInput[] = [
       dataCategory: DataCategory.Text,
       fileFormats: [FileFormat.TXT],
       dynamic: false,
+      isList: false,
     },
     value: "",
   },
@@ -51,13 +52,7 @@ export const EMAIL_SENDER_NODE_DEFAULT_DATA: NodeData = {
 };
 
 export const EmailSenderContent = memo(
-  ({
-    id,
-    data,
-  }: {
-    id: string;
-    data: NodeData;
-  }) => {
+  ({ id, data }: { id: string; data: NodeData }) => {
     const [config, setConfig] = useState<NodeInput[]>(data.inputs);
 
     const updateConfigValue = createUpdateConfigValue(setConfig);

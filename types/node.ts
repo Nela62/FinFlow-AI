@@ -5,12 +5,14 @@ export enum NodeType {
   SEC_FILING = "sec-filing",
   SUMMARIZER = "summarizer",
   EMAIL_SENDER = "email-sender",
+  STOCK_SCREENER = "stock-screener",
 }
 
 type NodeInputHandleTrue = {
   hasHandle: "true";
   dataCategory: DataCategory;
   fileFormats: FileFormat[];
+  isList: boolean;
   dynamic: boolean;
 };
 
@@ -35,6 +37,7 @@ export type NodeOutput = {
   label: string;
   allowMultiple: boolean;
   supportedFileFormats: SupportedFileFormat[];
+  isList: boolean;
 };
 
 export type NodeContent = React.ReactNode;

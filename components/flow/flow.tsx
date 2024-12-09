@@ -37,7 +37,7 @@ import {
   nodeTypes,
 } from "@/types/react-flow";
 import { DEFAULT_DATA_MAP } from "./nodes/constants/node-map";
-import { RunsSidebar } from "./nodes/runs/runs-sidebar";
+import { RunsSidebar } from "./runs/runs-sidebar";
 
 const PositionSchema = z.object({
   x: z.number(),

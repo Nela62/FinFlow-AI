@@ -26,6 +26,7 @@ const inputs: NodeInput[] = [
       dataCategory: DataCategory.Text,
       fileFormats: [FileFormat.TXT],
       dynamic: true,
+      isList: false,
     },
     value: "",
   },
@@ -65,6 +66,7 @@ const outputs: NodeOutput[] = [
     supportedFileFormats: [
       { fileFormat: FileFormat.MD, value: { selected: true } },
     ],
+    isList: false,
   },
 ];
 

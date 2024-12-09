@@ -14,6 +14,7 @@ const nodesList = [
   { id: "appender", name: "Appender", disabled: true },
   { id: "document-compiler", name: "Document Compiler", disabled: true },
   { id: "email-sender", name: "Email Sender", disabled: false },
+  { id: "stock-screener", name: "Stock Screener", disabled: false },
 ];
 
 export const NodeLibrarySidebar = () => {
@@ -29,7 +30,7 @@ export const NodeLibrarySidebar = () => {
   };
 
   return (
-    <aside className="flex flex-col gap-4 rounded-tl-[5px] border-r border-slate-300 backdrop-blur-md bg-background/40 shadow-sm w-[300px] pointer-events-auto">
+    <aside className="flex flex-col gap-4 rounded-tl-[5px] border-r border-slate-300 backdrop-blur-md bg-background/95 shadow-sm w-[300px] pointer-events-auto">
       <div
         className="text-lg font-semibold border-b border-slate-300 flex items-center px-4"
         style={{ height: TOP_BAR_HEIGHT }}

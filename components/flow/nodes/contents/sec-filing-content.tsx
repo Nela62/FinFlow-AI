@@ -1,4 +1,4 @@
-import { memo, useCallback, useEffect, useMemo, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import { useReactFlow } from "@xyflow/react";
 import { useQuery } from "@supabase-cache-helpers/postgrest-react-query";
 import { Separator } from "@/components/ui/separator";
@@ -25,6 +25,7 @@ const inputs: NodeInput[] = [
       dataCategory: DataCategory.Text,
       fileFormats: [FileFormat.TXT],
       dynamic: false,
+      isList: false,
     },
     value: "AAPL",
   },
@@ -35,6 +36,7 @@ const inputs: NodeInput[] = [
       dataCategory: DataCategory.Text,
       fileFormats: [FileFormat.TXT],
       dynamic: false,
+      isList: false,
     },
     value: "10-Q",
   },
@@ -48,6 +50,7 @@ const outputs: NodeOutput[] = [
     supportedFileFormats: [
       { fileFormat: FileFormat.MD, value: { selected: true } },
     ],
+    isList: false,
   },
 ];
 
