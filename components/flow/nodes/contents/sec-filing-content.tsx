@@ -68,8 +68,8 @@ export const SecFilingContent = memo(
 
     const updateConfigValue = createUpdateConfigValue(setConfig);
 
-    const chosenTicker = useInputValue(config, "ticker");
-    const chosenFilingType = useInputValue(config, "filing_type");
+    const selectedTicker = useInputValue(config, "ticker");
+    const selectedFilingType = useInputValue(config, "filing_type");
 
     const { updateNodeData } = useReactFlow();
 
@@ -93,7 +93,7 @@ export const SecFilingContent = memo(
         <div className="space-y-2 px-2">
           <p className="text-sm font-semibold">Company</p>
           <StockPicker
-            currentStockTicker={chosenTicker}
+            currentStockTicker={selectedTicker}
             onStockClick={(stockId) => {
               setStockId(stockId);
             }}
@@ -106,7 +106,7 @@ export const SecFilingContent = memo(
                 key={filingType.type}
                 className={cn(
                   "rounded-md p-1 space-y-1 border-2 cursor-pointer",
-                  chosenFilingType === filingType.type
+                  selectedFilingType === filingType.type
                     ? "bg-steel-blue-200 border-steel-blue-500"
                     : "bg-muted border-transparent"
                 )}

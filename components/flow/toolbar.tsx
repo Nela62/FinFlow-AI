@@ -55,7 +55,7 @@ export const Toolbar = ({ workflowId }: { workflowId: string }) => {
 
   return (
     <div
-      className="grow flex items-center justify-end pr-4 h-fit gap-2 backdrop-blur-md bg-background/40 shadow-sm border-b border-slate-300 z-20 pointer-events-auto"
+      className="grow flex items-center justify-end pr-4 h-fit gap-2 backdrop-blur-md bg-background/80 shadow-sm border-b border-slate-300 z-20 pointer-events-auto"
       style={{ height: TOP_BAR_HEIGHT }}
     >
       <Separator orientation="vertical" className="h-full text-slate-300" />

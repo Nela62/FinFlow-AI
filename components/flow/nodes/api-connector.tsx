@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { memo, useEffect } from "react";
 import type { SVGProps } from "react";
 
 import type { Node, NodeProps } from "@xyflow/react";
@@ -31,91 +31,60 @@ import {
 import { Button } from "@/components/ui/button";
 import { ChevronDown } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { NodeInput, NodeOutput } from "@/types/node";
+import { NodeInput, NodeOutput, NodeType } from "@/types/node";
 import { useDebouncedCallback } from "use-debounce";
 import { res } from "./temp/api";
 import { createClient } from "@/lib/supabase/client";
 import { useQuery } from "@supabase-cache-helpers/postgrest-react-query";
 import { fetchStockById } from "@/lib/queries";
-
-function MajesticonsDataLine(props: SVGProps<SVGSVGElement>) {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="1em"
-      height="1em"
-      viewBox="0 0 24 24"
-      {...props}
-    >
-      <path
-        fill="none"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={2}
-        d="M21 7c0 2.21-4.03 4-9 4S3 9.21 3 7m18 0c0-2.21-4.03-4-9-4S3 4.79 3 7m18 0v5M3 7v5m18 0c0 2.21-4.03 4-9 4s-9-1.79-9-4m18 0v5c0 2.21-4.03 4-9 4s-9-1.79-9-4v-5"
-      ></path>
-    </svg>
-  );
-}
+import { DataCategory, FileFormat } from "@/types/dataFormat";
+import { NodeData } from "@/types/react-flow";
+import { useInputValue } from "@/hooks/use-input-value";
+import { createUpdateConfigValue } from "@/lib/update-config-value";
 
 const inputs: NodeInput[] = [
-  // {
-  //   label: "ticker",
-  //   acceptedDataCategory: DataCategoryEnum.Text,
-  //   acceptedFileFormats: [FileFormat.TXT],
-  // },
+  {
+    label: "ticker",
+    handle: {
+      hasHandle: "true",
+      dataCategory: DataCategory.Text,
+      fileFormats: [FileFormat.TXT],
+      dynamic: false,
+      isList: false,
+    },
+    value: "AAPL",
+  },
+  {
+    label: "api_provider",
+    value: "yfinance",
+    handle: { hasHandle: "false" },
+  },
+  {
+    label: "endpoints",
+    value: ["income", "balance", "cashflow"],
+    handle: { hasHandle: "false" },
+  },
 ];
-
-type Params = {
-  ticker: string;
-  apiProvider: string;
-  endpoints: string[];
-};
-
-const defaultParams: Params = {
-  ticker: "AAPL",
-  apiProvider: "yfinance",
-  endpoints: ["income", "balance", "cashflow"],
-};
 
 const outputs: NodeOutput[] = [
-  // { label: "data", dataType: FileFormat.JSON },
-  // { label: "data", dataType: FileFormat.XML },
-  // { label: "tables", dataType: FileFormat.CSV },
-  // { label: "tables", dataType: FileFormat.XLSX },
+  {
+    label: "data",
+    allowMultiple: false,
+    supportedFileFormats: [
+      { fileFormat: FileFormat.JSON, value: { selected: true } },
+    ],
+    isList: false,
+  },
 ];
 
-const runFn = async (params: Record<string, any>) => {
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-  return {
-    id: "api-connector",
-    inputData: params.ticker,
-    params: params,
-    outputData: res,
-    logs: [`Fetching data from ${params.apiProvider}`],
-  };
-};
-
-// TODO: This can be abstracted to a generic node type + params type
-export type ApiConnectorNodeData = {
-  label: string;
-  params: Params;
-  inputs: NodeInput[];
-  outputs: NodeOutput[];
-};
-
-export const defaultData: ApiConnectorNodeData = {
-  label: "API Connector",
-  params: defaultParams,
+export const API_CONNECTOR_NODE_DEFAULT_DATA: NodeData = {
+  title: "API Connector",
+  type: NodeType.API_CONNECTOR,
   inputs,
-  outputs: [],
-  // outputs: [{ label: "data", dataType: FileFormat.JSON }],
+  outputs,
 };
 
-export type ApiConnectorNode = Node<ApiConnectorNodeData>;
-
-const apiProviders = [
+const API_PROVIDERS = [
   { id: "benzinga", name: "Benzinga" },
   { id: "bls", name: "Bureau of Labor Statistics" },
   { id: "cftc", name: "Commodity Futures Trading Commission" },
@@ -155,195 +124,183 @@ const sections = [
   },
 ];
 
-function ApiConnectorNodeComponent({ id, data }: NodeProps<ApiConnectorNode>) {
-  // TODO: Check if there is an input and adjust the ticker param
-  const updateNodeInternals = useUpdateNodeInternals();
-  const [params, setParams] = useState<Record<string, any>>(data.params);
-  const [stockId, setStockId] = useState<string | null>(null);
-  const setParamsDebounced = useDebouncedCallback(
-    (params: Record<string, any>) => {
-      setParams(params);
-    },
-    1000
-  );
-  const { updateNodeData } = useReactFlow();
+export const ApiConnectorContent = memo(
+  ({ id, data }: { id: string; data: NodeData }) => {
+    // TODO: Check if there is an input and adjust the ticker param
+    const [config, setConfig] = useState<NodeInput[]>(data.inputs);
+    const [stockId, setStockId] = useState<string | null>(null);
 
-  const [selectedOutputs, setSelectedOutputs] = useState<NodeOutput[]>(
-    data.outputs
-  );
+    const updateConfigValue = createUpdateConfigValue(setConfig);
 
-  const supabase = createClient();
-  const { data: stock } = useQuery(fetchStockById(supabase, stockId ?? ""), {
-    enabled: !!stockId,
-  });
+    const selectedTicker = useInputValue(config, "ticker");
+    const selectedApiProvider = useInputValue(config, "api_provider");
+    const selectedEndpoints = useInputValue(config, "endpoints");
 
-  useEffect(() => {
-    if (stock) {
-      setParams({ ...params, ticker: stock.symbol });
-    }
-  }, [stock]);
+    // const setParamsDebounced = useDebouncedCallback(
+    //   (params: Record<string, any>) => {
+    //     setParams(params);
+    //   },
+    //   1000
+    // );
+    const { updateNodeData } = useReactFlow();
 
-  useEffect(() => {
-    updateNodeInternals(id);
-    updateNodeData(id, { outputs: selectedOutputs });
-  }, [selectedOutputs]);
-
-  useEffect(() => {
-    updateNodeData(id, { params });
-  }, [params]);
-
-  const apiProvider = useMemo(() => {
-    return (
-      apiProviders.find(
-        (apiProvider) => apiProvider.id === params.apiProvider
-      ) ?? { id: "yfinance", name: "Yahoo Finance" }
+    const [selectedOutputs, setSelectedOutputs] = useState<NodeOutput[]>(
+      data.outputs
     );
-  }, [params.apiProvider]);
 
-  return (
-    <div></div>
-    // <NodeWrapper
-    //   nodeId={id}
-    //   width="w-[360px]"
-    //   inputs={inputs}
-    //   outputs={selectedOutputs}
-    //   headerProps={{
-    //     title: "API Connector",
-    //     bgColor: "bg-purple-200",
-    //     iconBgColor: "bg-purple-400",
-    //     textColor: "text-purple-900",
-    //     iconFn: MajesticonsDataLine,
-    //   }}
-    // >
-    //   <div className="space-y-2 px-2">
-    //     <p className="text-sm font-semibold">Company</p>
-    //     <StockPicker
-    //       currentStockTicker={params.ticker}
-    //       onStockClick={(stockId) => {
-    //         setStockId(stockId);
-    //       }}
-    //     />
-    //     <Separator orientation="horizontal" />
-    //     <p className="text-sm font-semibold">Data Source</p>
-    //     <DropdownMenu>
-    //       <DropdownMenuTrigger asChild>
-    //         <Button variant="outline" className="w-full flex justify-between">
-    //           {apiProvider.name}
-    //           <ChevronDown className="w-4 h-4" />
-    //         </Button>
-    //       </DropdownMenuTrigger>
-    //       <DropdownMenuContent>
-    //         <ScrollArea className="h-[200px]">
-    //           {apiProviders
-    //             .sort((a, b) => a.name.localeCompare(b.name))
-    //             .map((apiProvider) => (
-    //               <DropdownMenuItem
-    //                 key={apiProvider.id}
-    //                 onClick={() => {
-    //                   setParamsDebounced({
-    //                     ...params,
-    //                     apiProvider: apiProvider.id,
-    //                   });
-    //                 }}
-    //               >
-    //                 {apiProvider.name}
-    //               </DropdownMenuItem>
-    //             ))}
-    //         </ScrollArea>
-    //       </DropdownMenuContent>
-    //     </DropdownMenu>
-    //     <Separator orientation="horizontal" />
-    //     <div className="space-y-2">
-    //       <p className="text-sm font-semibold">Endpoints</p>
-    //       <NodeTabs defaultValue={sections[0]?.name}>
-    //         <NodeTabsList>
-    //           {sections.map((section) => (
-    //             <NodeTabsTrigger key={section.name} value={section.name}>
-    //               {section.name}
-    //             </NodeTabsTrigger>
-    //           ))}
-    //         </NodeTabsList>
-    //         {sections.map((section) => (
-    //           <NodeTabsContent
-    //             key={section.name}
-    //             value={section.name}
-    //             className="flex flex-wrap gap-2"
-    //           >
-    //             {section.subSections.map((subSection) => (
-    //               <div key={subSection.name}>
-    //                 <p className="text-sm font-semibold mb-1">
-    //                   {subSection.name}
-    //                 </p>
-    //                 <div className="flex flex-wrap gap-2">
-    //                   {subSection.endpoints.map((endpoint) => (
-    //                     <Badge
-    //                       key={endpoint}
-    //                       className={cn(
-    //                         "cursor-pointer",
-    //                         // TODO: Get the right colors
-    //                         params.endpoints.includes(endpoint)
-    //                           ? "bg-steel-blue-200 hover:bg-steel-blue-200"
-    //                           : "hover:bg-muted"
-    //                       )}
-    //                       variant="secondary"
-    //                       onClick={() => {
-    //                         if (params.endpoints.includes(endpoint)) {
-    //                           setParamsDebounced({
-    //                             ...params,
-    //                             endpoints: params.endpoints.filter(
-    //                               (e: string) => e !== endpoint
-    //                             ),
-    //                           });
-    //                         } else {
-    //                           setParamsDebounced({
-    //                             ...params,
-    //                             endpoints: [...params.endpoints, endpoint],
-    //                           });
-    //                         }
-    //                       }}
-    //                     >
-    //                       {endpoint}
-    //                     </Badge>
-    //                   ))}
-    //                 </div>
-    //               </div>
-    //             ))}
-    //           </NodeTabsContent>
-    //         ))}
-    //       </NodeTabs>
-    //     </div>
-    //     <Separator orientation="horizontal" />
-    //     <div className="flex justify-around py-2">
-    //       <div className="flex items-center space-x-2">
-    //         <Switch />
+    const supabase = createClient();
+    const { data: stock } = useQuery(fetchStockById(supabase, stockId ?? ""), {
+      enabled: !!stockId,
+    });
 
-    //         <p className="text-xs">Split-Adjusted</p>
-    //       </div>
-    //       <div className="flex items-center space-x-2">
-    //         <Switch />
-    //         <p className="text-xs">Inflation-Adjusted</p>
-    //       </div>
-    //     </div>
-    //     <Separator orientation="horizontal" />
-    //     <Outputs
-    //       nodeId={id}
-    //       outputs={outputs}
-    //       selectedOutputs={selectedOutputs}
-    //       setSelectedOutputs={setSelectedOutputs}
-    //     />
-    //     <Separator orientation="horizontal" />
-    //     <div className="flex justify-between">
-    //       <p className="text-xs">Cache output</p>
-    //       <div className="flex items-center space-x-2">
-    //         <Switch defaultChecked={false} id="cache-output" className="" />
-    //         <Label htmlFor="cache-output" className="text-xs">
-    //           Yes
-    //         </Label>
-    //       </div>
-    //     </div>
-    //   </div>
-    // </NodeWrapper>
-  );
-}
+    useEffect(() => {
+      if (stock) {
+        updateConfigValue("ticker", stock.symbol);
+      }
+    }, [stock]);
 
-export const ApiConnectorNode = React.memo(ApiConnectorNodeComponent);
+    // useEffect(() => {
+    //   2;
+    //   updateNodeInternals(id);
+    //   updateNodeData(id, { outputs: selectedOutputs });
+    // }, [selectedOutputs]);
+
+    useEffect(() => {
+      updateNodeData(id, { inputs: config });
+    }, [config]);
+
+    const apiProvider = useMemo(() => {
+      return (
+        API_PROVIDERS.find(
+          (apiProvider) => apiProvider.id === selectedApiProvider
+        ) ?? { id: "yfinance", name: "Yahoo Finance" }
+      );
+    }, [selectedApiProvider]);
+
+    return (
+      <div className="space-y-2 px-2">
+        <p className="text-sm font-semibold">Company</p>
+        <StockPicker
+          currentStockTicker={selectedTicker}
+          onStockClick={(stockId) => {
+            setStockId(stockId);
+          }}
+        />
+        <Separator orientation="horizontal" />
+        <p className="text-sm font-semibold">Data Source</p>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" className="w-full flex justify-between">
+              {apiProvider.name}
+              <ChevronDown className="w-4 h-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <ScrollArea className="h-[200px]">
+              {API_PROVIDERS.sort((a, b) => a.name.localeCompare(b.name)).map(
+                (apiProvider) => (
+                  <DropdownMenuItem
+                    key={apiProvider.id}
+                    onClick={() => {
+                      updateConfigValue("api_provider", apiProvider.id);
+                    }}
+                  >
+                    {apiProvider.name}
+                  </DropdownMenuItem>
+                )
+              )}
+            </ScrollArea>
+          </DropdownMenuContent>
+        </DropdownMenu>
+        <Separator orientation="horizontal" />
+        <div className="space-y-2">
+          <p className="text-sm font-semibold">Endpoints</p>
+          <NodeTabs defaultValue={sections[0]?.name}>
+            <NodeTabsList>
+              {sections.map((section) => (
+                <NodeTabsTrigger key={section.name} value={section.name}>
+                  {section.name}
+                </NodeTabsTrigger>
+              ))}
+            </NodeTabsList>
+            {sections.map((section) => (
+              <NodeTabsContent
+                key={section.name}
+                value={section.name}
+                className="flex flex-wrap gap-2"
+              >
+                {section.subSections.map((subSection) => (
+                  <div key={subSection.name}>
+                    <p className="text-sm font-semibold mb-1">
+                      {subSection.name}
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {subSection.endpoints.map((endpoint) => (
+                        <Badge
+                          key={endpoint}
+                          className={cn(
+                            "cursor-pointer",
+                            // TODO: Get the right colors
+                            selectedEndpoints.includes(endpoint)
+                              ? "bg-steel-blue-200 hover:bg-steel-blue-200"
+                              : "hover:bg-muted"
+                          )}
+                          variant="secondary"
+                          onClick={() => {
+                            if (selectedEndpoints.includes(endpoint)) {
+                              updateConfigValue("endpoints", [
+                                ...selectedEndpoints.filter(
+                                  (e: string) => e !== endpoint
+                                ),
+                              ]);
+                            } else {
+                              updateConfigValue("endpoints", [
+                                ...selectedEndpoints,
+                                endpoint,
+                              ]);
+                            }
+                          }}
+                        >
+                          {endpoint}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </NodeTabsContent>
+            ))}
+          </NodeTabs>
+        </div>
+        <Separator orientation="horizontal" />
+        <div className="flex justify-around py-2">
+          <div className="flex items-center space-x-2">
+            <Switch />
+
+            <p className="text-xs">Split-Adjusted</p>
+          </div>
+          <div className="flex items-center space-x-2">
+            <Switch />
+            <p className="text-xs">Inflation-Adjusted</p>
+          </div>
+        </div>
+        {/* <Separator orientation="horizontal" />
+        <Outputs
+          nodeId={id}
+          outputs={outputs}
+          selectedOutputs={selectedOutputs}
+          setSelectedOutputs={setSelectedOutputs}
+        />
+        <Separator orientation="horizontal" />
+        <div className="flex justify-between">
+          <p className="text-xs">Cache output</p>
+          <div className="flex items-center space-x-2">
+            <Switch defaultChecked={false} id="cache-output" className="" />
+            <Label htmlFor="cache-output" className="text-xs">
+              Yes
+            </Label>
+          </div>
+        </div> */}
+      </div>
+    );
+  }
+);

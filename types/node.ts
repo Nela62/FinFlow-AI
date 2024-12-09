@@ -6,6 +6,7 @@ export enum NodeType {
   SUMMARIZER = "summarizer",
   EMAIL_SENDER = "email-sender",
   STOCK_SCREENER = "stock-screener",
+  API_CONNECTOR = "api-connector",
 }
 
 type NodeInputHandleTrue = {
