@@ -157,7 +157,7 @@ export const SummarizerContent = memo(
                     "keywords",
                     Array.from(new Set([...keywords, ...newKeywords]))
                   );
-                  e.currentTarget.value = "";
+                  setKeywordsInput("");
                 }
               }}
             />

@@ -1,7 +1,7 @@
 export const enum DataCategory {
   Text = "Text",
   Json = "Json",
-
+  Tabular = "Tabular",
   // Tabular = "Tabular",
   // File = "File",
   // Any = "Any",
@@ -9,11 +9,11 @@ export const enum DataCategory {
 
 export const enum FileFormat {
   JSON = "JSON",
-  // CSV = "CSV",
+  CSV = "CSV",
   // XLSX = "XLSX",
   TXT = "TXT",
   MD = "MD",
-  // PDF = "PDF",
+  PDF = "PDF",
   // HTML = "HTML",
   // XML = "XML",
   // DOCX = "DOCX",

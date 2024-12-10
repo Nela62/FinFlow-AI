@@ -4,10 +4,12 @@ import {
   SecFilingContent,
 } from "../contents/sec-filing-content";
 import {
+  BxFile,
   Fa6SolidArrowDownWideShort,
   FluentMerge16Filled,
   IconParkOutlineSendEmail,
   MajesticonsDataLine,
+  MaterialSymbolsTableOutline,
 } from "./icons";
 import {
   SUMMARIZER_NODE_DEFAULT_DATA,
@@ -28,6 +30,14 @@ import {
   APPENDER_NODE_DEFAULT_DATA,
   AppenderContent,
 } from "../contents/appender-content";
+import {
+  DCF_MODEL_NODE_DEFAULT_DATA,
+  DcfModelContent,
+} from "../contents/dcf-model-content";
+import {
+  DOCUMENT_COMPILER_NODE_DEFAULT_DATA,
+  DocumentCompilerContent,
+} from "../contents/document-compiler-content";
 
 export const CONTENT_MAP: Record<
   NodeType,
@@ -42,6 +52,8 @@ export const CONTENT_MAP: Record<
   "stock-screener": StockScreenerContent,
   "api-connector": ApiConnectorContent,
   appender: AppenderContent,
+  "dcf-model": DcfModelContent,
+  "document-compiler": DocumentCompilerContent,
 } as const;
 
 export const DEFAULT_DATA_MAP: Record<NodeType, NodeData> = {
@@ -51,6 +63,8 @@ export const DEFAULT_DATA_MAP: Record<NodeType, NodeData> = {
   "stock-screener": STOCK_SCREENER_NODE_DEFAULT_DATA,
   "api-connector": API_CONNECTOR_NODE_DEFAULT_DATA,
   appender: APPENDER_NODE_DEFAULT_DATA,
+  "dcf-model": DCF_MODEL_NODE_DEFAULT_DATA,
+  "document-compiler": DOCUMENT_COMPILER_NODE_DEFAULT_DATA,
 } as const;
 
 export const STYLE_MAP: Record<NodeType, NodeHeaderStyle> = {
@@ -108,6 +122,26 @@ export const STYLE_MAP: Record<NodeType, NodeHeaderStyle> = {
       type: "icon",
       Icon: FluentMerge16Filled,
       bgColor: "bg-gray-500",
+    },
+  },
+  "dcf-model": {
+    title: "DCF Model",
+    bgColor: "bg-green-200",
+    textColor: "text-green-900",
+    visual: {
+      type: "icon",
+      Icon: MaterialSymbolsTableOutline,
+      bgColor: "bg-green-500",
+    },
+  },
+  "document-compiler": {
+    title: "Document Compiler",
+    bgColor: "bg-amber-200",
+    textColor: "text-amber-900",
+    visual: {
+      type: "icon",
+      Icon: BxFile,
+      bgColor: "bg-amber-500",
     },
   },
 } as const;

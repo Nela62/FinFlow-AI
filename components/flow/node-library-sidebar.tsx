@@ -4,17 +4,19 @@ import { Card, CardContent } from "../ui/card";
 import { cn } from "@/lib/utils";
 import { TOP_BAR_HEIGHT } from "@/lib/const";
 
+const isDemo = process.env.NEXT_PUBLIC_IS_DEMO !== "true";
+
 const nodesList = [
   { id: "sec-filing", name: "SEC Filing Parser", disabled: false },
-  { id: "api-connector", name: "API Connector", disabled: false },
+  { id: "api-connector", name: "API Connector", disabled: isDemo },
   { id: "summarizer", name: "Summarizer", disabled: false },
-  { id: "switch", name: "Switch", disabled: true },
-  { id: "dcf-model", name: "DCF Model", disabled: true },
-  { id: "financial-analysis", name: "Financial Analysis", disabled: true },
-  { id: "appender", name: "Appender", disabled: false },
-  { id: "document-compiler", name: "Document Compiler", disabled: true },
-  { id: "email-sender", name: "Email Sender", disabled: false },
-  { id: "stock-screener", name: "Stock Screener", disabled: false },
+  // { id: "switch", name: "Switch", disabled: isDemo },
+  { id: "dcf-model", name: "DCF Model", disabled: isDemo },
+  // { id: "financial-analysis", name: "Financial Analysis", disabled: isDemo },
+  { id: "appender", name: "Appender", disabled: isDemo },
+  { id: "document-compiler", name: "Document Compiler", disabled: isDemo },
+  { id: "email-sender", name: "Email Sender", disabled: isDemo },
+  { id: "stock-screener", name: "Stock Screener", disabled: isDemo },
 ];
 
 export const NodeLibrarySidebar = () => {
