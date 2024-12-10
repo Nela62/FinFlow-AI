@@ -21,7 +21,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { NodeHeader } from "./components/node-header";
+import { NodeHeader } from "../components/node-header";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -33,7 +33,7 @@ import { ChevronDown } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { NodeInput, NodeOutput, NodeType } from "@/types/node";
 import { useDebouncedCallback } from "use-debounce";
-import { res } from "./temp/api";
+import { res } from "../temp/api";
 import { createClient } from "@/lib/supabase/client";
 import { useQuery } from "@supabase-cache-helpers/postgrest-react-query";
 import { fetchStockById } from "@/lib/queries";
@@ -178,7 +178,7 @@ export const ApiConnectorContent = memo(
     }, [selectedApiProvider]);
 
     return (
-      <div className="space-y-2 px-2">
+      <div className="space-y-4 py-1 px-2">
         <p className="text-sm font-semibold">Company</p>
         <StockPicker
           currentStockTicker={selectedTicker}

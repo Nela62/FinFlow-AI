@@ -90,7 +90,7 @@ export const SecFilingContent = memo(
 
     return (
       <div>
-        <div className="space-y-2 px-2">
+        <div className="space-y-2 px-2 py-1">
           <p className="text-sm font-semibold">Company</p>
           <StockPicker
             currentStockTicker={selectedTicker}

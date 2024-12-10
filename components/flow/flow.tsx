@@ -38,6 +38,7 @@ import {
 } from "@/types/react-flow";
 import { DEFAULT_DATA_MAP } from "./nodes/constants/node-map";
 import { RunsSidebar } from "./runs/runs-sidebar";
+import { useNodesStore } from "@/providers/nodesProvider";
 
 const PositionSchema = z.object({
   x: z.number(),
@@ -56,6 +57,17 @@ const DnDFlow = ({
   const reactFlowWrapper = useRef(null);
   const { screenToFlowPosition } = useReactFlow();
   const [type] = useDnD();
+
+  const {
+    nodes,
+    edges,
+    setNodes,
+    setEdges,
+    onNodesChange,
+    onEdgesChange,
+    onConnect,
+    addNode,
+  } = useNodesStore((state) => state);
 
   const supabase = createClient();
 
@@ -111,9 +123,6 @@ const DnDFlow = ({
     }
   }, 1000);
 
-  const [nodes, setNodes] = useState<AppNode[]>([]);
-  const [edges, setEdges] = useState<CustomEdgeType[]>([]);
-
   useEffect(() => {
     fetchNodes().then((nodesRes) => {
       setNodes(
@@ -140,32 +149,6 @@ const DnDFlow = ({
   useEffect(() => {
     updateEdges(edges);
   }, [edges, updateEdges]);
-
-  const onNodesChange = useCallback(
-    (changes: NodeChange[]) => {
-      setNodes((nds) => applyNodeChanges(changes, nds) as AppNode[]);
-    },
-    [setNodes]
-  );
-
-  const onEdgesChange = useCallback(
-    (changes: EdgeChange[]) => {
-      setEdges((eds) => applyEdgeChanges(changes, eds) as CustomEdgeType[]);
-    },
-    [setEdges]
-  );
-
-  const onConnect = useCallback(
-    (conn: Connection) => {
-      setEdges((eds) =>
-        addEdge(
-          { ...conn, id: uuidv4(), type: "button-edge", animated: true },
-          eds
-        )
-      );
-    },
-    [setEdges]
-  );
 
   const { updateEdge } = useReactFlow();
 
@@ -196,7 +179,7 @@ const DnDFlow = ({
         data: DEFAULT_DATA_MAP[type],
       };
 
-      setNodes((nds) => [...nds, newNode]);
+      addNode(newNode);
     },
     [screenToFlowPosition, type, setNodes]
   );

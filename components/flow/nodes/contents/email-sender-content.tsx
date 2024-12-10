@@ -76,7 +76,7 @@ export const EmailSenderContent = memo(
     }, [config]);
 
     return (
-      <div className="space-y-2 px-2">
+      <div className="space-y-2 px-2 py-1">
         <div className="space-y-4 nodrag">
           <p className="text-sm font-semibold">Settings</p>
           <div className="space-y-1 w-full">

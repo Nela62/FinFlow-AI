@@ -1,12 +1,33 @@
+import { AppNode, CustomEdgeType } from "@/types/react-flow";
+import {
+  addEdge,
+  applyEdgeChanges,
+  applyNodeChanges,
+  Connection,
+} from "@xyflow/react";
+import { EdgeChange } from "@xyflow/react";
+import { NodeChange } from "@xyflow/react";
 import { createStore } from "zustand/vanilla";
+import { v4 as uuidv4 } from "uuid";
 
 export type NodesState = {
+  nodes: AppNode[];
+  edges: CustomEdgeType[];
   selectedRunId: string | null;
   isRunning: boolean;
   selectedTab: "logs" | "outputs";
 };
 
 export type NodesActions = {
+  onNodesChange: (changes: NodeChange[]) => void;
+  onEdgesChange: (changes: EdgeChange[]) => void;
+  onConnect: (connection: Connection) => void;
+  addNode: (node: AppNode) => void;
+  setNodes: (nodes: AppNode[]) => void;
+  setEdges: (edges: CustomEdgeType[]) => void;
+  deleteNode: (nodeId: string) => void;
+  deleteEdge: (edgeId: string) => void;
+  getInputNodes: (nodeId: string) => AppNode[];
   setSelectedRunId: (runId: string) => void;
   setSelectedTab: (tab: "logs" | "outputs") => void;
   resetSelectedRunId: () => void;
@@ -184,6 +205,9 @@ export type NodesStore = NodesState & NodesActions;
 // ];
 
 const defaultInitState: NodesState = {
+  nodes: [],
+  edges: [],
+
   selectedRunId: null,
   selectedTab: "logs",
   isRunning: false,
@@ -196,52 +220,52 @@ export const createNodesStore = (initState: NodesState = defaultInitState) => {
     resetSelectedRunId: () => set({ selectedRunId: null }),
     setSelectedTab: (tab) => set({ selectedTab: tab }),
     setIsRunning: (isRunning) => set({ isRunning }),
-    // onNodesChange: (changes) => {
-    //   set((state) => ({
-    //     nodes: applyNodeChanges(changes, state.nodes),
-    //   }));
-    // },
-    // onEdgesChange: (changes) => {
-    //   set((state) => ({
-    //     edges: applyEdgeChanges(changes, state.edges),
-    //   }));
-    // },
-    // onConnect: (connection) => {
-    //   set((state) => ({
-    //     edges: addEdge(
-    //       { ...connection, type: "button-edge", animated: true },
-    //       state.edges
-    //     ),
-    //   }));
-    // },
-    // addNode: (node) => {
-    //   set((state) => ({
-    //     nodes: [...state.nodes, node],
-    //   }));
-    // },
-    // setNodes: (nodes) => {
-    //   if (Array.isArray(nodes)) {
-    //     set({ nodes });
-    //   } else {
-    //     console.log("nodes ", nodes);
-    //   }
-    // },
-    // setEdges: (edges) => {
-    //   set({ edges });
-    // },
-    // deleteNode: (nodeId) => {
-    //   set((state) => ({
-    //     nodes: state.nodes?.filter((node) => node.id !== nodeId),
-    //     edges: state.edges?.filter(
-    //       (edge) => edge.source !== nodeId && edge.target !== nodeId
-    //     ),
-    //   }));
-    // },
-    // deleteEdge: (edgeId) => {
-    //   set((state) => ({
-    //     edges: state.edges?.filter((edge) => edge.id !== edgeId),
-    //   }));
-    // },
+    onNodesChange: (changes: NodeChange[]) => {
+      set((state) => ({
+        nodes: applyNodeChanges(changes, state.nodes) as AppNode[],
+      }));
+    },
+    onEdgesChange: (changes: EdgeChange[]) => {
+      set((state) => ({
+        edges: applyEdgeChanges(changes, state.edges) as CustomEdgeType[],
+      }));
+    },
+    onConnect: (connection) => {
+      set((state) => ({
+        edges: addEdge(
+          { ...connection, id: uuidv4(), type: "button-edge", animated: true },
+          state.edges
+        ),
+      }));
+    },
+    addNode: (node) => {
+      set((state) => ({
+        nodes: [...state.nodes, node],
+      }));
+    },
+    setNodes: (nodes) => {
+      if (Array.isArray(nodes)) {
+        set({ nodes });
+      } else {
+        console.log("nodes ", nodes);
+      }
+    },
+    setEdges: (edges) => {
+      set({ edges });
+    },
+    deleteNode: (nodeId) => {
+      set((state) => ({
+        nodes: state.nodes?.filter((node) => node.id !== nodeId),
+        edges: state.edges?.filter(
+          (edge) => edge.source !== nodeId && edge.target !== nodeId
+        ),
+      }));
+    },
+    deleteEdge: (edgeId) => {
+      set((state) => ({
+        edges: state.edges?.filter((edge) => edge.id !== edgeId),
+      }));
+    },
     // addRunResult: (runResult) => {
     //   set((state) => ({
     //     runResults: [...state.runResults, runResult],
@@ -250,14 +274,14 @@ export const createNodesStore = (initState: NodesState = defaultInitState) => {
     // clearRunResults: () => {
     //   set({ runResults: [] });
     // },
-    // getInputNodes: (nodeId: string) => {
-    //   const edges = get().edges;
-    //   const nodes = get().nodes;
-    //   const inputEdges = edges.filter((edge) => edge.target === nodeId);
-    //   const inputNodes = inputEdges.map((edge) =>
-    //     nodes.find((node) => node.id === edge.source)
-    //   );
-    //   return inputNodes.filter((node) => node !== undefined) as AppNode[];
-    // },
+    getInputNodes: (nodeId: string) => {
+      const edges = get().edges;
+      const nodes = get().nodes;
+      const inputEdges = edges.filter((edge) => edge.target === nodeId);
+      const inputNodes = inputEdges.map((edge) =>
+        nodes.find((node) => node.id === edge.source)
+      );
+      return inputNodes.filter((node) => node !== undefined) as AppNode[];
+    },
   }));
 };

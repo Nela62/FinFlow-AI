@@ -7,6 +7,10 @@ export enum NodeType {
   EMAIL_SENDER = "email-sender",
   STOCK_SCREENER = "stock-screener",
   API_CONNECTOR = "api-connector",
+  APPENDER = "appender",
+  DCF_MODEL = "dcf-model",
+  FINANCIAL_ANALYSIS = "financial-analysis",
+  DOCUMENT_COMPILER = "document-compiler",
 }
 
 type NodeInputHandleTrue = {

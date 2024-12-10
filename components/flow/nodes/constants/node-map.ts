@@ -5,6 +5,7 @@ import {
 } from "../contents/sec-filing-content";
 import {
   Fa6SolidArrowDownWideShort,
+  FluentMerge16Filled,
   IconParkOutlineSendEmail,
   MajesticonsDataLine,
 } from "./icons";
@@ -22,7 +23,11 @@ import { STOCK_SCREENER_NODE_DEFAULT_DATA } from "../contents/stock-screener-con
 import {
   API_CONNECTOR_NODE_DEFAULT_DATA,
   ApiConnectorContent,
-} from "../api-connector";
+} from "../contents/api-connector-content";
+import {
+  APPENDER_NODE_DEFAULT_DATA,
+  AppenderContent,
+} from "../contents/appender-content";
 
 export const CONTENT_MAP: Record<
   NodeType,
@@ -36,6 +41,7 @@ export const CONTENT_MAP: Record<
   "email-sender": EmailSenderContent,
   "stock-screener": StockScreenerContent,
   "api-connector": ApiConnectorContent,
+  appender: AppenderContent,
 } as const;
 
 export const DEFAULT_DATA_MAP: Record<NodeType, NodeData> = {
@@ -44,6 +50,7 @@ export const DEFAULT_DATA_MAP: Record<NodeType, NodeData> = {
   "email-sender": EMAIL_SENDER_NODE_DEFAULT_DATA,
   "stock-screener": STOCK_SCREENER_NODE_DEFAULT_DATA,
   "api-connector": API_CONNECTOR_NODE_DEFAULT_DATA,
+  appender: APPENDER_NODE_DEFAULT_DATA,
 } as const;
 
 export const STYLE_MAP: Record<NodeType, NodeHeaderStyle> = {
@@ -91,6 +98,16 @@ export const STYLE_MAP: Record<NodeType, NodeHeaderStyle> = {
       type: "icon",
       Icon: MajesticonsDataLine,
       bgColor: "bg-purple-500",
+    },
+  },
+  appender: {
+    title: "Appender",
+    bgColor: "bg-gray-200",
+    textColor: "text-gray-900",
+    visual: {
+      type: "icon",
+      Icon: FluentMerge16Filled,
+      bgColor: "bg-gray-500",
     },
   },
 } as const;

@@ -103,7 +103,7 @@ const LogicTree = ({ group }: { group: Group }) => {
 export const StockScreenerContent = memo(
   ({ id, data }: { id: string; data: NodeData }) => {
     return (
-      <div>
+      <div className="space-y-4 px-2 py-1">
         <LogicTree group={initialConfig} />
         <Dialog>
           <DialogTrigger asChild>
