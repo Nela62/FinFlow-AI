@@ -34,7 +34,7 @@ export const NodeLibrarySidebar = () => {
   return (
     <aside className="flex flex-col gap-4 rounded-tl-[5px] border-r border-slate-300 backdrop-blur-md bg-background/80 shadow-sm w-fit pointer-events-auto">
       <div
-        className="text-lg font-semibold border-b border-slate-300 flex items-center px-4"
+        className="text-sm font-semibold border-b border-slate-300 flex items-center px-4"
         style={{ height: TOP_BAR_HEIGHT }}
       >
         <p className="">Node Library</p>

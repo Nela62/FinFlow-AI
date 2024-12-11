@@ -2,6 +2,7 @@ export const enum DataCategory {
   Text = "Text",
   Json = "Json",
   Tabular = "Tabular",
+  PDF = "PDF",
   // Tabular = "Tabular",
   // File = "File",
   // Any = "Any",

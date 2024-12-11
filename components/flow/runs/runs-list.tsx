@@ -27,7 +27,7 @@ export const RunsList = ({ workflowId }: { workflowId: string }) => {
   return (
     <div className="flex flex-col gap-2 h-full">
       <div
-        className="text-lg font-semibold border-b border-slate-300 flex items-center px-4"
+        className="text-sm font-semibold border-b border-slate-300 flex items-center px-4"
         style={{ height: TOP_BAR_HEIGHT }}
       >
         <p className="">Runs</p>

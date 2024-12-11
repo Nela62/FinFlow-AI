@@ -9,7 +9,7 @@ export enum NodeType {
   API_CONNECTOR = "api-connector",
   APPENDER = "appender",
   DCF_MODEL = "dcf-model",
-  FINANCIAL_ANALYSIS = "financial-analysis",
+  // FINANCIAL_ANALYSIS = "financial-analysis",
   DOCUMENT_COMPILER = "document-compiler",
 }
 

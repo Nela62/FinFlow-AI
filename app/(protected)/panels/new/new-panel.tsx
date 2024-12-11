@@ -27,6 +27,7 @@ export const NewPanelComponent = ({ userId }: { userId: string }) => {
   const [selectedWidgets, setSelectedWidgets] = useState<string[]>([]);
   const [panelName, setPanelName] = useState<string>("");
   const { workspaceId } = useSidebarStore((state) => state);
+  // const workspaceId = "1";
 
   const supabase = createClient();
 

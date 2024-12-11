@@ -19,7 +19,7 @@ export const WorkflowPageComponent = ({
   if (!workflow) return <Skeleton className="w-full h-10" />;
 
   return (
-    <div className="h-[calc(100vh-35px)] w-[calc(100vw-35px)]">
+    <div className="h-full w-[calc(100vw-35px)]">
       <Flow workflowId={workflowId} userId={userId} />
     </div>
   );

@@ -17,14 +17,12 @@ export const LayoutComponent = ({
       {/* <AppSidebar /> */}
       <LeftSidebar />
       <div className="bg-sidebar w-full max-h-screen relative grow">
-        <div className="w-full h-[35px] bg-slate-700 z-40">
+        {/* <div className="w-full h-[35px] bg-slate-700 z-40">
           <Button variant="ghost" size="icon">
             <Bot className="w-4 h-4 text-white" />
           </Button>
-        </div>
-        <div className="relative h-[calc(100vh-35px)] w-full bg-slate-700">
-          {children}
-        </div>
+        </div> */}
+        <div className="relative h-full w-full bg-slate-700">{children}</div>
         {/* <ResizablePanelGroup direction="horizontal" className="">
           <ResizablePanel defaultSize={75}>
             <Card className="flex-1 my-2 h-[calc(100vh-16px)] flex flex-col w-full">

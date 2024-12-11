@@ -98,7 +98,7 @@ export const Toolbar = ({ workflowId }: { workflowId: string }) => {
       <Separator orientation="vertical" className="h-full text-slate-300" />
       <Button
         variant="ghost"
-        className="w-fit p-1.5"
+        className="w-fit p-1.5 h-fit"
         onClick={runWorkflow}
         disabled={isRunning}
       >

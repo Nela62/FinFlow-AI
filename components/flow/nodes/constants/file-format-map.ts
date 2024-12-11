@@ -19,6 +19,18 @@ export const FILE_FORMAT_MAP: Record<FileFormat, FileFormatData> = {
     dataCategory: DataCategory.Text,
     imageLink: "/output/markdown-file.png",
   },
+  [FileFormat.CSV]: {
+    extension: ".csv",
+    contentType: "text/csv",
+    dataCategory: DataCategory.Tabular,
+    imageLink: "/output/csv-file.png",
+  },
+  [FileFormat.PDF]: {
+    extension: ".pdf",
+    contentType: "application/pdf",
+    dataCategory: DataCategory.PDF,
+    imageLink: "/output/pdf-file.png",
+  },
 };
 
 // export const fileFormatsList: FileFormatData[] = [

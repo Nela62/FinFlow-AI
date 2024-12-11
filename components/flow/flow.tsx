@@ -191,7 +191,7 @@ const DnDFlow = ({
       <Dialog>
         <Popover>
           <div
-            className="h-full w-full relative bg-slate-200 rounded-tl-[5px]"
+            className="h-full w-full relative bg-slate-200"
             ref={reactFlowWrapper}
           >
             <ReactFlow
